@@ -4,876 +4,362 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Refinery Performance Dashboard — SAP Analytics Cloud</title>
+<script>
+(function(){var t=localStorage.getItem('theme');if(t==='dark'||(t===null&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0d1b2a; color: #e8eaf0; font-size: 13px; }
-
-/* Header */
-.header {
-  background: linear-gradient(135deg, #0f2744 0%, #0d1b2a 100%);
-  padding: 12px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #00b0f0;
-  position: sticky; top: 0; z-index: 100;
-}
-.header-left { display: flex; align-items: center; gap: 14px; }
-.header-badge {
-  background: #00b0f0; color: #000; font-size: 9px; font-weight: 800;
-  letter-spacing: 1.5px; padding: 3px 8px; border-radius: 3px; text-transform: uppercase;
-}
-.header h1 { font-size: 17px; color: #fff; font-weight: 600; }
-.header .sub { font-size: 10px; color: #64748b; margin-top: 2px; }
-.period { font-size: 11px; color: #94a3b8; text-align: right; }
-
-/* Tabs */
-.tabs {
-  display: flex; background: #0a1929;
-  border-bottom: 1px solid #1e3a5f; overflow-x: auto;
-}
-.tab {
-  padding: 10px 18px; cursor: pointer; font-size: 12px; color: #64748b;
-  border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s;
-  user-select: none;
-}
-.tab:hover { color: #cbd5e1; background: #0d1b2a; }
-.tab.active { color: #00b0f0; border-bottom-color: #00b0f0; background: #0d1b2a; font-weight: 600; }
-
-/* Pages */
-.page { display: none; padding: 14px 16px; }
-.page.active { display: block; }
-
-/* Section header */
-.section-header {
-  font-size: 15px; font-weight: 700; color: #e2e8f0;
-  margin-bottom: 14px; padding-bottom: 8px;
-  border-bottom: 1px solid #1e3a5f;
-  display: flex; align-items: center; gap: 10px;
-}
-.section-header span { font-size: 11px; color: #64748b; font-weight: 400; }
-
-/* Grid layouts */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-.grid-sidebar { display: grid; grid-template-columns: 180px 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-
-/* Card */
-.card {
-  background: #111f31; border: 1px solid #1a3050;
-  border-radius: 6px; padding: 13px;
-}
-.card-title {
-  font-size: 10px; color: #4a6080; text-transform: uppercase;
-  letter-spacing: 0.8px; margin-bottom: 10px; font-weight: 700;
-}
-
-/* KPI styles */
-.kpi-xl { font-size: 30px; font-weight: 700; line-height: 1; }
-.kpi-lg { font-size: 22px; font-weight: 700; }
-.kpi-md { font-size: 17px; font-weight: 600; }
-.kpi-sm { font-size: 13px; font-weight: 600; }
-.c-green { color: #70ad47; }
-.c-blue { color: #00b0f0; }
-.c-amber { color: #ffc000; }
-.c-red { color: #ef4444; }
-.c-muted { color: #94a3b8; }
-.c-white { color: #e2e8f0; }
-
-.delta-up { font-size: 11px; color: #70ad47; }
-.delta-dn { font-size: 11px; color: #ef4444; }
-.delta-flat { font-size: 11px; color: #64748b; }
-
-/* Divider */
-.divider { border-top: 1px solid #1a3050; margin: 10px 0; }
-
-/* Metric rows */
-.mrow { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #12223a; font-size: 12px; }
-.mrow:last-child { border-bottom: none; }
-.mrow-label { color: #64748b; }
-.mrow-value { font-weight: 600; color: #cbd5e1; }
-
-/* Table */
-.data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.data-table th { background: #0f2744; padding: 7px 10px; text-align: left; color: #64748b; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-.data-table td { padding: 6px 10px; border-bottom: 1px solid #12223a; color: #cbd5e1; }
-.data-table tr:nth-child(even) td { background: #0d1b2a; }
-.data-table td.v-blue { color: #00b0f0; font-weight: 700; }
-.data-table td.v-amber { color: #ffc000; font-weight: 700; }
-
-/* Mini KPI blocks */
-.mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.mini-kpi { padding: 10px 12px; background: #0d1b2a; border-radius: 4px; border-left: 3px solid; }
-.mini-kpi.blue { border-color: #00b0f0; }
-.mini-kpi.green { border-color: #70ad47; }
-.mini-kpi.amber { border-color: #ffc000; }
-.mini-kpi.red { border-color: #ef4444; }
-.mini-label { font-size: 10px; color: #4a6080; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-.mini-value { font-size: 20px; font-weight: 700; color: #e2e8f0; }
-.mini-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
-
-/* Loss comparison */
-.loss-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.loss-year { font-size: 11px; font-weight: 700; padding: 6px 8px; border-radius: 3px; margin-bottom: 8px; }
-.loss-year.y24 { background: #1a2f47; color: #94a3b8; }
-.loss-year.y25 { background: #0f2744; color: #00b0f0; }
-
-/* Watermark note */
-.anonymize-note {
-  font-size: 10px; color: #2a4060; font-style: italic;
-  text-align: center; padding: 4px; margin-top: 2px;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,sans-serif;font-size:13px;transition:background .25s,color .25s;}
+/* Light mode */
+body{background:#f0f4f8;color:#1e293b;}
+.header{background:linear-gradient(135deg,#1a73c8,#1558a8);}
+.tabs{background:#fff;border-bottom:2px solid #dde4ee;}
+.tab{color:#666;}
+.tab:hover{color:#1a73c8;background:#f0f7ff;}
+.tab.active{color:#1a73c8;border-bottom-color:#1a73c8;background:#fff;}
+.card{background:#fff;border:1px solid #dde4ee;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.card-title{color:#777;}
+.section-header{color:#1e293b;border-bottom:1px solid #dde4ee;}
+.section-header span{color:#888;}
+.kpi-xl,.kpi-lg,.kpi-md{color:#1e293b;}
+.kpi-sm{color:#64748b;}
+.c-white{color:#1e293b;}
+.c-muted{color:#888;}
+.divider{border-top:1px solid #eef2f8;}
+.mrow{border-bottom:1px solid #eef2f8;}
+.mrow-label{color:#888;}
+.mrow-value{color:#1e293b;}
+.data-table th{background:#f8f9fc;color:#555;}
+.data-table td{color:#1e293b;border-bottom:1px solid #f0f4f8;}
+.data-table tr:nth-child(even) td{background:#f8fafc;}
+.mini-kpi{background:#f8fafc;}
+.mini-label{color:#777;}
+.mini-value{color:#1e293b;}
+.mini-sub{color:#888;}
+.loss-year.y24{background:#f0f4f8;color:#666;}
+.loss-year.y25{background:#e3f2fd;color:#1a73c8;}
+.anon-note{color:#ccc;border-top:1px solid #eee;}
+.toggle-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;}
+.toggle-btn:hover{background:rgba(255,255,255,.25);}
+/* Dark mode */
+html.dark body{background:#0d1b2a;color:#e8eaf0;}
+html.dark .tabs{background:#0a1929;border-bottom-color:#1e3a5f;}
+html.dark .tab{color:#64748b;}
+html.dark .tab:hover{color:#cbd5e1;background:#0d1b2a;}
+html.dark .tab.active{color:#00b0f0;border-bottom-color:#00b0f0;background:#0d1b2a;}
+html.dark .card{background:#111f31;border:1px solid #1a3050;box-shadow:none;}
+html.dark .card-title{color:#4a6080;}
+html.dark .section-header{color:#e2e8f0;border-bottom-color:#1e3a5f;}
+html.dark .section-header span{color:#64748b;}
+html.dark .kpi-xl,html.dark .kpi-lg,html.dark .kpi-md{color:#e2e8f0;}
+html.dark .kpi-sm{color:#94a3b8;}
+html.dark .c-white{color:#e2e8f0;}
+html.dark .c-muted{color:#94a3b8;}
+html.dark .divider{border-top-color:#1a3050;}
+html.dark .mrow{border-bottom-color:#12223a;}
+html.dark .mrow-label{color:#64748b;}
+html.dark .mrow-value{color:#cbd5e1;}
+html.dark .data-table th{background:#0f2744;color:#64748b;}
+html.dark .data-table td{color:#cbd5e1;border-bottom-color:#1a3050;}
+html.dark .data-table tr:nth-child(even) td{background:#0d1b2a;}
+html.dark .mini-kpi{background:#0d1b2a;}
+html.dark .mini-label{color:#4a6080;}
+html.dark .mini-value{color:#e2e8f0;}
+html.dark .mini-sub{color:#64748b;}
+html.dark .loss-year.y24{background:#1a2f47;color:#94a3b8;}
+html.dark .loss-year.y25{background:#0f2744;color:#00b0f0;}
+html.dark .anon-note{color:#2a4060;border-top-color:#1a3050;}
+html.dark .toggle-btn{background:rgba(0,0,0,.2);border-color:rgba(255,255,255,.15);}
+/* Layout */
+.header{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.2);}
+.header h1{font-size:16px;color:#fff;font-weight:600;}
+.header-badge{background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 8px;border-radius:3px;text-transform:uppercase;}
+.period{font-size:11px;color:rgba(255,255,255,.65);}
+.toggle-btn{cursor:pointer;padding:5px 8px;border-radius:5px;font-size:13px;display:flex;align-items:center;gap:5px;transition:background .2s;}
+.tabs{display:flex;overflow-x:auto;}
+.tab{padding:10px 16px;cursor:pointer;font-size:12px;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;user-select:none;font-weight:500;}
+.tab.active{font-weight:700;}
+.page-wrap{padding:14px 16px;}
+.page{display:none;}
+.page.active{display:block;}
+.section-header{font-size:14px;font-weight:700;margin-bottom:14px;padding-bottom:8px;display:flex;align-items:center;gap:10px;}
+.card{border-radius:6px;padding:13px;margin-bottom:12px;}
+.card-title{font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;font-weight:700;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.grid-sidebar{display:grid;grid-template-columns:175px 1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.kpi-xl{font-size:28px;font-weight:700;line-height:1;}
+.kpi-lg{font-size:22px;font-weight:700;}
+.kpi-md{font-size:17px;font-weight:600;}
+.kpi-sm{font-size:13px;font-weight:600;}
+.c-green{color:#22c55e;}
+html.dark .c-green{color:#70ad47;}
+.c-blue{color:#1a73c8;}
+html.dark .c-blue{color:#00b0f0;}
+.c-amber{color:#d97706;}
+html.dark .c-amber{color:#ffc000;}
+.c-red{color:#dc2626;}
+html.dark .c-red{color:#ef4444;}
+.delta-up{font-size:11px;color:#22c55e;}
+html.dark .delta-up{color:#70ad47;}
+.divider{margin:10px 0;}
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12px;}
+.mrow:last-child{border-bottom:none!important;}
+.data-table{width:100%;border-collapse:collapse;font-size:12px;}
+.data-table th{padding:7px 10px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
+.data-table td{padding:6px 10px;}
+.data-table td.v-blue{color:#1a73c8;font-weight:700;}
+html.dark .data-table td.v-blue{color:#00b0f0;}
+.data-table td.v-amber{color:#d97706;font-weight:700;}
+html.dark .data-table td.v-amber{color:#ffc000;}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mini-kpi{padding:10px 12px;border-radius:4px;border-left:3px solid;}
+.mini-kpi.blue{border-color:#1a73c8;}
+html.dark .mini-kpi.blue{border-color:#00b0f0;}
+.mini-kpi.green{border-color:#22c55e;}
+html.dark .mini-kpi.green{border-color:#70ad47;}
+.mini-kpi.amber{border-color:#d97706;}
+html.dark .mini-kpi.amber{border-color:#ffc000;}
+.mini-kpi.red{border-color:#dc2626;}
+html.dark .mini-kpi.red{border-color:#ef4444;}
+.mini-label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.mini-value{font-size:20px;font-weight:700;}
+.mini-sub{font-size:10px;margin-top:2px;}
+.loss-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.loss-year{font-size:11px;font-weight:700;padding:6px 8px;border-radius:3px;margin-bottom:8px;}
+.anon-note{font-size:10px;font-style:italic;text-align:center;padding:6px;margin-top:4px;}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
 <div class="header">
-  <div class="header-left">
+  <div style="display:flex;align-items:center;gap:14px;">
     <div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
         <div class="header-badge">SAP Analytics Cloud</div>
-        <div style="font-size:10px;color:#475569;">Live Operational Intelligence</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.45);">Refinery · Production Intelligence</div>
       </div>
       <h1>Refinery Performance Dashboard</h1>
     </div>
   </div>
-  <div>
-    <div class="period">Reporting Period: Jan 1, 2025 — Dec 31, 2025</div>
-    <div style="font-size:10px;color:#2a4060;text-align:right;margin-top:2px;">Continuous Process Manufacturing Enterprise · Data anonymised for portfolio</div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <div style="text-align:right;">
+      <div class="period">Reporting Period: Jan 1 – Dec 31, 2025</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px;">Continuous Process Manufacturing · Figures anonymised</div>
+    </div>
+    <button class="toggle-btn" id="sac-theme-btn" onclick="sacToggle()" aria-label="Toggle theme">
+      <svg id="sac-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
   </div>
 </div>
-
-<!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="showPage(0)">📊 Overview &amp; Yield</div>
-  <div class="tab" onclick="showPage(1)">🧪 Raw Sugar Purity &amp; Rejections</div>
+  <div class="tab" onclick="showPage(1)">🧪 Raw Sugar Purity</div>
   <div class="tab" onclick="showPage(2)">🫙 Molasses Analytics</div>
   <div class="tab" onclick="showPage(3)">🏭 White Sugar Production</div>
   <div class="tab" onclick="showPage(4)">📉 Loss Analysis</div>
   <div class="tab" onclick="showPage(5)">📅 Historical Trends</div>
 </div>
+<div class="page-wrap">
 
-<!-- ================================================ -->
-<!-- PAGE 0: OVERVIEW & YIELD -->
-<!-- ================================================ -->
-<div class="page active" id="page-0">
-  <div class="section-header">Overview &amp; Yield Performance <span>Full-Year YTD · 308 of 365 days</span></div>
-
-  <!-- Sidebar KPI + 3 volume cards -->
+<div class="page active" id="p0">
+  <div class="section-header">Overview &amp; Yield <span>Full-Year YTD · 308 of 365 days</span></div>
   <div class="grid-sidebar">
-    <!-- Sidebar -->
     <div class="card">
       <div class="card-title">Yield YTD</div>
-      <div class="kpi-xl c-green">97.6%</div>
-      <div class="delta-up">▲ +0.1% vs prior year</div>
-
+      <div class="kpi-xl c-green">98.3%</div>
+      <div class="delta-up">▲ +0.4% vs prior year</div>
       <div class="divider"></div>
       <div class="card-title">WIP — In Process</div>
-      <div class="kpi-md c-white">2,431 MT</div>
-      <div class="c-muted" style="font-size:11px;">Current stocks</div>
-      <div class="kpi-sm c-muted" style="margin-top:4px;">521 MT</div>
-      <div class="c-muted" style="font-size:11px;">Prior day stocks</div>
-
+      <div class="kpi-md c-white">3,120 MT</div><div class="c-muted" style="font-size:11px;">Current stocks</div>
+      <div class="kpi-sm c-muted" style="margin-top:4px;">680 MT</div><div class="c-muted" style="font-size:11px;">Prior day</div>
       <div class="divider"></div>
       <div class="card-title">Process Rejections YTD</div>
-      <div class="kpi-md c-amber">10,847 MT</div>
-
+      <div class="kpi-md c-amber">8,240 MT</div>
       <div class="divider"></div>
       <div class="card-title">Plant Utilisation</div>
-      <div class="kpi-md c-white">82%</div>
-      <div class="c-muted" style="font-size:11px;">7,124 working hrs</div>
-      <div style="margin-top:6px;" class="mrow">
-        <span class="mrow-label">Working days</span><span class="mrow-value">308</span>
-      </div>
-      <div class="mrow">
-        <span class="mrow-label">Elapsed days</span><span class="mrow-value">365</span>
-      </div>
+      <div class="kpi-md c-white">91%</div><div class="c-muted" style="font-size:11px;">8,190 working hrs</div>
+      <div class="mrow" style="margin-top:6px;"><span class="mrow-label">Working days</span><span class="mrow-value">308</span></div>
+      <div class="mrow"><span class="mrow-label">Elapsed days</span><span class="mrow-value">365</span></div>
     </div>
-
-    <!-- Raw Sugar -->
     <div class="card">
       <div class="card-title">Raw Sugar Handled — YTD (MT)</div>
-      <div class="kpi-lg c-white" style="margin-bottom:6px;">1,452,847</div>
+      <div class="kpi-lg c-white" style="margin-bottom:6px;">1,820,000</div>
       <div class="c-muted" style="font-size:11px;margin-bottom:12px;">Total raw sugar received</div>
-      <div class="mrow"><span class="mrow-label">Raw Sugar Melted</span><span class="mrow-value c-blue">1,387,234</span></div>
-      <div class="mrow"><span class="mrow-label">Raw Sugar Dispatched</span><span class="mrow-value">118,904</span></div>
+      <div class="mrow"><span class="mrow-label">Raw Sugar Melted</span><span class="mrow-value c-blue">1,740,000</span></div>
+      <div class="mrow"><span class="mrow-label">Raw Sugar Dispatched</span><span class="mrow-value">142,000</span></div>
     </div>
-
-    <!-- White Sugar -->
     <div class="card">
       <div class="card-title">White Sugar Handled — YTD (MT)</div>
-      <div class="kpi-lg c-white" style="margin-bottom:6px;">1,289,543</div>
+      <div class="kpi-lg c-white" style="margin-bottom:6px;">1,610,000</div>
       <div class="c-muted" style="font-size:11px;margin-bottom:12px;">White sugar produced</div>
-      <div class="mrow"><span class="mrow-label">White Sugar Dispatched</span><span class="mrow-value c-blue">1,338,721</span></div>
+      <div class="mrow"><span class="mrow-label">White Sugar Dispatched</span><span class="mrow-value c-blue">1,680,000</span></div>
     </div>
-
-    <!-- Molasses -->
     <div class="card">
       <div class="card-title">Molasses Handled — YTD (MT)</div>
-      <div class="kpi-lg c-white" style="margin-bottom:6px;">31,208</div>
+      <div class="kpi-lg c-white" style="margin-bottom:6px;">38,500</div>
       <div class="c-muted" style="font-size:11px;margin-bottom:12px;">Molasses produced</div>
-      <div class="mrow"><span class="mrow-label">Molasses Dispatched</span><span class="mrow-value c-blue">36,442</span></div>
+      <div class="mrow"><span class="mrow-label">Molasses Dispatched</span><span class="mrow-value c-blue">44,200</span></div>
     </div>
   </div>
-
-  <!-- Yield Trend -->
-  <div class="card" style="margin-bottom:12px;">
-    <div class="card-title">Last 30 Days — Daily Yield Trend (%)</div>
-    <canvas id="yieldTrendChart" height="75"></canvas>
-  </div>
-
-  <!-- Stocks -->
+  <div class="card"><div class="card-title">Last 30 Days — Daily Yield Trend (%)</div><canvas id="yieldChart" height="75"></canvas></div>
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Current Stocks (MT)</div>
-      <table class="data-table">
-        <tr><th>Product Category</th><th style="text-align:right;">Stock (MT)</th></tr>
-        <tr><td>Raw Sugar</td><td class="v-blue" style="text-align:right;">168,432</td></tr>
-        <tr><td>Sugar Syrup / Molasses</td><td class="v-amber" style="text-align:right;">9,218</td></tr>
-        <tr><td>Fine Cane Sugar</td><td style="text-align:right;">49,876</td></tr>
-        <tr><td>Extra Fine Cane Sugar</td><td style="text-align:right;">132</td></tr>
-        <tr><td>Coarse Cane Sugar</td><td style="text-align:right;">3,941</td></tr>
-      </table>
+    <div class="card"><div class="card-title">Current Stocks (MT)</div>
+      <table class="data-table"><tr><th>Product Category</th><th style="text-align:right;">MT</th></tr>
+      <tr><td>Raw Sugar</td><td class="v-blue" style="text-align:right;">210,000</td></tr>
+      <tr><td>Sugar Syrup / Molasses</td><td class="v-amber" style="text-align:right;">11,400</td></tr>
+      <tr><td>Fine Cane Sugar</td><td style="text-align:right;">62,000</td></tr>
+      <tr><td>Extra Fine Cane Sugar</td><td style="text-align:right;">310</td></tr>
+      <tr><td>Coarse Cane Sugar</td><td style="text-align:right;">4,900</td></tr></table>
     </div>
-    <div class="card">
-      <div class="card-title">Opening Stocks — Jan 1, 2025 (MT)</div>
-      <table class="data-table">
-        <tr><th>Product Category</th><th style="text-align:right;">Stock (MT)</th></tr>
-        <tr><td>Raw Sugar</td><td class="v-blue" style="text-align:right;">121,847</td></tr>
-        <tr><td>Sugar Syrup / Molasses</td><td class="v-amber" style="text-align:right;">14,293</td></tr>
-        <tr><td>Fine Cane Sugar</td><td style="text-align:right;">98,312</td></tr>
-        <tr><td>Extra Fine Cane Sugar</td><td style="text-align:right;">298</td></tr>
-        <tr><td>Coarse Cane Sugar</td><td style="text-align:right;">5,024</td></tr>
-      </table>
+    <div class="card"><div class="card-title">Opening Stocks — Jan 1, 2025 (MT)</div>
+      <table class="data-table"><tr><th>Product Category</th><th style="text-align:right;">MT</th></tr>
+      <tr><td>Raw Sugar</td><td class="v-blue" style="text-align:right;">155,000</td></tr>
+      <tr><td>Sugar Syrup / Molasses</td><td class="v-amber" style="text-align:right;">17,800</td></tr>
+      <tr><td>Fine Cane Sugar</td><td style="text-align:right;">124,000</td></tr>
+      <tr><td>Extra Fine Cane Sugar</td><td style="text-align:right;">380</td></tr>
+      <tr><td>Coarse Cane Sugar</td><td style="text-align:right;">6,300</td></tr></table>
     </div>
   </div>
 </div>
 
-<!-- ================================================ -->
-<!-- PAGE 1: RAW SUGAR PURITY & REJECTIONS -->
-<!-- ================================================ -->
-<div class="page" id="page-1">
-  <div class="section-header">Raw Sugar Purity, Melting &amp; Rejections <span>Year-on-Year Analysis</span></div>
-
+<div class="page" id="p1">
+  <div class="section-header">Raw Sugar Purity, Melting &amp; Rejections</div>
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">YoY — Sugar Rejected from Process (MT &amp; %)</div>
-      <canvas id="rejectionYoYChart" height="160"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">YoY — Recycling within Process (%)</div>
-      <canvas id="recyclingYoYChart" height="160"></canvas>
-    </div>
+    <div class="card"><div class="card-title">YoY — Sugar Rejected from Process</div><canvas id="rejChart" height="160"></canvas></div>
+    <div class="card"><div class="card-title">YoY — Recycling within Process (%)</div><canvas id="recycChart" height="160"></canvas></div>
   </div>
-
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Sugar Rejected from Bagging — Month-wise (MT)</div>
-      <canvas id="baggingRejChart" height="160"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Raw Sugar Melting — Last 15 Days (MT/day)</div>
-      <canvas id="meltingChart" height="160"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Sugar Rejected from Bagging — Month-wise</div><canvas id="bagChart" height="160"></canvas></div>
+    <div class="card"><div class="card-title">Raw Sugar Melting — Last 15 Days (MT/day)</div><canvas id="meltChart" height="160"></canvas></div>
   </div>
-
-  <div class="card">
-    <div class="card-title">YoY — Raw Sugar Purity Trend (Monthly %) — 2024 vs 2025</div>
-    <canvas id="purityTrendChart" height="80"></canvas>
-  </div>
+  <div class="card"><div class="card-title">YoY — Raw Sugar Purity Trend (Monthly %)</div><canvas id="purityChart" height="80"></canvas></div>
 </div>
 
-<!-- ================================================ -->
-<!-- PAGE 2: MOLASSES ANALYTICS -->
-<!-- ================================================ -->
-<div class="page" id="page-2">
-  <div class="section-header">Molasses Purity &amp; Equivalent Sugar <span>Year-on-Year + 15-Day Trend</span></div>
-
+<div class="page" id="p2">
+  <div class="section-header">Molasses Purity &amp; Equivalent Sugar</div>
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">YoY — Ratio of Molasses to Raw Melted (%)</div>
-      <canvas id="molRatioChart" height="180"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">YoY — Quantities: Molasses Produced &amp; Equivalent Sugar (MT)</div>
-      <canvas id="molQtyChart" height="180"></canvas>
-    </div>
+    <div class="card"><div class="card-title">YoY — Ratio of Molasses to Raw Melted (%)</div><canvas id="molRatio" height="180"></canvas></div>
+    <div class="card"><div class="card-title">YoY — Quantities: Molasses &amp; Equiv. Sugar (MT)</div><canvas id="molQty" height="180"></canvas></div>
   </div>
-
-  <div class="card" style="margin-bottom:12px;">
-    <div class="card-title">YoY Molasses Purity — Avg Brix / Avg Purity % / Target (Monthly)</div>
-    <canvas id="molPurityBar" height="100"></canvas>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Molasses Purity Trend — Last 15 Days (%)</div>
-    <canvas id="molPurityLine" height="80"></canvas>
-  </div>
+  <div class="card"><div class="card-title">YoY Molasses Purity — Avg Brix / Avg Purity / Target</div><canvas id="molBar" height="100"></canvas></div>
+  <div class="card"><div class="card-title">Molasses Purity Trend — Last 15 Days (%)</div><canvas id="molLine" height="80"></canvas></div>
 </div>
 
-<!-- ================================================ -->
-<!-- PAGE 3: WHITE SUGAR PRODUCTION -->
-<!-- ================================================ -->
-<div class="page" id="page-3">
-  <div class="section-header">White Sugar Production &amp; Loadcell Calibration <span>SKU breakdown · Site receipts · Calibration QC</span></div>
-
+<div class="page" id="p3">
+  <div class="section-header">White Sugar Production &amp; Loadcell Calibration</div>
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">White Sugar — Breakup by SKU (%)</div>
-      <canvas id="skuPie" height="230"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">White Sugar — Site-wise Receipts (MT)</div>
-      <canvas id="siteBar" height="230"></canvas>
-    </div>
+    <div class="card"><div class="card-title">White Sugar — Breakup by SKU (%)</div><canvas id="skuPie" height="230"></canvas></div>
+    <div class="card"><div class="card-title">White Sugar — Site-wise Receipts (MT)</div><canvas id="siteBar" height="230"></canvas></div>
   </div>
-
-  <div class="card" style="margin-bottom:12px;">
-    <div class="card-title">White Sugar Produced — Month-wise, Year on Year (MT) · 2024 vs 2025</div>
-    <canvas id="monthlyProdChart" height="100"></canvas>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Loadcell Calibration — Last 15 Days (% deviation from nominal)</div>
-    <canvas id="loadcellChart" height="80"></canvas>
-  </div>
+  <div class="card"><div class="card-title">White Sugar Produced — Month-wise, Year on Year (MT)</div><canvas id="monthProd" height="100"></canvas></div>
+  <div class="card"><div class="card-title">Loadcell Calibration — Last 15 Days (% deviation)</div><canvas id="loadCell" height="80"></canvas></div>
 </div>
 
-<!-- ================================================ -->
-<!-- PAGE 4: LOSS ANALYSIS -->
-<!-- ================================================ -->
-<div class="page" id="page-4">
-  <div class="section-header">Sugar Loss Analysis — By-Products &amp; Equivalent Sugar <span>YTD + Rolling 30-day trend</span></div>
-
+<div class="page" id="p4">
+  <div class="section-header">Sugar Loss Analysis</div>
   <div class="grid-2">
-    <!-- By-product losses -->
     <div class="card">
       <div class="card-title">Sugar Lost in By-Products — Current Period (MT)</div>
       <div class="mini-grid">
-        <div class="mini-kpi amber">
-          <div class="mini-label">Lost in Molasses</div>
-          <div class="mini-value">14,892</div>
-          <div class="mini-sub">Primary by-product</div>
-        </div>
-        <div class="mini-kpi blue">
-          <div class="mini-label">Lost in Filter Cake</div>
-          <div class="mini-value">231</div>
-          <div class="mini-sub">Secondary loss</div>
-        </div>
-        <div class="mini-kpi green">
-          <div class="mini-label">Lost — Other</div>
-          <div class="mini-value">7,841</div>
-          <div class="mini-sub">Misc. by-products</div>
-        </div>
-        <div class="mini-kpi red">
-          <div class="mini-label">Lost in Fines</div>
-          <div class="mini-value">163</div>
-          <div class="mini-sub">Fine sugar losses</div>
-        </div>
+        <div class="mini-kpi amber"><div class="mini-label">Lost in Molasses</div><div class="mini-value">18,200</div><div class="mini-sub">Primary by-product</div></div>
+        <div class="mini-kpi blue"><div class="mini-label">Lost in Filter Cake</div><div class="mini-value">285</div><div class="mini-sub">Secondary loss</div></div>
+        <div class="mini-kpi green"><div class="mini-label">Lost — Other</div><div class="mini-value">9,600</div><div class="mini-sub">Misc. by-products</div></div>
+        <div class="mini-kpi red"><div class="mini-label">Lost in Fines</div><div class="mini-value">198</div><div class="mini-sub">Fine sugar losses</div></div>
       </div>
     </div>
-
-    <!-- YTD loss -->
     <div class="card">
       <div class="card-title">Sugar Lost in By-Products — YTD</div>
-      <div style="padding:10px 0;">
-        <div class="c-muted" style="font-size:11px;margin-bottom:4px;">YTD Total Loss — All By-Products</div>
-        <div class="kpi-lg c-amber">28,941 MT</div>
-      </div>
+      <div style="padding:10px 0;"><div class="c-muted" style="font-size:11px;margin-bottom:4px;">YTD Total Loss</div><div class="kpi-lg c-amber">35,400 MT</div></div>
       <div class="divider"></div>
-      <div style="padding:10px 0;">
-        <div class="c-muted" style="font-size:11px;margin-bottom:4px;">Calculated Loss %</div>
-        <div class="kpi-lg c-amber">2.08%</div>
-      </div>
+      <div style="padding:10px 0;"><div class="c-muted" style="font-size:11px;margin-bottom:4px;">Calculated Loss %</div><div class="kpi-lg c-amber">1.94%</div></div>
       <div class="divider"></div>
-      <div class="mrow">
-        <span class="mrow-label">Secondary YTD Loss</span>
-        <span class="mrow-value">23,847 MT</span>
-      </div>
+      <div class="mrow"><span class="mrow-label">Secondary YTD Loss</span><span class="mrow-value">29,100 MT</span></div>
     </div>
   </div>
-
-  <!-- YoY Loss % comparison -->
-  <div class="card" style="margin-bottom:12px;">
-    <div class="card-title">Loss % — Year-on-Year Comparison · 2024 vs 2025</div>
+  <div class="card">
+    <div class="card-title">Loss % — Year-on-Year · 2024 vs 2025</div>
     <div class="loss-cols" style="margin-top:8px;">
       <div>
         <div class="loss-year y24">2024 (Prior Year)</div>
-        <div class="mrow"><span class="mrow-label">Sugar Loss in Molasses</span><span class="mrow-value">1.09%</span></div>
-        <div class="mrow"><span class="mrow-label">Sugar in Excess Water</span><span class="mrow-value">0.04%</span></div>
-        <div class="mrow"><span class="mrow-label">Sugar in Fine Cane</span><span class="mrow-value">0.02%</span></div>
-        <div class="mrow"><span class="mrow-label">Sugar in Raw Pan</span><span class="mrow-value">0.57%</span></div>
+        <div class="mrow"><span class="mrow-label">Loss in Molasses</span><span class="mrow-value">1.18%</span></div>
+        <div class="mrow"><span class="mrow-label">Excess Water</span><span class="mrow-value">0.06%</span></div>
+        <div class="mrow"><span class="mrow-label">Fine Cane</span><span class="mrow-value">0.03%</span></div>
+        <div class="mrow"><span class="mrow-label">Raw Pan</span><span class="mrow-value">0.61%</span></div>
       </div>
       <div>
         <div class="loss-year y25">2025 (Current Year)</div>
-        <div class="mrow"><span class="mrow-label">Sugar Loss in Molasses</span><span class="mrow-value c-green">1.08% ▼</span></div>
-        <div class="mrow"><span class="mrow-label">Sugar in Excess Water</span><span class="mrow-value c-green">0.02% ▼</span></div>
-        <div class="mrow"><span class="mrow-label">Sugar in Fine Cane</span><span class="mrow-value c-green">0.01% ▼</span></div>
-        <div class="mrow"><span class="mrow-label">Sugar in Raw Pan</span><span class="mrow-value c-muted">0.57% —</span></div>
+        <div class="mrow"><span class="mrow-label">Loss in Molasses</span><span class="mrow-value c-green">1.05% ▼</span></div>
+        <div class="mrow"><span class="mrow-label">Excess Water</span><span class="mrow-value c-green">0.03% ▼</span></div>
+        <div class="mrow"><span class="mrow-label">Fine Cane</span><span class="mrow-value c-green">0.01% ▼</span></div>
+        <div class="mrow"><span class="mrow-label">Raw Pan</span><span class="mrow-value c-green">0.54% ▼</span></div>
       </div>
     </div>
   </div>
-
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Equivalent Sugar Lost — Last 30 Days (MT)</div>
-      <canvas id="sugarLostChart" height="160"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Molasses Purity vs Produced Qty — Last 30 Days</div>
-      <canvas id="molPurityQtyChart" height="160"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Equivalent Sugar Lost — Last 30 Days (MT)</div><canvas id="lossChart" height="160"></canvas></div>
+    <div class="card"><div class="card-title">Molasses Purity vs Produced Qty — Last 30 Days</div><canvas id="molPQChart" height="160"></canvas></div>
   </div>
-
-  <div class="card" style="margin-top:12px;">
-    <div class="card-title">Known Losses by Category — YTD (%)</div>
-    <canvas id="knownLossChart" height="80"></canvas>
-  </div>
+  <div class="card"><div class="card-title">Known Losses by Category — YTD (%)</div><canvas id="knownLoss" height="80"></canvas></div>
 </div>
 
-<!-- ================================================ -->
-<!-- PAGE 5: HISTORICAL TRENDS -->
-<!-- ================================================ -->
-<div class="page" id="page-5">
-  <div class="section-header">Historical Trends — Molasses Ratio &amp; Multi-Year Production <span>Calendar Year View</span></div>
-
-  <div class="card" style="margin-bottom:12px;">
-    <div class="card-title">Ratio of Molasses to Raw Melted — Per Calendar Month · 2024 vs 2025 (%)</div>
-    <canvas id="molMonthlyRatioChart" height="100"></canvas>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Molasses Produced per Calendar Year (MT) — 2021 to 2025</div>
-    <canvas id="molYearlyChart" height="180"></canvas>
-  </div>
-
-  <div class="anonymize-note">
-    ⚠ All figures are anonymised representative values. Chart structure, KPI logic, and analytical depth reflect the live SAP Analytics Cloud implementation.
-  </div>
+<div class="page" id="p5">
+  <div class="section-header">Historical Trends</div>
+  <div class="card"><div class="card-title">Ratio of Molasses to Raw Melted — Per Month · 2024 vs 2025 (%)</div><canvas id="molMonthly" height="100"></canvas></div>
+  <div class="card"><div class="card-title">Molasses Produced per Calendar Year (MT) — 2021 to 2025</div><canvas id="molYearly" height="180"></canvas></div>
+  <div class="anon-note">⚠ All figures are anonymised representative values. Chart structure and KPI logic reflect a live SAP Analytics Cloud implementation.</div>
 </div>
 
-<!-- ================================================ -->
-<!-- CHART SCRIPTS -->
-<!-- ================================================ -->
+</div>
 <script>
-/* ---------- Tab switching ---------- */
-function showPage(idx) {
-  document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx));
-  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
-}
+function showPage(i){document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',j===i));document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i));}
+function sacToggle(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');syncIcon();updateCharts();}
+function syncIcon(){const d=document.documentElement.classList.contains('dark');const ic=document.getElementById('sac-icon');if(!ic)return;ic.innerHTML=d?'<path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M6.34 17.66l-.71.71m12.73 0-.71-.71M6.34 6.34l-.71-.71M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7z"/>':'<path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';}
+window.addEventListener('message',function(e){if(e.data&&e.data.type==='portfolioTheme'){document.documentElement.classList.toggle('dark',e.data.dark);syncIcon();updateCharts();}});
+window.addEventListener('storage',function(e){if(e.key==='theme'){document.documentElement.classList.toggle('dark',e.newValue==='dark');syncIcon();updateCharts();}});
+document.addEventListener('DOMContentLoaded',syncIcon);
 
-/* ---------- Shared defaults ---------- */
-Chart.defaults.color = '#64748b';
-Chart.defaults.font.family = "'Segoe UI', Tahoma, sans-serif";
-Chart.defaults.font.size = 11;
+Chart.defaults.font.family="'Segoe UI',Tahoma,sans-serif";Chart.defaults.font.size=11;
+const AC=[];
+function tc(){const d=document.documentElement.classList.contains('dark');return{ax:d?'#4a6080':'#666',gr:d?'#1a3050':'#e8edf5',lg:d?'#94a3b8':'#555',bl:d?'#00b0f0':'#1a73c8',gn:d?'#70ad47':'#22c55e',am:d?'#ffc000':'#d97706'};}
+function ax(extra){const c=tc();const base={x:{ticks:{color:c.ax,maxRotation:45},grid:{color:c.gr}},y:{ticks:{color:c.ax},grid:{color:c.gr}}};return Object.assign(base,extra||{});}
+function lg(){return{labels:{color:tc().lg,boxWidth:12,font:{size:10}}};}
+function mk(id,cfg){const ch=new Chart(document.getElementById(id),cfg);AC.push(ch);return ch;}
+function updateCharts(){const c=tc();AC.forEach(ch=>{if(!ch||ch.destroyed)return;['x','y','y1'].forEach(k=>{if(ch.options.scales&&ch.options.scales[k]){if(ch.options.scales[k].ticks)ch.options.scales[k].ticks.color=c.ax;if(ch.options.scales[k].grid)ch.options.scales[k].grid.color=c.gr;if(ch.options.scales[k].title)ch.options.scales[k].title.color=c.ax;}});if(ch.options.plugins&&ch.options.plugins.legend&&ch.options.plugins.legend.labels)ch.options.plugins.legend.labels.color=c.lg;ch.update('none');});}
 
-const gridColor = '#1a3050';
-const axisOpts = {
-  x: { ticks: { color: '#4a6080', maxRotation: 45 }, grid: { color: gridColor } },
-  y: { ticks: { color: '#4a6080' }, grid: { color: gridColor } }
-};
-const legendOpts = { labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } } };
+const M12=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function l15(){return Array.from({length:15},(_,i)=>{const d=new Date('2025-12-17');d.setDate(d.getDate()+i);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});});}
+function l30(){return Array.from({length:30},(_,i)=>{const d=new Date('2025-12-01');d.setDate(d.getDate()+i);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});});}
 
-/* ---------- Helper data ---------- */
-const months12 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// PAGE 0
+mk('yieldChart',{type:'line',data:{labels:l30(),datasets:[{label:'Daily Yield %',data:[98.1,98.4,98.6,98.5,98.3,98.2,98.5,98.7,98.4,98.3,98.5,98.6,98.7,98.2,98.4,98.6,98.8,98.9,98.4,98.3,98.5,98.7,98.8,98.4,98.6,98.8,98.5,98.3,98.6,98.7],borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.07)',borderWidth:2,pointRadius:2,fill:true,tension:.35},{label:'Target 98.0%',data:Array(30).fill(98),borderColor:'#d97706',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:97,max:99.5,ticks:{...ax().y.ticks,callback:v=>v.toFixed(1)+'%'}}}}});
 
-function last15labels() {
-  return Array.from({length:15}, (_,i) => {
-    const d = new Date('2025-12-17'); d.setDate(d.getDate()+i);
-    return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
-  });
-}
-function last30labels() {
-  return Array.from({length:30}, (_,i) => {
-    const d = new Date('2025-12-01'); d.setDate(d.getDate()+i);
-    return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
-  });
-}
-function last30dayslabels() {
-  return Array.from({length:30}, (_,i) => {
-    const d = new Date('2025-12-01'); d.setDate(d.getDate()+i);
-    return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
-  });
-}
+// PAGE 1
+mk('rejChart',{type:'bar',data:{labels:['Rejected from Process (MT)','Rejection from Bagging (MT)','Raw Sugar Melted (MT)'],datasets:[{label:'2024',data:[64800,1720,1280000],backgroundColor:'#64748b',barThickness:22},{label:'2025',data:[52400,1390,1740000],backgroundColor:'#1a73c8',barThickness:22}]},options:{indexAxis:'y',plugins:{legend:lg()},scales:ax()}});
+mk('recycChart',{type:'bar',data:{labels:['Limbas Recycling %','Recycled Magma %'],datasets:[{label:'2024',data:[7.8,10.2],backgroundColor:'#64748b',barThickness:30},{label:'2025',data:[5.1,6.3],backgroundColor:'#22c55e',barThickness:30}]},options:{indexAxis:'y',plugins:{legend:lg()},scales:{...ax(),x:{...ax().x,ticks:{...ax().x.ticks,callback:v=>v+'%'}}}}});
+mk('bagChart',{type:'bar',data:{labels:M12,datasets:[{label:'Reject from Bagging (MT)',data:[3800,3500,4600,4300,3300,3800,4100,4500,3600,4100,4700,3500],backgroundColor:'#dc2626',barThickness:14,yAxisID:'y'},{label:'White Sugar Dispatched (MT)',data:[130000,112000,140000,122000,132000,109000,149000,122000,135000,117000,144000,130000],type:'line',borderColor:'#1a73c8',backgroundColor:'rgba(26,115,200,.05)',borderWidth:2,pointRadius:3,fill:false,yAxisID:'y1'}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,position:'left'},y1:{...ax().y,position:'right',grid:{drawOnChartArea:false}}}}});
+mk('meltChart',{type:'line',data:{labels:l15(),datasets:[{label:'MT/day',data:[6100,6550,6220,6380,5800,6700,6250,6430,6060,6570,6310,6180,6490,6070,6640],borderColor:'#1a73c8',backgroundColor:'rgba(26,115,200,.07)',borderWidth:2,pointRadius:3,fill:true,tension:.3}]},options:{plugins:{legend:lg()},scales:ax()}});
+mk('purityChart',{type:'line',data:{labels:M12,datasets:[{label:'2024 Purity %',data:[98.2,98.0,98.3,97.9,98.2,98.4,97.8,98.2,98.5,98.0,98.3,98.1],borderColor:'#9ca3af',borderWidth:2,tension:.3,pointRadius:4},{label:'2025 Purity %',data:[98.6,98.5,98.8,98.4,98.7,98.9,98.5,98.7,98.9,98.6,98.8,98.6],borderColor:'#1a73c8',borderWidth:2,tension:.3,pointRadius:4}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:97,max:99.5}}}});
 
-/* ===================================================
-   PAGE 0 — Yield Trend
-   =================================================== */
-new Chart(document.getElementById('yieldTrendChart'), {
-  type: 'line',
-  data: {
-    labels: last30labels(),
-    datasets: [{
-      label: 'Daily Yield %',
-      data: [97.42,97.68,97.71,97.88,97.63,97.55,97.82,97.91,97.74,97.58,97.66,97.73,97.84,97.45,97.62,97.79,97.87,97.93,97.61,97.52,97.69,97.77,97.84,97.58,97.71,97.83,97.64,97.48,97.72,97.81],
-      borderColor: '#70ad47', backgroundColor: 'rgba(112,173,71,0.08)',
-      borderWidth: 2, pointRadius: 2.5, fill: true, tension: 0.35
-    },{
-      label: 'Target 97.5%',
-      data: Array(30).fill(97.5),
-      borderColor: '#ffc000', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0
-    }]
-  },
-  options: {
-    plugins: { legend: legendOpts },
-    scales: {
-      ...axisOpts,
-      y: { ...axisOpts.y, min: 96.8, max: 98.4, ticks: { ...axisOpts.y.ticks, callback: v => v.toFixed(1)+'%' } }
-    }
-  }
-});
+// PAGE 2
+mk('molRatio',{type:'bar',data:{labels:['2024','2025'],datasets:[{label:'Molasses/Raw Melted (%)',data:[2.62,2.21],backgroundColor:['#64748b','#1a73c8'],barThickness:50}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:0,max:3.5,ticks:{...ax().y.ticks,callback:v=>v.toFixed(2)+'%'}}}}});
+mk('molQty',{type:'bar',data:{labels:['2024','2025'],datasets:[{label:'Molasses Produced (MT)',data:[33500,38500],backgroundColor:'#d97706',barThickness:28},{label:'Equiv. Sugar in Molasses (MT)',data:[23100,24700],backgroundColor:'#22c55e',barThickness:28},{label:'Raw Sugar Melted (MT / 100)',data:[40200,40800],backgroundColor:'#1a73c8',barThickness:28}]},options:{plugins:{legend:lg()},scales:ax()}});
+mk('molBar',{type:'bar',data:{labels:M12,datasets:[{label:'Avg Molasses Brix',data:[81.4,82.1,80.9,81.6,82.8,82.0,80.6,82.2,82.9,81.3,80.8,81.8],backgroundColor:'#1a73c8',barThickness:12},{label:'Avg Molasses Purity %',data:[65.2,66.0,64.5,65.1,67.2,66.5,64.0,66.3,67.4,64.8,64.2,65.8],backgroundColor:'#22c55e',barThickness:12},{label:'Target (65%)',data:Array(12).fill(65),type:'line',borderColor:'#d97706',borderWidth:2,borderDash:[5,4],pointRadius:0,fill:false}]},options:{plugins:{legend:lg()},scales:ax()}});
+mk('molLine',{type:'line',data:{labels:l15(),datasets:[{label:'Molasses Purity (%)',data:[65.1,66.2,64.8,67.1,65.4,66.6,64.9,66.8,66.1,64.7,65.5,66.8,65.9,65.1,67.2],borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.07)',borderWidth:2,fill:true,tension:.35,pointRadius:3}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:62,max:70}}}});
 
-/* ===================================================
-   PAGE 1 — Rejections & Purity
-   =================================================== */
-new Chart(document.getElementById('rejectionYoYChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Rejected from\nProcess (MT)', 'Rejection Rate\nfrom Bagging (MT)', 'Raw Sugar\nMelted (MT)'],
-    datasets: [
-      { label: '2024', data: [52138, 1438, 1021893], backgroundColor: '#1e5a8a', barThickness: 22 },
-      { label: 'Rejection Rate 2024', data: [0, 0, 0], backgroundColor: 'transparent' }, // spacer
-      { label: '2025', data: [48623, 1247, 982441], backgroundColor: '#ffc000', barThickness: 22 },
-    ]
-  },
-  options: {
-    indexAxis: 'y',
-    plugins: { legend: { ...legendOpts, labels: { ...legendOpts.labels, filter: i => i.text !== 'Rejection Rate 2024' } } },
-    scales: {
-      x: { ...axisOpts.x },
-      y: { ticks: { color: '#4a6080' }, grid: { color: gridColor } }
-    }
-  }
-});
+// PAGE 3
+mk('skuPie',{type:'pie',data:{labels:['Fine Cane Sugar (79.8%)','Coarse Cane Sugar (18.6%)','Extra Fine Cane (1.2%)','Other (0.4%)'],datasets:[{data:[79.8,18.6,1.2,0.4],backgroundColor:['#1a73c8','#0f3d6e','#22c55e','#d97706'],borderColor:'#fff',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:tc().lg,font:{size:10},boxWidth:10}}}}});
+mk('siteBar',{type:'bar',data:{labels:['Refinery Line A','Refinery Line B','Refinery Line C','Coarse Grade Line','Extra Fine Line'],datasets:[{label:'Fine — Primary',data:[504000,106000,601000,0,0],backgroundColor:'#1a73c8',barThickness:14},{label:'Fine — Secondary',data:[362000,0,0,0,0],backgroundColor:'#0f3d6e',barThickness:14},{label:'Coarse',data:[0,0,0,238000,0],backgroundColor:'#22c55e',barThickness:14},{label:'Extra Fine',data:[0,0,0,0,38000],backgroundColor:'#d97706',barThickness:14}]},options:{indexAxis:'y',plugins:{legend:lg()},scales:{...ax(),y:{ticks:{color:tc().ax,font:{size:10}},grid:{color:tc().gr}}}}});
+mk('monthProd',{type:'bar',data:{labels:M12,datasets:[{label:'2024 (MT)',data:[160000,175000,178000,182000,185000,112000,168000,179000,185000,166000,175000,188000],backgroundColor:'rgba(100,116,139,.5)',borderColor:'#64748b',borderWidth:1,barThickness:14},{label:'2025 (MT)',data:[170000,178000,186000,191000,197000,118000,175000,185000,192000,174000,182000,195000],backgroundColor:'rgba(26,115,200,.65)',borderColor:'#1a73c8',borderWidth:1,barThickness:14}]},options:{plugins:{legend:lg()},scales:ax()}});
+mk('loadCell',{type:'line',data:{labels:l15(),datasets:[{label:'Loadcell Deviation (%)',data:[0.32,0.29,0.34,0.28,0.31,0.29,0.33,0.30,0.68,0.51,0.42,0.29,0.31,0.28,0.30],borderColor:'#d97706',backgroundColor:'rgba(217,119,6,.07)',borderWidth:2,fill:true,tension:.2,pointRadius:4},{label:'Control Limit (0.50%)',data:Array(15).fill(0.5),borderColor:'#dc2626',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:0,max:1.0,ticks:{...ax().y.ticks,callback:v=>v.toFixed(2)+'%'}}}}});
 
-new Chart(document.getElementById('recyclingYoYChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Limbas Recycling %', 'Recycled Magma %'],
-    datasets: [
-      { label: '2024', data: [6.78, 9.47], backgroundColor: '#1e5a8a', barThickness: 28 },
-      { label: '2025', data: [4.78, 5.48], backgroundColor: '#70ad47', barThickness: 28 }
-    ]
-  },
-  options: {
-    indexAxis: 'y',
-    plugins: { legend: legendOpts },
-    scales: {
-      x: { ...axisOpts.x, ticks: { ...axisOpts.x.ticks, callback: v => v+'%' } },
-      y: { ticks: { color: '#4a6080' }, grid: { color: gridColor } }
-    }
-  }
-});
+// PAGE 4
+mk('lossChart',{type:'line',data:{labels:l30(),datasets:[{label:'Equiv. Sugar Lost (MT)',data:[48,47,46,48,18,49,48,47,48,50,49,47,48,50,48,27,49,48,49,47,48,50,47,49,26,49,49,47,48,50],borderColor:'#1a73c8',backgroundColor:'rgba(26,115,200,.07)',borderWidth:2,fill:true,tension:.3,pointRadius:2}]},options:{plugins:{legend:lg()},scales:ax()}});
+mk('molPQChart',{type:'line',data:{labels:l30(),datasets:[{label:'Molasses Purity (%)',data:[65.1,66.2,64.8,67.1,65.4,66.6,64.9,66.8,66.1,64.7,65.5,66.8,65.9,65.1,67.2,64.8,66.4,65.7,66.9,65.3,66.7,65.2,64.9,66.3,67.0,65.4,66.1,64.7,65.8,66.9],borderColor:'#d97706',borderWidth:2,tension:.3,pointRadius:2,yAxisID:'y'},{label:'Molasses Produced (MT)',data:[155,162,158,165,157,168,160,164,162,169,161,163,167,159,164,158,167,161,164,160,166,162,159,164,168,160,163,166,161,167],borderColor:'#22c55e',borderWidth:2,tension:.3,pointRadius:2,yAxisID:'y1'}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,position:'left'},y1:{...ax().y,position:'right',grid:{drawOnChartArea:false}}}}});
+mk('knownLoss',{type:'bar',data:{labels:['Excess Water','Fine Cane','Molasses','Raw Pan','Floss/Spirits','Benchmark'],datasets:[{label:'Loss %',data:[0.03,0.01,1.05,0.54,28.60,27.80],backgroundColor:['#1a73c8','#22c55e','#d97706','#dc2626','#7c3aed','#64748b'],barThickness:28}]},options:{plugins:{legend:{display:false}},scales:ax()}});
 
-new Chart(document.getElementById('baggingRejChart'), {
-  type: 'bar',
-  data: {
-    labels: months12,
-    datasets: [
-      {
-        label: 'Reject from Bagging (MT)',
-        data: [4231,3892,5127,4841,3672,4218,4531,5012,3987,4621,5234,3941],
-        backgroundColor: '#ef4444', barThickness: 14, yAxisID: 'y'
-      },
-      {
-        label: 'White Sugar Dispatched (MT)',
-        data: [104231,89432,112547,98321,105432,87654,119432,97821,108234,93421,115234,104439],
-        type: 'line', borderColor: '#00b0f0', backgroundColor: 'rgba(0,176,240,0.05)',
-        borderWidth: 2, pointRadius: 3, fill: false, yAxisID: 'y1'
-      }
-    ]
-  },
-  options: {
-    plugins: { legend: legendOpts },
-    scales: {
-      x: axisOpts.x,
-      y: { ...axisOpts.y, position: 'left', title: { display: true, text: 'Rejected (MT)', color: '#4a6080', font: { size: 10 } } },
-      y1: { ...axisOpts.y, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Dispatched (MT)', color: '#4a6080', font: { size: 10 } } }
-    }
-  }
-});
-
-new Chart(document.getElementById('meltingChart'), {
-  type: 'line',
-  data: {
-    labels: last15labels(),
-    datasets: [{
-      label: 'Raw Sugar Melted (MT/day)',
-      data: [4872,5231,4941,5072,4618,5348,4987,5123,4832,5241,5018,4921,5187,4843,5312],
-      borderColor: '#00b0f0', backgroundColor: 'rgba(0,176,240,0.08)',
-      borderWidth: 2, pointRadius: 3, fill: true, tension: 0.3
-    }]
-  },
-  options: { plugins: { legend: legendOpts }, scales: axisOpts }
-});
-
-new Chart(document.getElementById('purityTrendChart'), {
-  type: 'line',
-  data: {
-    labels: months12,
-    datasets: [
-      { label: '2024 Purity %', data: [98.62,98.51,98.74,98.42,98.63,98.71,98.34,98.58,98.72,98.45,98.68,98.52], borderColor: '#475569', borderWidth: 2, tension: 0.3, pointRadius: 4 },
-      { label: '2025 Purity %', data: [98.71,98.68,98.82,98.51,98.74,98.87,98.52,98.71,98.83,98.64,98.78,98.61], borderColor: '#00b0f0', borderWidth: 2, tension: 0.3, pointRadius: 4 }
-    ]
-  },
-  options: {
-    plugins: { legend: legendOpts },
-    scales: {
-      ...axisOpts,
-      y: { ...axisOpts.y, min: 97.5, max: 99.5, ticks: { ...axisOpts.y.ticks, callback: v => v.toFixed(2)+'%' } }
-    }
-  }
-});
-
-/* ===================================================
-   PAGE 2 — Molasses
-   =================================================== */
-new Chart(document.getElementById('molRatioChart'), {
-  type: 'bar',
-  data: {
-    labels: ['2024', '2025'],
-    datasets: [{
-      label: 'Molasses / Raw Melted Ratio (%)',
-      data: [2.38, 2.19],
-      backgroundColor: ['#1e5a8a', '#00b0f0'],
-      barThickness: 50
-    }]
-  },
-  options: {
-    plugins: { legend: legendOpts },
-    scales: {
-      x: axisOpts.x,
-      y: { ...axisOpts.y, min: 0, max: 3, ticks: { ...axisOpts.y.ticks, callback: v => v.toFixed(2)+'%' } }
-    }
-  }
-});
-
-new Chart(document.getElementById('molQtyChart'), {
-  type: 'bar',
-  data: {
-    labels: ['2024', '2025'],
-    datasets: [
-      { label: 'Molasses Produced (MT)', data: [26840, 31208], backgroundColor: '#ffc000', barThickness: 28 },
-      { label: 'Equiv. Sugar in Molasses (MT)', data: [18521, 19624], backgroundColor: '#70ad47', barThickness: 28 },
-      { label: 'Raw Sugar Melted (MT ÷ 100)', data: [31982, 32479], backgroundColor: '#00b0f0', barThickness: 28 }
-    ]
-  },
-  options: { plugins: { legend: legendOpts }, scales: axisOpts }
-});
-
-new Chart(document.getElementById('molPurityBar'), {
-  type: 'bar',
-  data: {
-    labels: months12,
-    datasets: [
-      { label: 'Avg Molasses Brix', data: [80.2,80.7,79.8,80.4,81.2,80.6,79.4,80.8,81.4,80.1,79.9,80.5], backgroundColor: '#00b0f0', barThickness: 12 },
-      { label: 'Avg Molasses Purity %', data: [63.8,64.2,62.9,63.4,65.1,64.8,62.3,64.7,65.8,63.1,62.7,64.1], backgroundColor: '#70ad47', barThickness: 12 },
-      { label: 'Purity Target (63%)', data: Array(12).fill(63), type: 'line', borderColor: '#ffc000', borderWidth: 2, borderDash: [5,4], pointRadius: 0, fill: false }
-    ]
-  },
-  options: { plugins: { legend: legendOpts }, scales: axisOpts }
-});
-
-new Chart(document.getElementById('molPurityLine'), {
-  type: 'line',
-  data: {
-    labels: last15labels(),
-    datasets: [{
-      label: 'Molasses Purity (%)',
-      data: [63.2,64.1,62.8,65.3,63.7,64.8,63.1,65.2,64.4,62.9,63.8,65.1,64.2,63.4,65.6],
-      borderColor: '#70ad47', backgroundColor: 'rgba(112,173,71,0.08)',
-      borderWidth: 2, fill: true, tension: 0.35, pointRadius: 3
-    }]
-  },
-  options: {
-    plugins: { legend: legendOpts },
-    scales: { ...axisOpts, y: { ...axisOpts.y, min: 60, max: 70 } }
-  }
-});
-
-/* ===================================================
-   PAGE 3 — White Sugar Production
-   =================================================== */
-new Chart(document.getElementById('skuPie'), {
-  type: 'pie',
-  data: {
-    labels: ['Fine Cane Sugar (81.3%)', 'Coarse Cane Sugar (17.86%)', 'Extra Fine Cane Sugar (0.62%)', 'Other (0.22%)'],
-    datasets: [{
-      data: [81.3, 17.86, 0.62, 0.22],
-      backgroundColor: ['#00b0f0', '#0f3d6e', '#70ad47', '#ffc000'],
-      borderColor: '#0d1b2a', borderWidth: 2
-    }]
-  },
-  options: {
-    plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 10 } } }
-  }
-});
-
-new Chart(document.getElementById('siteBar'), {
-  type: 'bar',
-  data: {
-    labels: ['Refinery Line A', 'Refinery Line B', 'Refinery Line C', 'Refinery Line D (Coarse)', 'Line E (Extra Fine)'],
-    datasets: [
-      { label: 'Fine Sugar — Primary Run', data: [402731, 84674, 480742, 0, 0], backgroundColor: '#00b0f0', barThickness: 14 },
-      { label: 'Fine Sugar — Secondary Run', data: [289431, 0, 0, 0, 0], backgroundColor: '#0f3d6e', barThickness: 14 },
-      { label: 'Coarse Sugar', data: [0, 0, 0, 190284, 0], backgroundColor: '#70ad47', barThickness: 14 },
-      { label: 'Extra Fine', data: [0, 0, 0, 0, 30561], backgroundColor: '#ffc000', barThickness: 14 }
-    ]
-  },
-  options: {
-    indexAxis: 'y',
-    plugins: { legend: legendOpts },
-    scales: {
-      x: axisOpts.x,
-      y: { ticks: { color: '#4a6080', font: { size: 10 } }, grid: { color: gridColor }, stacked: true }
-    }
-  }
-});
-
-new Chart(document.getElementById('monthlyProdChart'), {
-  type: 'bar',
-  data: {
-    labels: months12,
-    datasets: [
-      { label: '2024 (MT)', data: [128341,139821,142534,145821,148234,89432,134821,143281,148321,132841,139821,150342], backgroundColor: 'rgba(71,85,105,0.6)', borderColor: '#475569', borderWidth: 1, barThickness: 14 },
-      { label: '2025 (MT)', data: [135821,142341,149234,152841,157234,94321,139821,148234,153821,139234,145821,156342], backgroundColor: 'rgba(0,176,240,0.65)', borderColor: '#00b0f0', borderWidth: 1, barThickness: 14 }
-    ]
-  },
-  options: { plugins: { legend: legendOpts }, scales: axisOpts }
-});
-
-new Chart(document.getElementById('loadcellChart'), {
-  type: 'line',
-  data: {
-    labels: last15labels(),
-    datasets: [
-      {
-        label: 'Loadcell Deviation (%)',
-        data: [0.78,0.76,0.79,0.76,0.78,0.76,0.78,0.79,1.84,1.26,1.03,0.76,0.78,0.76,0.78],
-        borderColor: '#ffc000', backgroundColor: 'rgba(255,192,0,0.08)',
-        borderWidth: 2, fill: true, tension: 0.2, pointRadius: 4
-      },
-      {
-        label: 'Control Limit (1.0%)',
-        data: Array(15).fill(1.0),
-        borderColor: '#ef4444', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0
-      }
-    ]
-  },
-  options: {
-    plugins: { legend: legendOpts },
-    scales: {
-      ...axisOpts,
-      y: { ...axisOpts.y, min: 0, max: 2.5, ticks: { ...axisOpts.y.ticks, callback: v => v.toFixed(2)+'%' } }
-    }
-  }
-});
-
-/* ===================================================
-   PAGE 4 — Loss Analysis
-   =================================================== */
-new Chart(document.getElementById('sugarLostChart'), {
-  type: 'line',
-  data: {
-    labels: last30labels(),
-    datasets: [{
-      label: 'Equiv. Sugar Lost (MT)',
-      data: [83.2,81.7,80.4,82.3,28.1,84.2,83.7,81.9,82.8,84.1,83.4,81.2,82.7,83.9,82.1,44.2,83.8,82.4,83.1,81.8,82.6,84.3,81.4,83.2,44.8,82.9,83.6,81.7,82.3,84.1],
-      borderColor: '#00b0f0', backgroundColor: 'rgba(0,176,240,0.08)',
-      borderWidth: 2, fill: true, tension: 0.3, pointRadius: 2
-    }]
-  },
-  options: { plugins: { legend: legendOpts }, scales: axisOpts }
-});
-
-new Chart(document.getElementById('molPurityQtyChart'), {
-  type: 'line',
-  data: {
-    labels: last30labels(),
-    datasets: [
-      {
-        label: 'Molasses Purity (%)',
-        data: [63.2,64.1,63.0,65.3,63.7,64.8,63.1,65.2,64.4,62.9,63.8,65.1,64.2,63.4,65.6,62.8,64.3,63.9,65.1,64.7,63.2,64.8,65.3,63.7,64.1,62.9,63.8,65.2,64.0,63.5],
-        borderColor: '#ffc000', borderWidth: 2, tension: 0.3, pointRadius: 2, yAxisID: 'y'
-      },
-      {
-        label: 'Molasses Produced (MT)',
-        data: [124,131,129,133,126,134,128,132,130,136,129,131,134,128,132,127,135,130,132,129,134,131,128,133,136,129,131,134,130,135],
-        borderColor: '#70ad47', borderWidth: 2, tension: 0.3, pointRadius: 2, yAxisID: 'y1'
-      }
-    ]
-  },
-  options: {
-    plugins: { legend: legendOpts },
-    scales: {
-      x: axisOpts.x,
-      y: { ...axisOpts.y, position: 'left', title: { display: true, text: 'Purity %', color: '#4a6080', font: { size: 10 } } },
-      y1: { ...axisOpts.y, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'MT Produced', color: '#4a6080', font: { size: 10 } } }
-    }
-  }
-});
-
-new Chart(document.getElementById('knownLossChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Lost in Excess Water', 'Lost in Fine Cane', 'Lost in Molasses', 'Lost in Raw Pan', 'Floss / Spirits', 'Known Limits (Benchmark)'],
-    datasets: [{
-      label: '2025 Loss %',
-      data: [0.02, 0.01, 1.08, 0.57, 29.27, 28.35],
-      backgroundColor: ['#00b0f0','#70ad47','#ffc000','#ef4444','#7c3aed','#475569'],
-      barThickness: 28
-    }]
-  },
-  options: {
-    plugins: { legend: { display: false } },
-    scales: axisOpts
-  }
-});
-
-/* ===================================================
-   PAGE 5 — Historical Trends
-   =================================================== */
-new Chart(document.getElementById('molMonthlyRatioChart'), {
-  type: 'line',
-  data: {
-    labels: months12,
-    datasets: [
-      { label: '2024', data: [2.12,2.15,2.13,2.25,2.84,2.57,3.05,2.94,2.98,1.97,2.63,2.14], borderColor: '#475569', borderWidth: 2, tension: 0.3, pointRadius: 4 },
-      { label: '2025', data: [1.72,2.10,2.12,2.13,1.81,1.80,1.67,2.50,2.64,2.18,2.14,2.49], borderColor: '#00b0f0', borderWidth: 2, tension: 0.3, pointRadius: 4 }
-    ]
-  },
-  options: {
-    plugins: { legend: legendOpts },
-    scales: {
-      ...axisOpts,
-      y: { ...axisOpts.y, ticks: { ...axisOpts.y.ticks, callback: v => v.toFixed(2)+'%' } }
-    }
-  }
-});
-
-new Chart(document.getElementById('molYearlyChart'), {
-  type: 'bar',
-  data: {
-    labels: ['2021', '2022', '2023', '2024', '2025'],
-    datasets: [{
-      label: 'Molasses Produced (MT)',
-      data: [4987, 13714, 12908, 26840, 31208],
-      backgroundColor: ['#1a3a5c','#1e5a8a','#00b0f0','#ffc000','#70ad47'],
-      barThickness: 44
-    }]
-  },
-  options: {
-    indexAxis: 'y',
-    plugins: { legend: { display: false } },
-    scales: {
-      x: axisOpts.x,
-      y: { ticks: { color: '#4a6080' }, grid: { color: gridColor } }
-    }
-  }
-});
+// PAGE 5
+mk('molMonthly',{type:'line',data:{labels:M12,datasets:[{label:'2024',data:[2.48,2.52,2.50,2.64,3.18,2.95,3.42,3.31,3.36,2.24,2.97,2.51],borderColor:'#9ca3af',borderWidth:2,tension:.3,pointRadius:4},{label:'2025',data:[2.01,2.41,2.43,2.45,2.12,2.10,1.95,2.82,2.98,2.50,2.47,2.81],borderColor:'#1a73c8',borderWidth:2,tension:.3,pointRadius:4}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,ticks:{...ax().y.ticks,callback:v=>v.toFixed(2)+'%'}}}}});
+mk('molYearly',{type:'bar',data:{labels:['2021','2022','2023','2024','2025'],datasets:[{label:'Molasses Produced (MT)',data:[6200,17100,16100,33500,38500],backgroundColor:['#1e3a5c','#1e5a8a','#1a73c8','#d97706','#22c55e'],barThickness:44}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{...ax(),y:{ticks:{color:tc().ax},grid:{color:tc().gr}}}}});
 </script>
 </body>
 </html>

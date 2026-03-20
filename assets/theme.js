@@ -1,10 +1,19 @@
 // Theme management for Vimal Vidyadharan portfolio
-// Runs toggle and syncs button state
+// Handles toggle, icon sync, iframe broadcasting, and standalone page support
 
 function toggleTheme() {
   const isDark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   syncToggleButton();
+  broadcastThemeToFrames(isDark);
+}
+
+function broadcastThemeToFrames(isDark) {
+  document.querySelectorAll('iframe').forEach(function(frame) {
+    try {
+      frame.contentWindow.postMessage({ type: 'portfolioTheme', dark: isDark }, '*');
+    } catch(e) {}
+  });
 }
 
 function syncToggleButton() {
@@ -17,4 +26,18 @@ function syncToggleButton() {
   btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
 }
 
-document.addEventListener('DOMContentLoaded', syncToggleButton);
+document.addEventListener('DOMContentLoaded', function() {
+  syncToggleButton();
+  // Sync iframes after a short delay so they have time to load
+  var isDark = document.documentElement.classList.contains('dark');
+  setTimeout(function() { broadcastThemeToFrames(isDark); }, 600);
+  // Also sync when each iframe finishes loading
+  document.querySelectorAll('iframe').forEach(function(frame) {
+    frame.addEventListener('load', function() {
+      var dark = document.documentElement.classList.contains('dark');
+      try {
+        frame.contentWindow.postMessage({ type: 'portfolioTheme', dark: dark }, '*');
+      } catch(e) {}
+    });
+  });
+});

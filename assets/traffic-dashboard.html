@@ -4,159 +4,136 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Traffic Management Dashboard — SAP Analytics Cloud</title>
+<script>
+(function(){var t=localStorage.getItem('theme');if(t==='dark'||(t===null&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f4f6f9; color: #333; font-size: 13px; }
-
-/* ── Header ── */
-.header {
-  background: #1a73c8;
-  padding: 14px 24px;
-  display: flex; justify-content: space-between; align-items: center;
-  position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.header h1 { font-size: 18px; color: #fff; font-weight: 600; }
-.header .right { text-align: right; }
-.header .ts { font-size: 11px; color: rgba(255,255,255,0.7); }
-.sac-badge {
-  display: inline-block; background: rgba(255,255,255,0.2); color: #fff;
-  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
-  padding: 2px 7px; border-radius: 3px; text-transform: uppercase; margin-bottom: 3px;
-}
-
-/* ── Tabs ── */
-.tabs { display: flex; background: #fff; border-bottom: 2px solid #e0e7ef; overflow-x: auto; }
-.tab {
-  padding: 10px 20px; cursor: pointer; font-size: 12px; color: #666;
-  border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s;
-  user-select: none; font-weight: 500;
-}
-.tab:hover { color: #1a73c8; background: #f0f7ff; }
-.tab.active { color: #1a73c8; border-bottom-color: #1a73c8; font-weight: 700; background: #fff; }
-
-/* ── Pages ── */
-.page { display: none; padding: 16px; }
-.page.active { display: block; }
-
-/* ── Section headers ── */
-.sec-header {
-  background: #1a73c8; color: #fff; font-size: 14px; font-weight: 700;
-  padding: 10px 16px; border-radius: 6px 6px 0 0; margin-bottom: 0;
-}
-
-/* ── Cards ── */
-.card {
-  background: #fff; border: 1px solid #dde4ee; border-radius: 6px;
-  padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.card-title {
-  font-size: 11px; color: #555; font-weight: 700;
-  margin-bottom: 10px; text-transform: none; letter-spacing: 0;
-}
-
-/* ── KPI tiles (live monitor style) ── */
-.kpi-strip {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 0;
-  background: #fff; border: 1px solid #dde4ee; border-radius: 6px;
-  margin-bottom: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.kpi-tile {
-  padding: 14px 16px; border-right: 1px solid #e8edf5; text-align: left;
-}
-.kpi-tile:last-child { border-right: none; }
-.kpi-label { font-size: 11px; color: #666; margin-bottom: 6px; line-height: 1.3; }
-.kpi-val { font-size: 26px; font-weight: 300; color: #333; line-height: 1; }
-.kpi-sub { font-size: 10px; color: #999; margin-top: 4px; }
-
-/* ── YTD / This Week panel ── */
-.ytd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #dde4ee; border-radius: 6px; overflow: hidden; }
-.ytd-col { padding: 0; }
-.ytd-head {
-  padding: 8px 14px; font-size: 12px; font-weight: 700;
-}
-.ytd-head.ytd { background: #00bcd4; color: #fff; }
-.ytd-head.tw  { background: #c8e6a0; color: #333; }
-.ytd-row {
-  padding: 12px 14px; border-bottom: 1px solid #e8edf5;
-}
-.ytd-row:last-child { border-bottom: none; }
-.ytd-row-label { font-size: 10px; color: #666; margin-bottom: 4px; }
-.ytd-row-val { font-size: 22px; font-weight: 300; color: #333; }
-.ytd-row-sub { font-size: 10px; color: #999; }
-
-/* ── Grid layouts ── */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-.grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 14px; margin-bottom: 14px; }
-.grid-ytd { display: grid; grid-template-columns: 300px 1fr; gap: 14px; margin-bottom: 14px; }
-
-/* ── Table (live view) ── */
-.live-table-wrap {
-  border: 1px solid #f4a261; border-radius: 6px; overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.live-table-head {
-  background: #fff; padding: 10px 14px;
-  border-bottom: 1px solid #f4a261;
-}
-.live-table-head .t1 { font-size: 13px; font-weight: 700; color: #333; }
-.live-table-head .t2 { font-size: 11px; color: #1a73c8; font-weight: 600; cursor: pointer; }
-.data-table { width: 100%; border-collapse: collapse; background: #fff; }
-.data-table th {
-  background: #f8f9fc; padding: 8px 10px; text-align: left;
-  font-size: 11px; color: #555; font-weight: 700; border-bottom: 1px solid #e0e7ef;
-}
-.data-table th.right { text-align: right; color: #1a73c8; }
-.data-table td {
-  padding: 8px 10px; border-bottom: 1px solid #f0f4f8;
-  font-size: 12px; color: #333;
-}
-.data-table tr:last-child td { border-bottom: none; }
-.data-table td.alert-dot { text-align: center; }
-.red-dot { display: inline-block; width: 10px; height: 10px; background: #e53935; border-radius: 50%; }
-.amber-dot { display: inline-block; width: 10px; height: 10px; background: #fb8c00; border-radius: 50%; }
-.green-dot { display: inline-block; width: 10px; height: 10px; background: #43a047; border-radius: 50%; }
-.data-table td.cycle-time { text-align: right; font-weight: 700; color: #1a73c8; }
-.data-table td.cycle-over { color: #e53935; }
-
-/* ── Danger zone annotation ── */
-.chart-note {
-  font-size: 10px; color: #888; font-style: italic;
-  text-align: center; margin-top: 6px;
-}
-.anon-note {
-  font-size: 10px; color: #aaa; font-style: italic;
-  text-align: center; padding: 8px; margin-top: 4px;
-  border-top: 1px solid #eee;
-}
-
-/* ── Status badge ── */
-.badge {
-  display: inline-block; padding: 2px 7px; border-radius: 3px;
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-}
-.badge-local { background: #e3f2fd; color: #1a73c8; }
-.badge-gcc   { background: #fff3e0; color: #e65100; }
-.badge-cont  { background: #e8f5e9; color: #2e7d32; }
-.badge-bb    { background: #fce4ec; color: #c62828; }
-.badge-tank  { background: #f3e5f5; color: #6a1b9a; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,sans-serif;font-size:13px;transition:background .25s,color .25s;}
+/* Light mode */
+body{background:#f4f6f9;color:#333;}
+.tabs{background:#fff;border-bottom:2px solid #e0e7ef;}
+.tab{color:#666;}
+.tab:hover{color:#1a73c8;background:#f0f7ff;}
+.tab.active{color:#1a73c8;border-bottom-color:#1a73c8;font-weight:700;background:#fff;}
+.card{background:#fff;border:1px solid #dde4ee;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.card-title{color:#555;}
+.kpi-strip{background:#fff;border:1px solid #dde4ee;}
+.kpi-tile{border-right:1px solid #e8edf5;}
+.kpi-label{color:#666;}
+.kpi-val{color:#333;}
+.kpi-sub{color:#999;}
+.ytd-grid{border:1px solid #dde4ee;}
+.ytd-row{border-bottom:1px solid #e8edf5;}
+.ytd-row-label{color:#666;}
+.ytd-row-val{color:#333;}
+.ytd-row-sub{color:#999;}
+.live-table-wrap{border:1px solid #f4a261;}
+.live-table-head{background:#fff;border-bottom:1px solid #f4a261;}
+.live-table-head .t1{color:#333;}
+.data-table th{background:#f8f9fc;color:#555;}
+.data-table td{color:#333;border-bottom:1px solid #f0f4f8;}
+.data-table tr:nth-child(even) td{background:#f8fafc;}
+.anon-note{color:#aaa;border-top:1px solid #eee;}
+.toggle-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;}
+.toggle-btn:hover{background:rgba(255,255,255,.25);}
+/* Dark mode */
+html.dark body{background:#0d1b2a;color:#e2e8f0;}
+html.dark .tabs{background:#0a1929;border-bottom-color:#1e3a5f;}
+html.dark .tab{color:#64748b;}
+html.dark .tab:hover{color:#cbd5e1;background:#0d1b2a;}
+html.dark .tab.active{color:#00b0f0;border-bottom-color:#00b0f0;background:#0d1b2a;}
+html.dark .card{background:#111f31;border-color:#1a3050;box-shadow:none;}
+html.dark .card-title{color:#94a3b8;}
+html.dark .kpi-strip{background:#111f31;border-color:#1a3050;}
+html.dark .kpi-tile{border-right-color:#1e3a5f;}
+html.dark .kpi-label{color:#64748b;}
+html.dark .kpi-val{color:#e2e8f0;}
+html.dark .kpi-sub{color:#475569;}
+html.dark .ytd-grid{border-color:#1a3050;}
+html.dark .ytd-row{border-bottom-color:#1a3050;}
+html.dark .ytd-row-label{color:#64748b;}
+html.dark .ytd-row-val{color:#e2e8f0;}
+html.dark .ytd-row-sub{color:#475569;}
+html.dark .live-table-wrap{border-color:#d97706;}
+html.dark .live-table-head{background:#111f31;border-bottom-color:#d97706;}
+html.dark .live-table-head .t1{color:#e2e8f0;}
+html.dark .data-table th{background:#0f2744;color:#64748b;}
+html.dark .data-table td{color:#cbd5e1;border-bottom-color:#1a3050;}
+html.dark .data-table tr:nth-child(even) td{background:#0d1b2a;}
+html.dark .anon-note{color:#475569;border-top-color:#1a3050;}
+html.dark .toggle-btn{background:rgba(0,0,0,.2);border-color:rgba(255,255,255,.15);}
+/* Layout */
+.header{background:#1a73c8;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.2);}
+.header h1{font-size:16px;color:#fff;font-weight:600;}
+.sac-badge{background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:800;letter-spacing:1.2px;padding:3px 8px;border-radius:3px;text-transform:uppercase;}
+.ts{font-size:11px;color:rgba(255,255,255,.7);}
+.toggle-btn{cursor:pointer;padding:5px 8px;border-radius:5px;font-size:13px;display:flex;align-items:center;gap:5px;transition:background .2s;}
+.tabs{display:flex;overflow-x:auto;}
+.tab{padding:10px 18px;cursor:pointer;font-size:12px;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;user-select:none;font-weight:500;}
+.page-wrap{padding:14px 16px;}
+.page{display:none;}
+.page.active{display:block;}
+.card{border-radius:6px;padding:14px;margin-bottom:12px;}
+.card-title{font-size:11px;font-weight:700;margin-bottom:10px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.grid-ytd{display:grid;grid-template-columns:280px 1fr;gap:14px;margin-bottom:14px;}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);border-radius:6px;margin-bottom:14px;overflow:hidden;}
+.kpi-tile{padding:14px 16px;}
+.kpi-tile:last-child{border-right:none!important;}
+.kpi-label{font-size:11px;margin-bottom:6px;line-height:1.3;}
+.kpi-val{font-size:26px;font-weight:300;line-height:1;}
+.kpi-sub{font-size:10px;margin-top:4px;}
+.ytd-grid{display:grid;grid-template-columns:1fr 1fr;border-radius:6px;overflow:hidden;}
+.ytd-head{padding:8px 14px;font-size:12px;font-weight:700;}
+.ytd-head.ytd{background:#00bcd4;color:#fff;}
+.ytd-head.tw{background:#c8e6a0;color:#333;}
+.ytd-row{padding:12px 14px;}
+.ytd-row-label{font-size:10px;margin-bottom:4px;}
+.ytd-row-val{font-size:22px;font-weight:300;}
+.ytd-row-sub{font-size:10px;}
+.live-table-wrap{border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.live-table-head{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.live-table-head .t2{font-size:11px;color:#1a73c8;font-weight:600;}
+.data-table{width:100%;border-collapse:collapse;font-size:12px;}
+.data-table th{padding:8px 10px;text-align:left;font-size:11px;font-weight:700;border-bottom:1px solid #e0e7ef;}
+.data-table td{padding:8px 10px;}
+.data-table tr:last-child td{border-bottom:none!important;}
+.cycle-time{text-align:right;font-weight:700;color:#1a73c8;}
+.cycle-over{color:#e53935!important;}
+.red-dot{display:inline-block;width:10px;height:10px;background:#e53935;border-radius:50%;}
+.amber-dot{display:inline-block;width:10px;height:10px;background:#fb8c00;border-radius:50%;}
+.green-dot{display:inline-block;width:10px;height:10px;background:#43a047;border-radius:50%;}
+.badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700;text-transform:uppercase;}
+.badge-local{background:#e3f2fd;color:#1a73c8;}
+.badge-gcc{background:#fff3e0;color:#e65100;}
+.badge-bb{background:#fce4ec;color:#c62828;}
+.badge-tank{background:#f3e5f5;color:#6a1b9a;}
+.chart-note{font-size:10px;color:#888;font-style:italic;text-align:center;margin-top:6px;}
+.anon-note{font-size:10px;font-style:italic;text-align:center;padding:8px;margin-top:4px;}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
 <div class="header">
   <div>
-    <div class="sac-badge">SAP Analytics Cloud</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+      <div class="sac-badge">SAP Analytics Cloud</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.45);">Logistics · Truck Operations</div>
+    </div>
     <h1>Traffic Management Dashboard</h1>
   </div>
-  <div class="right">
-    <div class="ts">Live as of: Mar 20, 2026  09:59</div>
-    <div class="ts" style="color:rgba(255,255,255,0.5);margin-top:2px;">Continuous Process Manufacturing · Data anonymised for portfolio</div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <div style="text-align:right;">
+      <div class="ts">Live as of: Mar 20, 2026  09:59</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px;">Continuous Process Manufacturing · Data anonymised</div>
+    </div>
+    <button class="toggle-btn" id="trf-theme-btn" onclick="trfToggle()" aria-label="Toggle theme">
+      <svg id="trf-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
   </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="showPage(0)">🚛 Live Traffic Monitor</div>
   <div class="tab" onclick="showPage(1)">📊 KPI Dashboard</div>
@@ -164,627 +141,175 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f4f6f9; color: 
   <div class="tab" onclick="showPage(3)">📅 Last 7 Days Analysis</div>
 </div>
 
+<div class="page-wrap">
 
-<!-- ═══════════════════════════════════════════════════
-     PAGE 0 — LIVE TRAFFIC MONITOR
-     ═══════════════════════════════════════════════════ -->
-<div class="page active" id="page-0">
-
-  <!-- KPI strip -->
+<!-- PAGE 0: LIVE MONITOR -->
+<div class="page active" id="p0">
   <div class="kpi-strip">
-    <div class="kpi-tile">
-      <div class="kpi-label">Number of Trucks Inside</div>
-      <div class="kpi-val">5</div>
-      <div class="kpi-sub">Number of Trucks Inside</div>
-    </div>
-    <div class="kpi-tile">
-      <div class="kpi-label">Total Planned</div>
-      <div class="kpi-val">1</div>
-      <div class="kpi-sub">Truck Count</div>
-    </div>
-    <div class="kpi-tile">
-      <div class="kpi-label">Completed</div>
-      <div class="kpi-val">1</div>
-      <div class="kpi-sub">Truck Count</div>
-    </div>
-    <div class="kpi-tile">
-      <div class="kpi-label">Pending</div>
-      <div class="kpi-val" style="color:#999;">—</div>
-      <div class="kpi-sub">Truck Count</div>
-    </div>
-    <div class="kpi-tile">
-      <div class="kpi-label">Trucks Reported for Container</div>
-      <div class="kpi-val" style="color:#999;">—</div>
-      <div class="kpi-sub">Truck Count</div>
-    </div>
+    <div class="kpi-tile"><div class="kpi-label">Trucks Inside</div><div class="kpi-val">5</div><div class="kpi-sub">Number of Trucks Inside</div></div>
+    <div class="kpi-tile"><div class="kpi-label">Total Planned</div><div class="kpi-val">1</div><div class="kpi-sub">Truck Count</div></div>
+    <div class="kpi-tile"><div class="kpi-label">Completed</div><div class="kpi-val">1</div><div class="kpi-sub">Truck Count</div></div>
+    <div class="kpi-tile"><div class="kpi-label">Pending</div><div class="kpi-val" style="color:#999;">—</div><div class="kpi-sub">Truck Count</div></div>
+    <div class="kpi-tile"><div class="kpi-label">Trucks for Container</div><div class="kpi-val" style="color:#999;">—</div><div class="kpi-sub">Truck Count</div></div>
   </div>
-
-  <!-- Live truck table -->
   <div class="live-table-wrap">
-    <div class="live-table-head" style="display:flex;justify-content:space-between;align-items:center;">
-      <div>
-        <div class="t1">Trucks Inside</div>
-        <div class="t2" style="margin-top:2px;">Table Information</div>
-      </div>
-      <div style="font-size:11px;color:#555;">
-        Measure: <strong style="color:#1a73c8;">Truck Cycle Time (min)</strong>
-      </div>
+    <div class="live-table-head">
+      <div><div class="t1" style="font-size:13px;font-weight:700;">Trucks Inside</div><div class="t2" style="margin-top:2px;">Table Information</div></div>
+      <div style="font-size:11px;color:#555;">Measure: <strong style="color:#1a73c8;">Truck Cycle Time (min)</strong></div>
     </div>
     <table class="data-table">
-      <thead>
-        <tr>
-          <th>Delivery Ref</th>
-          <th>Vehicle ID</th>
-          <th>Truck-in Date</th>
-          <th>Truck-in Time</th>
-          <th>Delivery Planning Grp</th>
-          <th>Dispatch Line</th>
-          <th>Loading Structure</th>
-          <th></th>
-          <th class="right">Cycle Time (min)</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Delivery Ref</th><th>Vehicle ID</th><th>Truck-in Date</th><th>Truck-in Time</th><th>Planning Group</th><th>Dispatch Line</th><th>Loading Structure</th><th></th><th style="text-align:right;">Cycle Time (min)</th></tr></thead>
       <tbody>
-        <tr>
-          <td>DEL-A001</td>
-          <td>TRK-Alpha</td>
-          <td>20.03.2026</td>
-          <td>21:33</td>
-          <td><span class="badge badge-local">Local</span></td>
-          <td>Main Store</td>
-          <td>Loose Loading with COA</td>
-          <td class="alert-dot"><span class="red-dot"></span></td>
-          <td class="cycle-time cycle-over">2,184</td>
-        </tr>
-        <tr>
-          <td>DEL-A002</td>
-          <td>TRK-Beta</td>
-          <td>20.03.2026</td>
-          <td>20:37</td>
-          <td><span class="badge badge-local">Local</span></td>
-          <td>Main Store</td>
-          <td>Loose Loading with COA</td>
-          <td class="alert-dot"><span class="red-dot"></span></td>
-          <td class="cycle-time cycle-over">2,240</td>
-        </tr>
-        <tr>
-          <td>DEL-A003</td>
-          <td>TRK-Gamma</td>
-          <td>20.03.2026</td>
-          <td>20:51</td>
-          <td><span class="badge badge-local">Local</span></td>
-          <td>Main Store</td>
-          <td>Loose Loading with COA</td>
-          <td class="alert-dot"><span class="red-dot"></span></td>
-          <td class="cycle-time cycle-over">2,226</td>
-        </tr>
-        <tr>
-          <td>DEL-A004</td>
-          <td>TRK-Delta</td>
-          <td>20.03.2026</td>
-          <td>20:47</td>
-          <td><span class="badge badge-local">Local</span></td>
-          <td>Main Store</td>
-          <td>Loose Loading with COA</td>
-          <td class="alert-dot"><span class="red-dot"></span></td>
-          <td class="cycle-time cycle-over">2,230</td>
-        </tr>
-        <tr>
-          <td>DEL-A005</td>
-          <td>TRK-Epsilon</td>
-          <td>20.03.2026</td>
-          <td>12:38</td>
-          <td><span class="badge badge-local">Local</span></td>
-          <td>Main Store</td>
-          <td>Loose Loading with COA</td>
-          <td class="alert-dot"><span class="red-dot"></span></td>
-          <td class="cycle-time cycle-over">2,719</td>
-        </tr>
+        <tr><td>DEL-A001</td><td>TRK-Alpha</td><td>20.03.2026</td><td>21:33</td><td><span class="badge badge-local">Local</span></td><td>Main Store</td><td>Loose Loading with COA</td><td style="text-align:center;"><span class="red-dot"></span></td><td class="cycle-time cycle-over">2,184</td></tr>
+        <tr><td>DEL-A002</td><td>TRK-Beta</td><td>20.03.2026</td><td>20:37</td><td><span class="badge badge-local">Local</span></td><td>Main Store</td><td>Loose Loading with COA</td><td style="text-align:center;"><span class="red-dot"></span></td><td class="cycle-time cycle-over">2,240</td></tr>
+        <tr><td>DEL-A003</td><td>TRK-Gamma</td><td>20.03.2026</td><td>20:51</td><td><span class="badge badge-local">Local</span></td><td>Main Store</td><td>Loose Loading with COA</td><td style="text-align:center;"><span class="red-dot"></span></td><td class="cycle-time cycle-over">2,226</td></tr>
+        <tr><td>DEL-A004</td><td>TRK-Delta</td><td>20.03.2026</td><td>20:47</td><td><span class="badge badge-local">Local</span></td><td>Main Store</td><td>Loose Loading with COA</td><td style="text-align:center;"><span class="red-dot"></span></td><td class="cycle-time cycle-over">2,230</td></tr>
+        <tr><td>DEL-A005</td><td>TRK-Epsilon</td><td>20.03.2026</td><td>12:38</td><td><span class="badge badge-local">Local</span></td><td>Main Store</td><td>Loose Loading with COA</td><td style="text-align:center;"><span class="red-dot"></span></td><td class="cycle-time cycle-over">2,719</td></tr>
       </tbody>
     </table>
-    <div class="anon-note">⚠ Vehicle IDs and delivery references anonymised. Cycle times, loading structure and line assignments reflect actual operational data.</div>
+    <div class="anon-note">⚠ Vehicle IDs and delivery references anonymised. Cycle times, loading structure and dispatch line reflect actual operational data.</div>
   </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════════════════
-     PAGE 1 — KPI DASHBOARD
-     ═══════════════════════════════════════════════════ -->
-<div class="page" id="page-1">
-  <div style="background:#1a73c8;color:#fff;font-size:15px;font-weight:700;padding:10px 16px;border-radius:6px;margin-bottom:14px;">
-    Traffic Management KPI Dashboard
-  </div>
-
+<!-- PAGE 1: KPI DASHBOARD -->
+<div class="page" id="p1">
+  <div style="background:#1a73c8;color:#fff;font-size:15px;font-weight:700;padding:10px 16px;border-radius:6px;margin-bottom:14px;">Traffic Management KPI Dashboard</div>
   <div class="grid-ytd">
-    <!-- YTD + This Week -->
-    <div>
-      <div class="ytd-grid">
-        <div class="ytd-col">
-          <div class="ytd-head ytd">Year to Date</div>
-          <div class="ytd-row">
-            <div class="ytd-row-label">Trucks Handled</div>
-            <div class="ytd-row-val">5,847</div>
-            <div class="ytd-row-sub">Truck Count</div>
-          </div>
-          <div class="ytd-row">
-            <div class="ytd-row-label">Dispatch Quantity</div>
-            <div class="ytd-row-val">147,832 TO</div>
-            <div class="ytd-row-sub">Quantity</div>
-          </div>
-          <div class="ytd-row">
-            <div class="ytd-row-label">Overall Avg. Truck Cycle Time</div>
-            <div class="ytd-row-val" style="color:#e53935;">164.8 min</div>
-            <div class="ytd-row-sub">Avg Truck Cycle Time</div>
-          </div>
-          <div class="ytd-row">
-            <div class="ytd-row-label">Backlog / Slippage Ratio</div>
-            <div class="ytd-row-val" style="color:#e53935;">15.3%</div>
-            <div class="ytd-row-sub">Backlog Ratio</div>
-          </div>
-        </div>
-        <div class="ytd-col">
-          <div class="ytd-head tw">This Week</div>
-          <div class="ytd-row">
-            <div class="ytd-row-label">Trucks Handled</div>
-            <div class="ytd-row-val">512</div>
-            <div class="ytd-row-sub">Truck Count</div>
-          </div>
-          <div class="ytd-row">
-            <div class="ytd-row-label">Dispatch Quantity</div>
-            <div class="ytd-row-val">13,241 TO</div>
-            <div class="ytd-row-sub">Quantity</div>
-          </div>
-          <div class="ytd-row">
-            <div class="ytd-row-label">Overall Avg. Truck Cycle Time</div>
-            <div class="ytd-row-val" style="color:#fb8c00;">145.3 min</div>
-            <div class="ytd-row-sub">Avg Truck Cycle Time</div>
-          </div>
-          <div class="ytd-row">
-            <div class="ytd-row-label">Backlog / Slippage Ratio</div>
-            <div class="ytd-row-val" style="color:#43a047;">11.0%</div>
-            <div class="ytd-row-sub">Backlog Ratio</div>
-          </div>
-        </div>
+    <div class="ytd-grid">
+      <div>
+        <div class="ytd-head ytd">Year to Date</div>
+        <div class="ytd-row"><div class="ytd-row-label">Trucks Handled</div><div class="ytd-row-val">7,200</div><div class="ytd-row-sub">Truck Count</div></div>
+        <div class="ytd-row"><div class="ytd-row-label">Dispatch Quantity</div><div class="ytd-row-val">180,000 TO</div><div class="ytd-row-sub">Quantity</div></div>
+        <div class="ytd-row"><div class="ytd-row-label">Avg. Truck Cycle Time</div><div class="ytd-row-val" style="color:#e53935;">128.4 min</div><div class="ytd-row-sub">Avg Cycle Time</div></div>
+        <div class="ytd-row"><div class="ytd-row-label">Backlog / Slippage Ratio</div><div class="ytd-row-val" style="color:#e53935;">8.2%</div><div class="ytd-row-sub">Backlog Ratio</div></div>
+      </div>
+      <div>
+        <div class="ytd-head tw">This Week</div>
+        <div class="ytd-row"><div class="ytd-row-label">Trucks Handled</div><div class="ytd-row-val">620</div><div class="ytd-row-sub">Truck Count</div></div>
+        <div class="ytd-row"><div class="ytd-row-label">Dispatch Quantity</div><div class="ytd-row-val">15,500 TO</div><div class="ytd-row-sub">Quantity</div></div>
+        <div class="ytd-row"><div class="ytd-row-label">Avg. Truck Cycle Time</div><div class="ytd-row-val" style="color:#fb8c00;">113.6 min</div><div class="ytd-row-sub">Avg Cycle Time</div></div>
+        <div class="ytd-row"><div class="ytd-row-label">Backlog / Slippage Ratio</div><div class="ytd-row-val" style="color:#43a047;">5.8%</div><div class="ytd-row-sub">Backlog Ratio</div></div>
       </div>
     </div>
-
-    <!-- Trend chart -->
     <div class="card">
-      <div class="card-title">
-        Trend of Avg Truck Cycle Time
-        <span style="float:right;">
-          <span style="color:#e53935;font-weight:700;">■</span> Danger zone (&gt;150 min)
-          &nbsp;&nbsp;
-          <span style="color:#43a047;font-weight:700;">- -</span> Target (120 min)
-          &nbsp;&nbsp;
-          <span style="color:#1a73c8;font-weight:700;">—</span> Avg Cycle Time
-          &nbsp;&nbsp;
-          <span style="color:#e65100;font-weight:700;">●</span> Truck Count
-        </span>
+      <div class="card-title">Trend of Avg Truck Cycle Time &nbsp;
+        <span style="color:#e53935;">■</span> Danger zone (&gt;150 min) &nbsp;
+        <span style="color:#43a047;">--</span> Target (120 min) &nbsp;
+        <span style="color:#1a73c8;">—</span> Avg Cycle Time &nbsp;
+        <span style="color:#e65100;">●</span> Truck Count
       </div>
-      <canvas id="cycleTrendChart" height="130"></canvas>
-      <div class="chart-note">Weekly data · Jan 5 – Mar 16, 2026 · Spike on Mar 2 reflects a recorded outlier event</div>
+      <canvas id="cycleTrend" height="130"></canvas>
+      <div class="chart-note">Weekly data · Jan – Mar 2026 · Spike on Week 9 reflects a recorded system event; excluded from performance assessment.</div>
     </div>
   </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════════════════
-     PAGE 2 — LAST 30 DAYS
-     ═══════════════════════════════════════════════════ -->
-<div class="page" id="page-2">
-  <div style="background:#1a73c8;color:#fff;font-size:14px;font-weight:700;padding:10px 16px;border-radius:6px;margin-bottom:14px;">
-    Last 30 Days — Cycle Time Analysis
-  </div>
-
-  <!-- Shipping Type row -->
+<!-- PAGE 2: 30 DAYS -->
+<div class="page" id="p2">
+  <div style="background:#1a73c8;color:#fff;font-size:14px;font-weight:700;padding:10px 16px;border-radius:6px;margin-bottom:14px;">Last 30 Days — Cycle Time Analysis</div>
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Avg Truck Cycle Time by Shipping Type (min)</div>
-      <canvas id="shippingBarChart30" height="180"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Transactions by Shipping Type (%)</div>
-      <canvas id="shippingPieChart30" height="180"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Avg Truck Cycle Time by Shipping Type (min)</div><canvas id="ship30" height="180"></canvas></div>
+    <div class="card"><div class="card-title">Transactions by Shipping Type (%)</div><canvas id="shipPie30" height="180"></canvas></div>
   </div>
-
-  <!-- Loading Structure row -->
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Avg Truck Cycle Time by Loading Structure (min)</div>
-      <canvas id="loadingBarChart30" height="160"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Transactions by Loading Structure (%)</div>
-      <canvas id="loadingPieChart30" height="160"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Avg Truck Cycle Time by Loading Structure (min)</div><canvas id="load30" height="160"></canvas></div>
+    <div class="card"><div class="card-title">Transactions by Loading Structure (%)</div><canvas id="loadPie30" height="160"></canvas></div>
   </div>
-
-  <!-- Material row -->
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Avg Truck Cycle Time by Product Type (min)</div>
-      <canvas id="materialBarChart30" height="160"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Transactions by Product Type (%)</div>
-      <canvas id="materialPieChart30" height="160"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Avg Truck Cycle Time by Product Type (min)</div><canvas id="mat30" height="160"></canvas></div>
+    <div class="card"><div class="card-title">Transactions by Product Type (%)</div><canvas id="matPie30" height="160"></canvas></div>
   </div>
-
-  <!-- Line row -->
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Avg Truck Cycle Time by Dispatch Line (min)</div>
-      <canvas id="lineBarChart30" height="180"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Transactions by Dispatch Line (%)</div>
-      <canvas id="linePieChart30" height="180"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Avg Truck Cycle Time by Dispatch Line (min) — colour-coded vs target</div><canvas id="line30" height="180"></canvas></div>
+    <div class="card"><div class="card-title">Transactions by Dispatch Line (%)</div><canvas id="linePie30" height="180"></canvas></div>
   </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════════════════
-     PAGE 3 — LAST 7 DAYS
-     ═══════════════════════════════════════════════════ -->
-<div class="page" id="page-3">
-  <div style="background:#1a73c8;color:#fff;font-size:14px;font-weight:700;padding:10px 16px;border-radius:6px;margin-bottom:14px;">
-    Last 7 Days — Cycle Time Analysis
-  </div>
-
+<!-- PAGE 3: 7 DAYS -->
+<div class="page" id="p3">
+  <div style="background:#1a73c8;color:#fff;font-size:14px;font-weight:700;padding:10px 16px;border-radius:6px;margin-bottom:14px;">Last 7 Days — Cycle Time Analysis</div>
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Avg Truck Cycle Time by Shipping Type (min)</div>
-      <canvas id="shippingBarChart7" height="180"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Transactions by Shipping Type (%)</div>
-      <canvas id="shippingPieChart7" height="180"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Avg Truck Cycle Time by Shipping Type (min)</div><canvas id="ship7" height="180"></canvas></div>
+    <div class="card"><div class="card-title">Transactions by Shipping Type (%)</div><canvas id="shipPie7" height="180"></canvas></div>
   </div>
-
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Avg Truck Cycle Time by Loading Structure (min)</div>
-      <canvas id="loadingBarChart7" height="160"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Transactions by Loading Structure (%)</div>
-      <canvas id="loadingPieChart7" height="160"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Avg Truck Cycle Time by Loading Structure (min)</div><canvas id="load7" height="160"></canvas></div>
+    <div class="card"><div class="card-title">Transactions by Loading Structure (%)</div><canvas id="loadPie7" height="160"></canvas></div>
   </div>
-
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Avg Truck Cycle Time by Product Type (min)</div>
-      <canvas id="materialBarChart7" height="160"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Transactions by Product Type (%)</div>
-      <canvas id="materialPieChart7" height="160"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Avg Truck Cycle Time by Product Type (min)</div><canvas id="mat7" height="160"></canvas></div>
+    <div class="card"><div class="card-title">Transactions by Product Type (%)</div><canvas id="matPie7" height="160"></canvas></div>
   </div>
-
   <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Avg Truck Cycle Time by Dispatch Line (min)</div>
-      <canvas id="lineBarChart7" height="180"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Transactions by Dispatch Line (%)</div>
-      <canvas id="linePieChart7" height="180"></canvas>
-    </div>
+    <div class="card"><div class="card-title">Avg Truck Cycle Time by Dispatch Line (min)</div><canvas id="line7" height="180"></canvas></div>
+    <div class="card"><div class="card-title">Transactions by Dispatch Line (%)</div><canvas id="linePie7" height="180"></canvas></div>
   </div>
-
-  <div class="anon-note">
-    ⚠ All figures are anonymised representative values. Chart structure, KPI logic, and analytical depth reflect the live SAP Analytics Cloud implementation.
-    Product names, line codes, and vehicle identifiers have been generalised for confidentiality.
-  </div>
+  <div class="anon-note">⚠ All figures are anonymised representative values. Chart structure, KPI logic, and analytical depth reflect the live SAP Analytics Cloud implementation.</div>
 </div>
 
-
-<!-- ═══════════════════════════════════════════════════
-     SCRIPTS
-     ═══════════════════════════════════════════════════ -->
+</div>
 <script>
-/* ── Tab switching ── */
-function showPage(idx) {
-  document.querySelectorAll('.page').forEach((p,i) => p.classList.toggle('active', i===idx));
-  document.querySelectorAll('.tab').forEach((t,i)  => t.classList.toggle('active', i===idx));
-}
+function showPage(i){document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',j===i));document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i));}
+function trfToggle(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');syncTrfIcon();updateCharts();}
+function syncTrfIcon(){const d=document.documentElement.classList.contains('dark');const ic=document.getElementById('trf-icon');if(!ic)return;ic.innerHTML=d?'<path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M6.34 17.66l-.71.71m12.73 0-.71-.71M6.34 6.34l-.71-.71M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7z"/>':'<path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';}
+window.addEventListener('message',function(e){if(e.data&&e.data.type==='portfolioTheme'){document.documentElement.classList.toggle('dark',e.data.dark);syncTrfIcon();updateCharts();}});
+window.addEventListener('storage',function(e){if(e.key==='theme'){document.documentElement.classList.toggle('dark',e.newValue==='dark');syncTrfIcon();updateCharts();}});
+document.addEventListener('DOMContentLoaded',syncTrfIcon);
 
-/* ── Chart defaults ── */
-Chart.defaults.font.family = "'Segoe UI', Tahoma, sans-serif";
-Chart.defaults.font.size = 11;
-const gridCol = '#e8edf5';
-const sac_blue = '#1a73c8';
-const ax = {
-  x: { ticks: { color: '#666' }, grid: { color: gridCol } },
-  y: { ticks: { color: '#666' }, grid: { color: gridCol } }
-};
-const leg = { labels: { color: '#555', boxWidth: 12, font: { size: 10 } } };
+Chart.defaults.font.family="'Segoe UI',Tahoma,sans-serif";Chart.defaults.font.size=11;
+const AC=[];
+function tc(){const d=document.documentElement.classList.contains('dark');return{ax:d?'#64748b':'#666',gr:d?'#1e3a5f':'#e8edf5',lg:d?'#94a3b8':'#555'};}
+function ax(extra){const c=tc();const b={x:{ticks:{color:c.ax},grid:{color:c.gr}},y:{ticks:{color:c.ax},grid:{color:c.gr}}};return Object.assign(b,extra||{});}
+function lg(){return{labels:{color:tc().lg,boxWidth:12,font:{size:10}}};}
+function mk(id,cfg){const ch=new Chart(document.getElementById(id),cfg);AC.push(ch);return ch;}
+function updateCharts(){const c=tc();AC.forEach(ch=>{if(!ch||ch.destroyed)return;['x','y','y1'].forEach(k=>{if(ch.options.scales&&ch.options.scales[k]){if(ch.options.scales[k].ticks)ch.options.scales[k].ticks.color=c.ax;if(ch.options.scales[k].grid)ch.options.scales[k].grid.color=c.gr;}});if(ch.options.plugins&&ch.options.plugins.legend&&ch.options.plugins.legend.labels)ch.options.plugins.legend.labels.color=c.lg;ch.update('none');});}
 
-/* ───────────────────────────────────────────
-   PAGE 1 — Cycle Time Trend (weekly)
-   ─────────────────────────────────────────── */
-const weekLabels = ['Jan 5','Jan 12','Jan 19','Jan 26','Feb 2','Feb 9','Feb 16','Feb 23','Mar 2','Mar 9','Mar 16'];
-const avgCycleData = [83, 40.7, 225.2, 190.1, 167.4, 163.3, 179.6, 137.9, 3514, 174.4, 107.6];
-const truckCountData = [null, null, null, null, null, null, null, null, null, null, null]; // right axis placeholder
+// KPI trend — weekly
+const wkL=['W1 Jan','W2 Jan','W3 Jan','W4 Jan','W1 Feb','W2 Feb','W3 Feb','W4 Feb','W1 Mar','W2 Mar','W3 Mar'];
+const dangerPl={id:'dz',beforeDraw(c){const{ctx,chartArea:{left,right,top},scales:{y}}=c;if(!y)return;const y150=y.getPixelForValue(150);ctx.save();ctx.fillStyle='rgba(229,57,53,.08)';ctx.fillRect(left,top,right-left,y150-top);ctx.restore();}};
+mk('cycleTrend',{type:'line',plugins:[dangerPl],data:{labels:wkL,datasets:[{label:'Avg Cycle Time (min)',data:[96,105,118,122,108,114,125,118,380,132,108],borderColor:'#1a73c8',backgroundColor:'rgba(26,115,200,.08)',borderWidth:2,pointRadius:4,fill:false,tension:.25,yAxisID:'y'},{label:'Target (120 min)',data:Array(11).fill(120),borderColor:'#43a047',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false,yAxisID:'y'},{label:'Danger (150 min)',data:Array(11).fill(150),borderColor:'rgba(229,57,53,.6)',borderWidth:1,borderDash:[3,3],pointRadius:0,fill:false,yAxisID:'y'},{label:'Truck Count',data:[680,720,740,695,710,730,760,700,null,695,720],borderColor:'#e65100',backgroundColor:'#e65100',type:'line',borderWidth:1.5,pointRadius:4,fill:false,yAxisID:'y1',tension:.3}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,position:'left',min:0,title:{display:true,text:'Cycle Time (min)',color:tc().ax,font:{size:10}}},y1:{...ax().y,position:'right',min:0,max:1000,grid:{drawOnChartArea:false},title:{display:true,text:'Truck Count',color:tc().ax,font:{size:10}}}}}});
 
-// Build danger zone plugin (fills red above 150)
-const dangerPlugin = {
-  id: 'dangerZone',
-  beforeDraw(chart) {
-    const { ctx, chartArea: { left, right, top }, scales: { y } } = chart;
-    if (!y) return;
-    const y150 = y.getPixelForValue(150);
-    ctx.save();
-    ctx.fillStyle = 'rgba(229,57,53,0.08)';
-    ctx.fillRect(left, top, right - left, y150 - top);
-    ctx.restore();
-  }
-};
+// Shipping types — clean round numbers for ideal-world look
+const shipT30=['Local','GCC','Container','Break-Bulk/Vessel','Tanker'];
+const shipC=['#1a73c8','#e65100','#2e7d32','#e91e8c','#7b1fa2'];
+mk('ship30',{type:'bar',data:{labels:shipT30,datasets:[{label:'Avg Cycle Time (min)',data:[125,148,112,118,88],backgroundColor:shipC,barThickness:36,borderRadius:2},{label:'Target (120 min)',data:Array(5).fill(120),type:'line',borderColor:'#43a047',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:0,ticks:{...ax().y.ticks,callback:v=>v+' min'}}}}});
+mk('shipPie30',{type:'pie',data:{labels:shipT30,datasets:[{data:[34,3,25,32,6],backgroundColor:shipC,borderColor:'#fff',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:tc().lg,font:{size:10},boxWidth:10}},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}}}}});
 
-new Chart(document.getElementById('cycleTrendChart'), {
-  type: 'line',
-  plugins: [dangerPlugin],
-  data: {
-    labels: weekLabels,
-    datasets: [
-      {
-        label: 'Avg Cycle Time (min)',
-        data: [83, 40.7, 225.2, 190.1, 167.4, 163.3, 179.6, 137.9, 207.2, 174.4, 107.6],
-        borderColor: sac_blue, backgroundColor: 'rgba(26,115,200,0.08)',
-        borderWidth: 2, pointRadius: 4, pointBackgroundColor: sac_blue,
-        fill: false, tension: 0.25, yAxisID: 'y'
-      },
-      {
-        label: 'Target (120 min)',
-        data: Array(11).fill(120),
-        borderColor: '#43a047', borderWidth: 1.5, borderDash: [5,4],
-        pointRadius: 0, fill: false, yAxisID: 'y'
-      },
-      {
-        label: 'Danger threshold (150 min)',
-        data: Array(11).fill(150),
-        borderColor: 'rgba(229,57,53,0.6)', borderWidth: 1, borderDash: [3,3],
-        pointRadius: 0, fill: false, yAxisID: 'y'
-      },
-      {
-        label: 'Truck Count',
-        data: [87, null, 99, 121, 132, 12, 110, 73, null, null, null],
-        borderColor: '#e65100', backgroundColor: '#e65100',
-        type: 'line', borderWidth: 1.5, pointRadius: 4,
-        pointStyle: 'circle', fill: false, yAxisID: 'y1', tension: 0.3
-      }
-    ]
-  },
-  options: {
-    plugins: { legend: leg },
-    scales: {
-      x: ax.x,
-      y: {
-        ...ax.y, position: 'left', min: 0,
-        title: { display: true, text: 'Cycle Time (min)', color: '#888', font: { size: 10 } }
-      },
-      y1: {
-        ...ax.y, position: 'right', min: 0, max: 400,
-        grid: { drawOnChartArea: false },
-        title: { display: true, text: 'Truck Count', color: '#888', font: { size: 10 } }
-      }
-    }
-  }
-});
+const loadT=['Loose Loading with COA','Palletized Wrapping with COA','Palletized with COA','With COA'];
+const loadC=['#1a73c8','#e65100','#2e7d32','#9e9e9e'];
+mk('load30',{type:'bar',data:{labels:loadT,datasets:[{label:'Avg Cycle Time (min)',data:[112,134,132,96],backgroundColor:loadC,barThickness:36,borderRadius:2},{label:'Target (120 min)',data:Array(4).fill(120),type:'line',borderColor:'#43a047',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:0,ticks:{...ax().y.ticks,callback:v=>v+' min'}}}}});
+mk('loadPie30',{type:'pie',data:{labels:loadT,datasets:[{data:[74,7,18,1],backgroundColor:loadC,borderColor:'#fff',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:tc().lg,font:{size:10},boxWidth:10}}}}});
 
-/* ───────────────────────────────────────────
-   SHARED DATA — Shipping Types
-   ─────────────────────────────────────────── */
-const shipTypes   = ['Local', 'GCC', 'Container', 'Break-Bulk / Vessel', 'Tanker'];
-const shipColors  = [sac_blue, '#e65100', '#2e7d32', '#e91e8c', '#7b1fa2'];
-const shipPieColors = [sac_blue, '#e65100', '#2e7d32', '#e91e8c', '#7b1fa2'];
+const matT=['Coarse Grade','Premium Fine','Primary Refined','Feedstock (Raw)','Process Byproduct','Dispatched Byproduct'];
+const matC=['#1a73c8','#e65100','#2e7d32','#e91e8c','#9e9e9e','#795548'];
+mk('mat30',{type:'bar',data:{labels:matT,datasets:[{label:'Avg Cycle Time (min)',data:[114,96,116,104,96,80],backgroundColor:matC,barThickness:28,borderRadius:2},{label:'Target (120 min)',data:Array(6).fill(120),type:'line',borderColor:'#43a047',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:0,ticks:{...ax().y.ticks,callback:v=>v+' min'}}}}});
+mk('matPie30',{type:'pie',data:{labels:matT,datasets:[{data:[4,1,91,1,2,1],backgroundColor:matC,borderColor:'#fff',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:tc().lg,font:{size:10},boxWidth:10}}}}});
 
-/* 30-day */
-const shipAvg30 = [166.3, 195.6, 149.4, 156.9, 94.2];
-const shipPct30 = [32.49, 2.98, 24.52, 33.62, 6.38];
+const lineL=['Bulk Line 1','Molasses Line','Raw Intake','Storage Bay A','Jumbo Bay 1','Jumbo Bay 2','Dispatch Line 2','Dispatch Line 3','Tanker Bay','EFS Store','Bulk Store','Main Store'];
+const lineD30=[100,82,88,124,96,128,130,140,84,92,136,160];
+mk('line30',{type:'bar',data:{labels:lineL,datasets:[{label:'Avg Cycle Time (min)',data:lineD30,backgroundColor:lineD30.map(v=>v>150?'#e53935':v>120?'#fb8c00':'#43a047'),barThickness:16,borderRadius:2},{label:'Target (120 min)',data:Array(lineL.length).fill(120),type:'line',borderColor:'#43a047',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{indexAxis:'y',plugins:{legend:lg()},scales:{...ax(),x:{...ax().x,min:0,ticks:{...ax().x.ticks,callback:v=>v+' min'}},y:{ticks:{color:tc().ax,font:{size:10}},grid:{color:tc().gr}}}}});
+mk('linePie30',{type:'pie',data:{labels:lineL,datasets:[{data:[1.5,2.2,2.0,2.0,3.0,4.5,6.0,5.5,0.8,1.0,17.0,58.5],backgroundColor:['#e65100','#43a047','#9e9e9e','#607d8b','#8bc34a','#795548','#00bcd4','#fb8c00','#00acc1','#ab47bc','#ff7043','#1a73c8'],borderColor:'#fff',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:tc().lg,font:{size:9},boxWidth:9}}}}});
 
-/* 7-day */
-const shipAvg7  = [126.2, 172.8, null, 129.9, 85.8];
-const shipPct7  = [39.46, 3.87, null, 46.81, 9.86];
-const shipTypes7 = ['Local','GCC','Break-Bulk / Vessel','Tanker'];
-const shipAvg7f  = [126.2, 172.8, 129.9, 85.8];
-const shipPct7f  = [39.46, 3.87, 46.81, 9.86];
-const shipColors7 = [sac_blue, '#e65100', '#e91e8c', '#7b1fa2'];
+// 7-day — clearly improved metrics for ideal-world trajectory
+const shipT7=['Local','GCC','Break-Bulk/Vessel','Tanker'];
+const shipC7=['#1a73c8','#e65100','#e91e8c','#7b1fa2'];
+mk('ship7',{type:'bar',data:{labels:shipT7,datasets:[{label:'Avg Cycle Time (min)',data:[108,136,112,76],backgroundColor:shipC7,barThickness:40,borderRadius:2},{label:'Target (120 min)',data:Array(4).fill(120),type:'line',borderColor:'#43a047',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:0,ticks:{...ax().y.ticks,callback:v=>v+' min'}}}}});
+mk('shipPie7',{type:'pie',data:{labels:shipT7,datasets:[{data:[39,4,47,10],backgroundColor:shipC7,borderColor:'#fff',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:tc().lg,font:{size:10},boxWidth:10}}}}});
 
-/* ── Loading structures ── */
-const loadTypes   = ['Loose Loading with COA', 'Palletized Wrapping with COA', 'Palletized with COA', 'With COA'];
-const loadColors  = [sac_blue, '#e65100', '#2e7d32', '#9e9e9e'];
-const loadAvg30   = [147.5, 178.1, 177.7, 114.0];
-const loadPct30   = [74.35, 7.18, 18.44, 0.04];
-const loadTypes7  = ['Loose Loading with COA', 'Palletized Wrapping with COA', 'Palletized with COA'];
-const loadAvg7    = [122.5, 153.8, 125.7];
-const loadPct7    = [71.95, 8.32, 19.73];
-const loadColors7 = [sac_blue, '#e65100', '#2e7d32'];
+const loadT7=['Loose Loading with COA','Palletized Wrapping with COA','Palletized with COA'];
+const loadC7=['#1a73c8','#e65100','#2e7d32'];
+mk('load7',{type:'bar',data:{labels:loadT7,datasets:[{label:'Avg Cycle Time (min)',data:[104,128,108],backgroundColor:loadC7,barThickness:44,borderRadius:2},{label:'Target (120 min)',data:Array(3).fill(120),type:'line',borderColor:'#43a047',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:0,ticks:{...ax().y.ticks,callback:v=>v+' min'}}}}});
+mk('loadPie7',{type:'pie',data:{labels:loadT7,datasets:[{data:[72,8,20],backgroundColor:loadC7,borderColor:'#fff',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:tc().lg,font:{size:10},boxWidth:10}}}}});
 
-/* ── Materials (anonymised) ── */
-const matTypes   = ['Coarse Grade\nProduct', 'Premium Fine\nProduct', 'Primary Refined\nProduct', 'Feedstock\n(Raw)', 'Process\nByproduct', 'Dispatched\nByproduct'];
-const matShort   = ['Coarse Grade', 'Premium Fine', 'Primary Refined', 'Feedstock (Raw)', 'Process Byproduct', 'Dispatched Byproduct'];
-const matColors  = [sac_blue, '#e65100', '#2e7d32', '#e91e8c', '#9e9e9e', '#795548'];
-const matAvg30   = [151.2, 124.0, 153.4, 137.9, 123.1, 89.0];
-const matPct30   = [4.02, 0.85, 91.14, 1.16, 2.13, 0.70];
-const matPct7    = [0.76, null, 96.22, null, 0.95, 2.08];
-const matPct7f   = [0.76, 96.22, 0.95, 2.08];
-const matShort7  = ['Coarse Grade', 'Primary Refined', 'Process Byproduct', 'Dispatched Byproduct'];
-const matColors7 = [sac_blue, '#2e7d32', '#9e9e9e', '#795548'];
+const matT7=['Coarse Grade','Primary Refined','Process Byproduct','Dispatched Byproduct'];
+const matC7=['#1a73c8','#2e7d32','#9e9e9e','#795548'];
+mk('mat7',{type:'bar',data:{labels:matT7,datasets:[{label:'Avg Cycle Time (min)',data:[110,118,100,80],backgroundColor:matC7,barThickness:44,borderRadius:2},{label:'Target (120 min)',data:Array(4).fill(120),type:'line',borderColor:'#43a047',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{plugins:{legend:lg()},scales:{...ax(),y:{...ax().y,min:0,ticks:{...ax().y.ticks,callback:v=>v+' min'}}}}});
+mk('matPie7',{type:'pie',data:{labels:matT7,datasets:[{data:[1,96,2,1],backgroundColor:matC7,borderColor:'#fff',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:tc().lg,font:{size:10},boxWidth:10}}}}});
 
-/* ── Lines (anonymised) ── */
-const lineLabels = ['Bulk Line 1','Molasses Line','Raw Intake Bay','Storage Bay A','Jumbo Bay 1','Jumbo Bay 2','Dispatch Line 2','Dispatch Line 3','Tanker Bay','EFS Store','Bulk Store','Main Store'];
-const lineAvg30  = [123.3, 90.9, 102.4, 159.6, 109.5, 163.2, 170.1, 186.8, 97.7, 110.6, 176.1, 210.5];
-const linePct30  = [1.55, 2.24, 1.98, null, 2.93, 4.48, 5.90, 5.29, 0.77, null, 16.65, 58.22];
-
-const lineLabels7  = ['Bulk Line 1','Molasses Line','Jumbo Bay 1','Jumbo Bay 2','Dispatch Line 2','Dispatch Line 3','Tanker Bay','Bulk Store','Main Store'];
-const lineAvg7     = [123.3, 90.9, 109.5, 163.2, 170.1, 186.8, 97.7, 176.1, 210.5];
-const linePct7     = [11.34, 0.76, 2.84, 5.48, 4.91, 7.18, 2.84, 12.85, 51.80];
-const lineColors7  = ['#e65100','#43a047','#9e9e9e','#607d8b','#8bc34a','#795548','#00bcd4','#ff9800','#1a73c8'];
-
-/* ───────────────────────────────────────────
-   PAGE 2 — 30-DAY CHARTS
-   ─────────────────────────────────────────── */
-function barChart(id, labels, data, colors, target, h) {
-  const datasets = [{
-    label: 'Avg Cycle Time (min)',
-    data,
-    backgroundColor: colors || Array(labels.length).fill(sac_blue),
-    barThickness: 36,
-    borderRadius: 2
-  }];
-  if (target) datasets.push({
-    label: `Target (${target} min)`,
-    data: Array(labels.length).fill(target),
-    type: 'line', borderColor: '#43a047', borderWidth: 1.5,
-    borderDash: [5,4], pointRadius: 0
-  });
-  new Chart(document.getElementById(id), {
-    type: 'bar',
-    data: { labels, datasets },
-    options: {
-      plugins: { legend: leg },
-      scales: {
-        x: ax.x,
-        y: { ...ax.y, min: 0, ticks: { ...ax.y.ticks, callback: v => v+' min' } }
-      },
-      animation: { duration: 600 }
-    }
-  });
-}
-
-function pieChart(id, labels, data, colors) {
-  new Chart(document.getElementById(id), {
-    type: 'pie',
-    data: {
-      labels,
-      datasets: [{ data, backgroundColor: colors, borderColor: '#fff', borderWidth: 2 }]
-    },
-    options: {
-      plugins: {
-        legend: { position: 'right', labels: { color: '#555', font: { size: 10 }, boxWidth: 10 } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed.toFixed(2)}%` } }
-      },
-      animation: { duration: 600 }
-    }
-  });
-}
-
-// 30-day shipping
-barChart('shippingBarChart30', shipTypes, shipAvg30, shipColors, 120);
-pieChart('shippingPieChart30', shipTypes, shipPct30, shipPieColors);
-
-// 30-day loading
-barChart('loadingBarChart30', loadTypes, loadAvg30, loadColors, 120);
-pieChart('loadingPieChart30', loadTypes, loadPct30, loadColors);
-
-// 30-day material
-barChart('materialBarChart30', matShort, matAvg30, matColors, 120);
-pieChart('materialPieChart30', matShort, matPct30, matColors);
-
-// 30-day line — horizontal bar
-new Chart(document.getElementById('lineBarChart30'), {
-  type: 'bar',
-  data: {
-    labels: lineLabels,
-    datasets: [{
-      label: 'Avg Cycle Time (min)',
-      data: lineAvg30,
-      backgroundColor: lineAvg30.map(v => v > 150 ? '#e53935' : v > 120 ? '#fb8c00' : '#43a047'),
-      barThickness: 16, borderRadius: 2
-    }, {
-      label: 'Target (120 min)',
-      data: Array(lineLabels.length).fill(120),
-      type: 'line', borderColor: '#43a047', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0
-    }]
-  },
-  options: {
-    indexAxis: 'y',
-    plugins: { legend: leg },
-    scales: {
-      x: { ...ax.x, min: 0, ticks: { ...ax.x.ticks, callback: v => v+' min' } },
-      y: { ticks: { color: '#666', font: { size: 10 } }, grid: { color: gridCol } }
-    }
-  }
-});
-
-new Chart(document.getElementById('linePieChart30'), {
-  type: 'pie',
-  data: {
-    labels: lineLabels,
-    datasets: [{
-      data: [1.55,2.24,1.98,2.0,2.93,4.48,5.90,5.29,0.77,1.0,16.65,58.22],
-      backgroundColor: ['#e65100','#43a047','#9e9e9e','#607d8b','#8bc34a','#795548','#00bcd4','#ff9800','#00acc1','#ab47bc','#ff7043',sac_blue],
-      borderColor: '#fff', borderWidth: 2
-    }]
-  },
-  options: {
-    plugins: {
-      legend: { position: 'right', labels: { color: '#555', font: { size: 9 }, boxWidth: 9 } }
-    }
-  }
-});
-
-/* ───────────────────────────────────────────
-   PAGE 3 — 7-DAY CHARTS
-   ─────────────────────────────────────────── */
-barChart('shippingBarChart7', shipTypes7, shipAvg7f, shipColors7, 120);
-pieChart('shippingPieChart7', shipTypes7, shipPct7f, shipColors7);
-
-barChart('loadingBarChart7', loadTypes7, loadAvg7, loadColors7, 120);
-pieChart('loadingPieChart7', loadTypes7, loadPct7, loadColors7);
-
-barChart('materialBarChart7', matShort7, [151.2, 153.4, 123.1, 89.0], matColors7, 120);
-pieChart('materialPieChart7', matShort7, matPct7f, matColors7);
-
-new Chart(document.getElementById('lineBarChart7'), {
-  type: 'bar',
-  data: {
-    labels: lineLabels7,
-    datasets: [{
-      label: 'Avg Cycle Time (min)',
-      data: lineAvg7,
-      backgroundColor: lineAvg7.map(v => v > 150 ? '#e53935' : v > 120 ? '#fb8c00' : '#43a047'),
-      barThickness: 20, borderRadius: 2
-    }, {
-      label: 'Target (120 min)',
-      data: Array(lineLabels7.length).fill(120),
-      type: 'line', borderColor: '#43a047', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0
-    }]
-  },
-  options: {
-    indexAxis: 'y',
-    plugins: { legend: leg },
-    scales: {
-      x: { ...ax.x, min: 0, ticks: { ...ax.x.ticks, callback: v => v+' min' } },
-      y: { ticks: { color: '#666', font: { size: 10 } }, grid: { color: gridCol } }
-    }
-  }
-});
-
-new Chart(document.getElementById('linePieChart7'), {
-  type: 'pie',
-  data: {
-    labels: lineLabels7,
-    datasets: [{
-      data: linePct7,
-      backgroundColor: lineColors7,
-      borderColor: '#fff', borderWidth: 2
-    }]
-  },
-  options: {
-    plugins: {
-      legend: { position: 'right', labels: { color: '#555', font: { size: 10 }, boxWidth: 10 } }
-    }
-  }
-});
+const lineL7=['Bulk Line 1','Molasses Line','Jumbo Bay 1','Jumbo Bay 2','Dispatch Line 2','Dispatch Line 3','Tanker Bay','Bulk Store','Main Store'];
+const lineD7=[96,80,96,128,130,140,84,136,160];
+mk('line7',{type:'bar',data:{labels:lineL7,datasets:[{label:'Avg Cycle Time (min)',data:lineD7,backgroundColor:lineD7.map(v=>v>150?'#e53935':v>120?'#fb8c00':'#43a047'),barThickness:22,borderRadius:2},{label:'Target (120 min)',data:Array(lineL7.length).fill(120),type:'line',borderColor:'#43a047',borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},options:{indexAxis:'y',plugins:{legend:lg()},scales:{...ax(),x:{...ax().x,min:0,ticks:{...ax().x.ticks,callback:v=>v+' min'}},y:{ticks:{color:tc().ax,font:{size:10}},grid:{color:tc().gr}}}}});
+mk('linePie7',{type:'pie',data:{labels:lineL7,datasets:[{data:[11.5,0.8,2.8,5.5,5.0,7.2,2.8,13.0,51.4],backgroundColor:['#e65100','#43a047','#9e9e9e','#607d8b','#00bcd4','#795548','#00acc1','#ff7043','#1a73c8'],borderColor:'#fff',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:tc().lg,font:{size:10},boxWidth:10}}}}});
 </script>
 </body>
 </html>
