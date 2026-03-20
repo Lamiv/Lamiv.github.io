@@ -45,10 +45,14 @@
       line-height: 1.5;
       font-weight: 500;
     }
+    @media (max-width: 900px) {
+      .predictive-grid { grid-template-columns: 1fr 1fr !important; }
+    }
     @media (max-width: 680px) {
       .decision-row { grid-template-columns: 1fr; }
       .decision-item { border-bottom: 1px solid var(--color-border); background: var(--color-bg-card); }
       .decision-item:last-child { border-bottom: none; }
+      .predictive-grid { grid-template-columns: 1fr !important; }
     }
   </style>
 </head>
@@ -95,7 +99,7 @@
             <div class="prose">
               <p>This analytics programme was built to replace fragmented, manual reporting across a large manufacturing operation with an integrated SAP Analytics Cloud intelligence layer. The focus was not just dashboard delivery — it was about enabling real-time decision-making across production, procurement, logistics, and commercial operations.</p>
               <p>Key design principles: every dashboard had to answer a specific business question, every metric had to be traceable to a decision, and every insight had to be accessible without technical support.</p>
-              <p>The four dashboards below are sample recreations of the live systems, built with anonymised and scaled data to preserve confidentiality. The analytics logic, layout, and decision frameworks are authentic.</p>
+              <p>Four sample recreations of the live systems are embedded below, built with anonymised and scaled data to preserve confidentiality. Multiple dashboards were delivered across the programme — these four represent the core decision domains. The analytics logic, layout, and decision frameworks are authentic.</p>
             </div>
           </div>
           <div>
@@ -110,8 +114,8 @@
                 <div style="font-size:.8125rem;color:var(--color-text-muted);">Faster business reporting cycles</div>
               </div>
               <div>
-                <div style="font-size:1.75rem;font-weight:800;letter-spacing:-.03em;color:var(--color-text);">4</div>
-                <div style="font-size:.8125rem;color:var(--color-text-muted);">Live decision intelligence dashboards</div>
+                <div style="font-size:1.75rem;font-weight:800;letter-spacing:-.03em;color:var(--color-text);">Multiple</div>
+                <div style="font-size:.8125rem;color:var(--color-text-muted);">Live decision intelligence dashboards delivered (4 samples shown)</div>
               </div>
             </div>
           </div>
@@ -125,21 +129,40 @@
         <div style="margin-bottom:2rem;">
           <span class="section-eyebrow">Dashboard 01</span>
           <h2 class="section-title">Yield Performance &amp; Operational Analytics</h2>
-          <p class="section-lead">Production yield tracking across processing stages, with variance analysis and predictive optimization. Enables operations leadership to identify loss points and act before they compound.</p>
+          <p class="section-lead">Production yield tracking across processing stages with variance analysis, time series forecasting, and predictive optimization. Enables operations leadership to identify loss points and act before they compound — and to anticipate future resource requirements before shortfalls occur.</p>
         </div>
 
-        <div class="decision-row" style="margin-bottom:2rem;">
+        <div class="decision-row" style="margin-bottom:1.5rem;">
           <div class="decision-item">
             <div class="decision-label">Decision Enabled</div>
             <div class="decision-text">Daily yield review and corrective action before shift close</div>
           </div>
           <div class="decision-item">
             <div class="decision-label">Insight Delivered</div>
-            <div class="decision-text">Stage-by-stage efficiency and loss point identification</div>
+            <div class="decision-text">Stage-by-stage efficiency, loss point identification, and forward yield projections</div>
           </div>
           <div class="decision-item">
             <div class="decision-label">Business Impact</div>
-            <div class="decision-text">$7M+ projected annual value through yield recovery</div>
+            <div class="decision-text">$7M+ projected annual value through yield recovery and predictive intervention</div>
+          </div>
+        </div>
+
+        <!-- Predictive model detail -->
+        <div class="predictive-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:2rem;">
+          <div class="component-card">
+            <div class="component-label">Time Series Forecasting</div>
+            <div class="component-name">Yield Trend Prediction</div>
+            <div class="component-desc">Predictive models trained on historical production data to forecast yield for upcoming periods — surfacing expected performance against targets before the period begins.</div>
+          </div>
+          <div class="component-card">
+            <div class="component-label">Write-back Architecture</div>
+            <div class="component-name">Predicted vs Actual</div>
+            <div class="component-desc">Predictive model outputs written back into SAC as a data layer, enabling direct side-by-side comparison of forecasted yield against actual results — with variance drill-down by stage and shift.</div>
+          </div>
+          <div class="component-card">
+            <div class="component-label">Procurement Intelligence</div>
+            <div class="component-name">Purchasing Requirement Prediction</div>
+            <div class="component-desc">Scenario modeling that converts predicted yield into forward-looking raw material and purchasing requirements — allowing procurement to act ahead of demand rather than react to shortfalls.</div>
           </div>
         </div>
 
@@ -289,7 +312,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <span class="footer-copy">&copy; 2025 Vimal Vidyadharan</span>
+      <span class="footer-copy">&copy; 2026 Vimal Vidyadharan</span>
       <ul class="footer-links">
         <li><a href="https://linkedin.com/in/vimz" target="_blank" rel="noopener">LinkedIn</a></li>
         <li><a href="mailto:vimzpy@gmail.com">Email</a></li>

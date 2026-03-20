@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enterprise Digital Transformation Program – Vimal Vidyadharan</title>
-  <meta name="description" content="Led end-to-end digitization of HR, ecommerce, and logistics for a large manufacturing enterprise using SAP SuccessFactors, BTP, CPI, and custom mobile apps." />
+  <meta name="description" content="Led end-to-end digitization of HR, ecommerce, and plant maintenance for a large manufacturing enterprise using SAP SuccessFactors, BTP, CPI, Fiori, and phase-based maintenance." />
   <link rel="canonical" href="https://lamiv.github.io/projects/digital-transformation.html" />
   <link rel="stylesheet" href="../assets/css/styles.css" />
   <script>
@@ -48,10 +48,11 @@
           <span class="tag">SAP SuccessFactors</span>
           <span class="tag">SAP BTP &middot; CPI</span>
           <span class="tag">S/4HANA Integration</span>
-          <span class="tag">Mobile Apps</span>
+          <span class="tag">SAP Fiori</span>
+          <span class="tag">Plant Maintenance</span>
         </div>
         <h1 class="hero-title" style="font-size:clamp(1.75rem,3.5vw,2.5rem);margin-top:.75rem;">Enterprise Digital Transformation Program</h1>
-        <p class="hero-sub">Led the enterprise-wide digitization of HR, ecommerce, and field logistics for a large continuous manufacturing enterprise — replacing manual and paper-based operations with integrated, real-time digital workflows across SAP and custom platforms.</p>
+        <p class="hero-sub">Led the enterprise-wide digitization of HR, ecommerce, and plant maintenance operations for a large continuous manufacturing enterprise — replacing manual and paper-based processes with integrated SAP-driven digital workflows, role-based Fiori applications, and phase-controlled maintenance execution.</p>
 
         <div class="metrics-bar" style="margin-top:2rem;">
           <div class="metric-item"><div class="metric-value">70%</div><div class="metric-label">Reduction in Manual Errors</div></div>
@@ -68,8 +69,8 @@
         <span class="section-eyebrow">Context</span>
         <h2 class="section-title">The Problem</h2>
         <div class="prose">
-          <p>A large continuous manufacturing enterprise was running HR on paper-based and legacy workflows, selling through telephone-based ordering with no digital channel, and coordinating field logistics through manual dispatch. These processes were slow, error-prone, and increasingly inadequate as the business scaled.</p>
-          <p>There was no unified digital layer connecting enterprise systems with field operations or customer channels. Every exception required manual intervention. Management had no real-time visibility into workforce metrics, order pipeline, or delivery status.</p>
+          <p>A large continuous manufacturing enterprise was operating across three distinct areas of dysfunction: HR ran on paper-based and legacy workflows with no self-service; customer ordering was handled entirely by phone with no digital channel; and plant maintenance operated on a failed SAP implementation — using overly complex GUI transactions, opaque user statuses, and no structured phase control across the maintenance lifecycle.</p>
+          <p>Plant maintenance in particular had accumulated years of workarounds. Planners worked in transactions like IW31 and IW41 that were difficult to use, hard to audit, and disconnected from the mobile workforce. There was no clear view of where a maintenance request or order stood, no governance over workflow transitions, and no mechanism to prevent execution before safety conditions were met.</p>
         </div>
       </div>
     </section>
@@ -78,7 +79,7 @@
     <section class="section">
       <div class="container">
         <span class="section-eyebrow">Transformation Programs</span>
-        <h2 class="section-title">Three Interdependent Programs Delivered in Parallel</h2>
+        <h2 class="section-title">Three Transformation Programs</h2>
 
         <!-- HR -->
         <div class="card" style="margin-bottom:1.5rem;">
@@ -106,16 +107,17 @@
           </ul>
         </div>
 
-        <!-- DRIVER APP -->
+        <!-- PLANT MAINTENANCE -->
         <div class="card">
-          <div class="tag-row"><span class="tag">Field Logistics</span><span class="tag">Mobile App</span><span class="tag">Operations</span></div>
-          <h3 class="card-title">Driver Mobile App for Field Logistics</h3>
-          <p class="card-desc">Developed a purpose-built mobile application to replace manual dispatch and paper-based driver operations, connecting field logistics with SAP delivery orders and real-time operational data.</p>
+          <div class="tag-row"><span class="tag">Plant Maintenance</span><span class="tag">SAP PM</span><span class="tag">SAP Fiori</span><span class="tag">Phase-Based Maintenance</span></div>
+          <h3 class="card-title">Plant Maintenance Transformation</h3>
+          <p class="card-desc">Worked closely with the plant maintenance team to recover and redesign a failed SAP PM implementation. The existing system relied on opaque user statuses, complex GUI transactions, and disconnected mobile workflows — leaving planners with no clear visibility and technicians working around the system rather than through it.</p>
+          <p class="card-desc" style="margin-top:.75rem;">The solution introduced a structured, phase-based maintenance model — replacing the old flat status approach with a two-level hierarchy of Phases and Sub-phases that maps directly to how maintenance work actually progresses, from request through planning, safety clearance, execution, and closure.</p>
           <ul class="card-bullets">
-            <li>Route optimization and scheduling integration with SAP delivery management</li>
-            <li>Real-time status updates and proof-of-delivery workflows</li>
-            <li>Automated mileage, load, and trip logging replacing manual dockets</li>
-            <li>Dispatcher visibility into driver status, location, and delivery progress</li>
+            <li><strong>Phase Control Codes</strong> govern transitions between phases — preventing execution until prerequisites like safety permits are obtained, and enforcing structured handovers between Gatekeepers, Planners, Technicians, and Controllers</li>
+            <li><strong>Fiori-based role dashboards</strong> replaced complex GUI transactions like IW31 and IW41, reducing planning cycle times by up to 25% and improving field usability for maintenance technicians</li>
+            <li><strong>Maintenance Planning Buckets</strong> allow planners to group work by time period or asset set, making backlog management and material and labor availability checks significantly more structured</li>
+            <li><strong>Shift from reactive to proactive maintenance</strong> — the phase model provides the governance and visibility needed to plan ahead rather than respond to breakdowns</li>
           </ul>
         </div>
       </div>
@@ -127,8 +129,8 @@
         <span class="section-eyebrow">Outcomes</span>
         <h2 class="section-title">Business Impact</h2>
         <div class="prose">
-          <p>The three programs collectively eliminated the majority of manual data entry, paper records, and disconnected communication that had characterized enterprise operations. HR processes became self-service and auditable. Customer ordering moved from phone-based to digital. Field logistics gained real-time visibility where none had existed.</p>
-          <p>The most significant outcome was the shift in operational control — management could now see and act on workforce, order, and delivery data in real time rather than relying on end-of-day or end-of-week consolidation.</p>
+          <p>The three programs collectively replaced the majority of manual, paper-based, and workaround-driven operations with governed, integrated digital workflows. HR processes became self-service and auditable. Customer ordering moved from phone-based to a capacity-aware digital channel. Plant maintenance shifted from an opaque, transaction-heavy system to a structured phase model with role-based Fiori applications and phase governance.</p>
+          <p>Across all three programs, the central outcome was a shift in operational control — processes that previously required constant manual coordination became trackable, governable, and visible to the right people at the right time.</p>
         </div>
       </div>
     </section>
@@ -141,7 +143,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <span class="footer-copy">&copy; 2025 Vimal Vidyadharan</span>
+      <span class="footer-copy">&copy; 2026 Vimal Vidyadharan</span>
       <ul class="footer-links">
         <li><a href="https://linkedin.com/in/vimz" target="_blank" rel="noopener">LinkedIn</a></li>
         <li><a href="mailto:vimzpy@gmail.com">Email</a></li>
