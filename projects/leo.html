@@ -1,29 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LEO – AI Agent Platform | Vimal Vidyadharan</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LEO – Enterprise AI Orchestration Platform – Vimal Vidyadharan</title>
+  <meta name="description" content="LEO is an enterprise AI orchestration platform bringing agentic intelligence into SAP landscapes through agent runtime, knowledge layers, tool registries, and governed execution." />
+  <link rel="canonical" href="https://lamiv.github.io/projects/leo.html" />
   <link rel="stylesheet" href="../assets/css/styles.css" />
-  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Prevent FOUC: apply saved theme before render
     (function(){var t=localStorage.getItem('theme');if(t==='dark'||(t===null&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();
   </script>
-  <link rel="stylesheet" href="../assets/style.css">
 </head>
+<body>
+  <a href="#main" class="skip-nav">Skip to main content</a>
 
-<body class="bg-gray-50 text-gray-900 font-sans">
-
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-blue-600 text-white px-4 py-2 rounded z-50 text-sm font-medium">Skip to main content</a>
-
-  <!-- NAVBAR -->
-    <nav class="site-nav" role="navigation" aria-label="Main navigation">
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <a href="../index.html" class="nav-brand">Vimal Vidyadharan</a>
       <ul class="nav-links" id="nav-links">
         <li><a href="../about.html">About</a></li>
-        <li><a href="../platforms.html">Platforms</a></li>
+        <li><a href="../platforms.html" aria-current="page">Platforms</a></li>
         <li><a href="../projects.html">Projects</a></li>
         <li><a href="../sap-analytics.html">SAP Analytics</a></li>
         <li><a href="../contact.html">Contact</a></li>
@@ -37,156 +33,107 @@
     </div>
   </nav>
 
-  <main id="main-content" class="max-w-4xl mx-auto px-6 py-16">
-
-    <!-- BREADCRUMB -->
-    <div class="text-sm text-gray-400 mb-8">
-      <a href="../projects.html" class="hover:text-blue-600">Projects</a>
-      <span class="mx-2">→</span>
-      <span class="text-gray-600">LEO</span>
-    </div>
-
-    <!-- HEADER -->
-    <div class="mb-10">
-      <div class="flex flex-wrap gap-2 mb-4">
-        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">AI Platform</span>
-        <span class="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">LangGraph</span>
-        <span class="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">Weaviate</span>
-        <span class="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">SAP OData</span>
-        <span class="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">MCP</span>
-      </div>
-      <h1 class="text-4xl font-extrabold text-gray-900 leading-tight">
-        LEO – Enterprise AI Agent Platform
-      </h1>
-      <p class="mt-4 text-lg text-gray-500 leading-relaxed">
-        A personal AI research project — an agent-native orchestration layer designed to bring LLM-driven automation to SAP enterprise landscapes. Currently under active development and not yet publicly released.
-      </p>
-      <div class="mt-4 inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
-        <span class="text-blue-600 text-sm">🔬</span>
-        <span class="text-sm text-blue-800 font-medium">Personal Side Project · Under Construction</span>
-      </div>
-    </div>
-
-    <!-- IMPACT METRICS -->
-    <div class="grid grid-cols-3 gap-4 mb-12">
-      <div class="bg-blue-600 text-white rounded-xl p-5 text-center">
-        <div class="text-2xl font-extrabold">SAP</div>
-        <div class="text-blue-200 text-xs mt-1">Native Integration</div>
-      </div>
-      <div class="bg-blue-600 text-white rounded-xl p-5 text-center">
-        <div class="text-2xl font-extrabold">Multi</div>
-        <div class="text-blue-200 text-xs mt-1">Agent Orchestration</div>
-      </div>
-      <div class="bg-blue-600 text-white rounded-xl p-5 text-center">
-        <div class="text-2xl font-extrabold">MCP</div>
-        <div class="text-blue-200 text-xs mt-1">Tool Architecture</div>
-      </div>
-    </div>
-
-    <!-- CONTENT -->
-    <div class="space-y-12">
-
-      <div>
-        <h2 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
-          <span class="w-8 h-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center text-sm font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span>
-          Problem
-        </h2>
-        <p class="text-gray-600 leading-relaxed">
-          SAP enterprises lack an AI-native orchestration layer to integrate large language models, enterprise data, and existing workflows into a unified intelligent system. Business processes remain siloed, and the path from raw enterprise data to actionable AI-driven outcomes requires significant custom development for each use case — slowing adoption and limiting scalability.
-        </p>
-      </div>
-
-      <div>
-        <h2 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
-          <span class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-sm font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
-          Solution
-        </h2>
-        <p class="text-gray-600 leading-relaxed mb-4">
-          LEO is being designed and built as a personal AI research project — a modular, scalable foundation for AI adoption across SAP business processes. Still under active development, the platform is intended to enable:
-        </p>
-        <ul class="space-y-3 text-gray-600">
-          <li class="flex gap-3">
-            <span class="text-blue-500 mt-1 font-bold text-sm">→</span>
-            <span><strong class="text-gray-800">Agent-based execution</strong> of business processes through structured reasoning and tool calling</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-blue-500 mt-1 font-bold text-sm">→</span>
-            <span><strong class="text-gray-800">Dynamic tool orchestration</strong> via an MCP-style architecture that exposes SAP functions as callable tools</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-blue-500 mt-1 font-bold text-sm">→</span>
-            <span><strong class="text-gray-800">Semantic layer</strong> over SAP data, enabling natural language interaction with enterprise systems</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-blue-500 mt-1 font-bold text-sm">→</span>
-            <span><strong class="text-gray-800">Integration with SAP OData services</strong> and BTP for real-time data access and transactional execution</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-blue-500 mt-1 font-bold text-sm">→</span>
-            <span><strong class="text-gray-800">Multi-agent workflows</strong> using modern frameworks for complex, multi-step business automation</span>
-          </li>
-        </ul>
-      </div>
-
-      <div>
-        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-sm font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg></span>
-          Tech Stack
-        </h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">LangGraph</div>
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">Langflow</div>
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">Weaviate (Vector DB)</div>
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">SAP OData APIs</div>
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">SAP BTP</div>
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">Python Microservices</div>
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">MCP Tool Architecture</div>
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">Knowledge Graphs</div>
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">Semantic Layer</div>
+  <main id="main">
+    <section class="hero" style="padding:3rem 0 2.5rem;">
+      <div class="container">
+        <div style="font-size:.8125rem;color:var(--color-text-muted);margin-bottom:1.5rem;">
+          <a href="../platforms.html" style="color:var(--color-text-muted);text-decoration:none;">Platforms</a>
+          <span style="margin:0 .5rem;">/</span>
+          <span>LEO</span>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <span class="status-badge status-badge--progress">Flagship Platform &middot; In Development</span>
+        </div>
+        <h1 class="hero-title" style="font-size:clamp(1.75rem,3.5vw,2.5rem);margin-top:.75rem;">LEO &ndash; Enterprise AI Orchestration Platform</h1>
+        <p class="hero-sub">An AI-native orchestration layer designed to bring agentic intelligence into enterprise systems, particularly SAP landscapes. LEO introduces an agent layer that can reason, act, and interact with enterprise data and services.</p>
+        <div style="margin-top:1.5rem;">
+          <a href="../platforms.html#leo" class="btn btn--primary">Full Platform Detail &rarr;</a>
+          <a href="../projects.html" class="btn btn--secondary" style="margin-left:.75rem;">All Projects</a>
         </div>
       </div>
+    </section>
 
-      <div>
-        <h2 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
-          <span class="w-8 h-8 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center text-sm font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></span>
-          Impact
-        </h2>
-        <ul class="space-y-3 text-gray-600">
-          <li class="flex gap-3">
-            <span class="text-green-500 font-bold">✓</span>
-            <span>Enables AI adoption across SAP business processes without bespoke per-use-case development</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-green-500 font-bold">✓</span>
-            <span>Reduces manual decision-making effort through intelligent agent execution</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-green-500 font-bold">✓</span>
-            <span>Provides a scalable, enterprise-grade architecture for future AI expansion</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-green-500 font-bold">✓</span>
-            <span>Bridges the gap between LLM capabilities and SAP transactional systems</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-green-500 font-bold">✓</span>
-            <span>Positions the enterprise for agent-driven operations at scale</span>
-          </li>
-        </ul>
+    <section class="section section--alt">
+      <div class="container--narrow">
+        <span class="section-eyebrow">The Problem</span>
+        <h2 class="section-title">SAP Lacks Native Agentic Intelligence</h2>
+        <div class="prose">
+          <p>SAP enterprises lack an AI-native orchestration layer to integrate large language models, enterprise data, and existing workflows into a unified intelligent system. Business processes remain siloed, and the path from raw enterprise data to actionable AI-driven outcomes requires significant custom development for each use case — slowing adoption and limiting scalability.</p>
+          <p>Every exception requires human intervention. Every decision depends on someone pulling a report. There is no layer that can reason, prioritize, and act on enterprise data dynamically.</p>
+        </div>
       </div>
+    </section>
 
+    <section class="section">
+      <div class="container">
+        <span class="section-eyebrow">Architecture</span>
+        <h2 class="section-title">How LEO Works</h2>
+        <div class="arch-flow" style="margin-bottom:2.5rem;">
+          <div class="arch-node">User / Interface</div>
+          <span class="arch-arrow">&rarr;</span>
+          <div class="arch-node">LEO Agent Runtime</div>
+          <span class="arch-arrow">&rarr;</span>
+          <div class="arch-node">Tool Registry (MCP)</div>
+          <span class="arch-arrow">&rarr;</span>
+          <div class="arch-node">SAP Services</div>
+          <span class="arch-arrow">&rarr;</span>
+          <div class="arch-node">Knowledge Layer</div>
+          <span class="arch-arrow">&rarr;</span>
+          <div class="arch-node">Policy Engine</div>
+        </div>
+        <div class="components-grid">
+          <div class="component-card">
+            <div class="component-label">Runtime</div>
+            <div class="component-name">Agent Runtime (LangGraph)</div>
+            <div class="component-desc">Stateful multi-step workflow execution with tool calling, conditional branching, and human-in-the-loop patterns for governed enterprise processes.</div>
+          </div>
+          <div class="component-card">
+            <div class="component-label">Memory</div>
+            <div class="component-name">Knowledge Layer (Weaviate)</div>
+            <div class="component-desc">Vector search and graph-based memory combining semantic document retrieval with structured enterprise data awareness.</div>
+          </div>
+          <div class="component-card">
+            <div class="component-label">Integration</div>
+            <div class="component-name">Tool Registry (MCP)</div>
+            <div class="component-desc">Structured interaction with SAP OData services, APIs, and enterprise data sources in a governed, auditable way.</div>
+          </div>
+          <div class="component-card">
+            <div class="component-label">Governance</div>
+            <div class="component-name">Policy Engine</div>
+            <div class="component-desc">Execution governance ensuring all agent actions operate within defined enterprise constraints — role-based and auditable.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container">
+        <span class="section-eyebrow">Use Cases</span>
+        <h2 class="section-title">What LEO Enables</h2>
+        <div class="grid-3">
+          <div class="card card--flat" style="padding:1.5rem;">
+            <h4 class="card-title" style="font-size:.9375rem;">Automated Invoice Validation</h4>
+            <p class="card-desc">Agent-driven three-way matching across purchase orders, goods receipts, and supplier invoices — with exception handling and SAP posting.</p>
+          </div>
+          <div class="card card--flat" style="padding:1.5rem;">
+            <h4 class="card-title" style="font-size:.9375rem;">Intelligent Procurement Workflows</h4>
+            <p class="card-desc">Agentic sourcing support — supplier comparison, contract retrieval, approval routing, and SAP requisition creation.</p>
+          </div>
+          <div class="card card--flat" style="padding:1.5rem;">
+            <h4 class="card-title" style="font-size:.9375rem;">Document Understanding and Action</h4>
+            <p class="card-desc">Extract structured information from contracts and purchase documents, then act on them through SAP-connected workflows.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container" style="padding-top:2rem;padding-bottom:3rem;">
+      <a href="../platforms.html#leo" class="btn btn--primary">View Full Platform Detail &rarr;</a>
+      <a href="../projects.html" class="btn btn--secondary btn--sm" style="margin-left:.75rem;">&larr; Back to Projects</a>
     </div>
-
-    <!-- NAVIGATION -->
-    <div class="mt-16 pt-8 border-t border-gray-200 flex justify-between items-center">
-      <a href="../projects.html" class="text-sm text-gray-500 hover:text-blue-600 font-medium">← All Projects</a>
-      <a href="ecodrisil.html" class="text-sm text-blue-600 hover:underline font-medium">Next: Ecodrisil →</a>
-    </div>
-
   </main>
 
-  <!-- FOOTER -->
-    <footer class="site-footer">
+  <footer class="site-footer">
     <div class="footer-inner">
       <span class="footer-copy">&copy; 2025 Vimal Vidyadharan</span>
       <ul class="footer-links">
@@ -196,7 +143,6 @@
       </ul>
     </div>
   </footer>
-
   <script src="../assets/theme.js"></script>
 </body>
 </html>
