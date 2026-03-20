@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procurement Cost Intelligence — SAP Analytics Cloud</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t==='dark'||(t===null&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,sans-serif;font-size:13px;transition:background .25s,color .25s;}
+/* ── LIGHT ── */
+body{background:#f0f4f8;color:#1e293b;}
+.tabs-bar{background:#fff;border-bottom:2px solid #dde4ee;}
+.tab{color:#64748b;}.tab:hover{color:#0d9488;background:#f0fdfb;}
+.tab.active{color:#0d9488;border-bottom:2px solid #0d9488;}
+.card{background:#fff;border:1px solid #dde4ee;border-radius:8px;padding:14px;}
+.card-title{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.yoy-card{background:#2d1b7a;border-radius:8px;padding:14px;}
+.yoy-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:10px;}
+.yoy-table{width:100%;border-collapse:collapse;font-size:11px;}
+.yoy-table th{color:#a5b4fc;padding:3px 6px;text-align:left;border-bottom:1px solid rgba(255,255,255,.15);}
+.yoy-table td{color:#e2e8f0;padding:4px 6px;}
+.yoy-table .yr{color:#94a3b8;font-size:10px;}
+.sav-tile{background:#15803d;border-radius:8px;padding:16px;color:#fff;}
+.sav-label{font-size:11px;color:#86efac;margin-bottom:8px;}
+.sav-num{font-size:28px;font-weight:800;line-height:1;}
+.sav-sub{font-size:11px;color:#bbf7d0;margin-top:4px;}
+.sav-pct{font-size:12px;font-weight:700;display:flex;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.25);}
+.cat-tile{border-radius:8px;padding:14px;color:#fff;}
+.cat-label{font-size:12px;font-weight:700;margin-bottom:2px;}
+.cat-sub{font-size:10px;opacity:.7;margin-bottom:10px;}
+.cat-num{font-size:24px;font-weight:800;line-height:1;margin-bottom:2px;}
+.cat-desc{font-size:10px;opacity:.8;}
+.cat-pct{font-size:11px;font-weight:700;display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.2);}
+.sec-lbl{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.wrap{padding:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.g12{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-bottom:12px;}
+.cw{position:relative;height:220px;}
+.cw-sm{position:relative;height:180px;}
+.cw-lg{position:relative;height:260px;}
+.hdr{padding:10px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#1a2840,#0f1f33);box-shadow:0 2px 8px rgba(0,0,0,.35);}
+.hdr h1{font-size:15px;color:#fff;font-weight:700;}
+.hdr-badge{background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:3px;text-transform:uppercase;margin-right:8px;}
+.period{font-size:11px;color:rgba(255,255,255,.6);}
+.toggle-btn{cursor:pointer;padding:5px 9px;border-radius:5px;font-size:14px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;margin-left:8px;transition:background .2s;}
+.toggle-btn:hover{background:rgba(255,255,255,.25);}
+.tabs-bar{display:flex;padding:0 14px;}
+.tab{padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;font-size:12px;font-weight:600;transition:all .15s;}
+.anon-note{text-align:center;font-size:10px;color:#94a3b8;padding:8px 14px 12px;border-top:1px solid #e2e8f0;margin-top:4px;}
+/* ── DARK ── */
+html.dark body{background:#0d1b2a;color:#e8eaf0;}
+html.dark .tabs-bar{background:#0a1929;border-bottom-color:#1e3a5f;}
+html.dark .tab{color:#4a6080;}
+html.dark .tab:hover{color:#2dd4bf;background:#0d1b2a;}
+html.dark .tab.active{color:#2dd4bf;border-bottom-color:#2dd4bf;}
+html.dark .card{background:#111f31;border-color:#1a3050;}
+html.dark .card-title{color:#4a6080;}
+html.dark .sec-lbl{color:#4a6080;}
+html.dark .anon-note{color:#2a4060;border-top-color:#1a3050;}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:6px;">
+    <span class="hdr-badge">SAP Analytics Cloud</span>
+    <h1>Procurement Cost Intelligence &mdash; 2025</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span class="period">Manufacturing Enterprise &nbsp;&bull;&nbsp; Jan &ndash; Dec 2025</span>
+    <button class="toggle-btn" id="themeBtn" onclick="pToggle()">&#9790;</button>
+  </div>
+</div>
+<div class="tabs-bar">
+  <div class="tab active" onclick="showTab(0)">Overview</div>
+  <div class="tab" onclick="showTab(1)">Spend Analytics</div>
+</div>
+
+<!-- TAB 0: OVERVIEW -->
+<div id="t0" class="wrap">
+<div style="background:#1e293b;color:#94a3b8;font-size:11px;text-align:center;padding:5px 12px;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <span>Sample recreation of a real enterprise SAP Analytics Cloud dashboard &mdash; data anonymised and scaled for confidentiality. Analytics logic, layout, and structure are authentic.</span>
+</div>
+
+  <div class="sec-lbl">Year-on-Year Spending Comparison</div>
+  <div class="g3">
+    <div class="yoy-card">
+      <div class="yoy-title">YoY Spending on Goods</div>
+      <table class="yoy-table">
+        <tr><th>Measures</th><th>Annual Spending</th><th>PO Count</th></tr>
+        <tr><td class="yr">Year</td></tr>
+        <tr><td>2024</td><td>AED 112,380,000</td><td>1,580</td></tr>
+        <tr><td>2025</td><td>AED 74,820,000</td><td>1,790</td></tr>
+      </table>
+    </div>
+    <div class="yoy-card">
+      <div class="yoy-title">YoY Spending on Services</div>
+      <table class="yoy-table">
+        <tr><th>Measures</th><th>Annual Spending</th><th>PO Count</th></tr>
+        <tr><td class="yr">Year</td></tr>
+        <tr><td>2024</td><td>AED 26,620,000</td><td>1,160</td></tr>
+        <tr><td>2025</td><td>AED 34,800,000</td><td>1,095</td></tr>
+      </table>
+    </div>
+    <div class="yoy-card">
+      <div class="yoy-title">YoY Total Spending</div>
+      <table class="yoy-table">
+        <tr><th>Measures</th><th>Annual Spending</th></tr>
+        <tr><td class="yr">Year</td></tr>
+        <tr><td>2024</td><td>AED 139,000,000</td></tr>
+        <tr><td>2025</td><td>AED 109,620,000</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec-lbl">Savings Summary</div>
+  <div class="g3">
+    <div class="sav-tile">
+      <div class="sav-label">Total Estimated Savings on Goods &nbsp;·&nbsp; AED, %</div>
+      <div class="sav-num">1,808,000</div>
+      <div class="sav-sub">Estimated Cost Savings (AED)</div>
+      <div class="sav-pct"><span>Total Savings %</span><span>3.20%</span></div>
+    </div>
+    <div class="sav-tile">
+      <div class="sav-label">Discounts on Non-Regular Purchases &nbsp;·&nbsp; AED, %</div>
+      <div class="sav-num">979,000</div>
+      <div class="sav-sub">Absolute Discount (AED)</div>
+      <div class="sav-pct"><span>Absolute Discount %</span><span>1.76%</span></div>
+    </div>
+    <div class="sav-tile">
+      <div class="sav-label">Asset Disposal Revenue &nbsp;·&nbsp; AED</div>
+      <div class="sav-num">415,500</div>
+      <div class="sav-sub">Payment Received in AED</div>
+      <div style="margin-top:22px;"></div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">Savings by Procurement Category</div>
+  <div class="g4">
+    <div class="cat-tile" style="background:#2563eb;">
+      <div class="cat-label">Bags</div>
+      <div class="cat-sub">in AED, %</div>
+      <div class="cat-num">1,618,000</div>
+      <div class="cat-desc">Estimated Cost Savings (AED)</div>
+      <div class="cat-pct"><span>% Savings</span><span>3.70%</span></div>
+    </div>
+    <div class="cat-tile" style="background:#0891b2;">
+      <div class="cat-label">Other Packing Material</div>
+      <div class="cat-sub">in AED, %</div>
+      <div class="cat-num">21,490</div>
+      <div class="cat-desc">Estimated Cost Savings (AED)</div>
+      <div class="cat-pct"><span>% Savings</span><span>0.47%</span></div>
+    </div>
+    <div class="cat-tile" style="background:#dc2626;">
+      <div class="cat-label">Industrial Chemicals</div>
+      <div class="cat-sub">in AED, %</div>
+      <div class="cat-num">70,560</div>
+      <div class="cat-desc">Estimated Cost Savings (AED)</div>
+      <div class="cat-pct"><span>% Savings</span><span>1.83%</span></div>
+    </div>
+    <div class="cat-tile" style="background:#d97706;">
+      <div class="cat-label">Fuel &amp; Gas</div>
+      <div class="cat-sub">in AED, %</div>
+      <div class="cat-num">96,980</div>
+      <div class="cat-desc">Estimated Cost Savings (AED)</div>
+      <div class="cat-pct"><span>% Savings</span><span>13.39%</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 1: SPEND ANALYTICS -->
+<div id="t1" class="wrap" style="display:none;">
+  <div class="g12">
+    <div class="card">
+      <div class="card-title">Annual Spend % by Material Group</div>
+      <div class="cw"><canvas id="cDonut"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Purchasing Trend — Monthly Spend Value (AED M) &amp; PO Count</div>
+      <div class="cw-lg"><canvas id="cTrend"></canvas></div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-title">Top 5 Bag Items by Order Value</div>
+      <div class="cw-sm"><canvas id="cBags"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Top 5 Bag Suppliers by Order Value</div>
+      <div class="cw-sm"><canvas id="cBagSupp"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Top 5 Other Packing Material by Value</div>
+      <div class="cw-sm"><canvas id="cPack"></canvas></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Top 5 Industrial Chemical Suppliers</div>
+      <div class="cw"><canvas id="cChem"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Top 5 Outsourced Service Suppliers</div>
+      <div class="cw"><canvas id="cOut"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<div class="anon-note">Analytics structure &amp; methodology authentic. All figures, supplier names, and vendor references anonymised for confidentiality.</div>
+
+<script>
+var AC = [];
+function showTab(n) {
+  document.getElementById('t0').style.display = n===0?'block':'none';
+  document.getElementById('t1').style.display = n===1?'block':'none';
+  document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('active',i===n);});
+  if(n===1 && AC.length===0) initCharts();
+}
+function pToggle() {
+  var d = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', d?'dark':'light');
+  syncIcon(); updateCharts();
+}
+function syncIcon() {
+  var d = document.documentElement.classList.contains('dark');
+  document.getElementById('themeBtn').textContent = d ? '\u2600' : '\u263D';
+}
+function updateCharts() {
+  var d = document.documentElement.classList.contains('dark');
+  var tc = d?'#94a3b8':'#64748b', gc = d?'#1a3050':'#e2e8f0';
+  AC.forEach(function(c) {
+    if(c.options.scales) Object.values(c.options.scales).forEach(function(ax){
+      if(ax.ticks) ax.ticks.color=tc;
+      if(ax.grid) ax.grid.color=gc;
+    });
+    if(c.options.plugins&&c.options.plugins.legend&&c.options.plugins.legend.labels)
+      c.options.plugins.legend.labels.color=d?'#cbd5e1':'#374151';
+    c.update('none');
+  });
+}
+window.addEventListener('message',function(e){
+  if(e.data&&e.data.type==='portfolioTheme'){
+    e.data.dark?document.documentElement.classList.add('dark'):document.documentElement.classList.remove('dark');
+    syncIcon(); updateCharts();
+  }
+});
+window.addEventListener('storage',function(e){
+  if(e.key==='theme'){
+    e.newValue==='dark'?document.documentElement.classList.add('dark'):document.documentElement.classList.remove('dark');
+    syncIcon(); updateCharts();
+  }
+});
+if(window.self!==window.top) document.getElementById('themeBtn').style.display='none';
+syncIcon();
+
+function mk(id,cfg){var c=new Chart(document.getElementById(id),cfg);AC.push(c);return c;}
+function isDk(){return document.documentElement.classList.contains('dark');}
+function tc(){return isDk()?'#94a3b8':'#64748b';}
+function gc(){return isDk()?'#1a3050':'#e2e8f0';}
+function axOpts(cb){return{grid:{color:gc()},ticks:{color:tc(),font:{size:10},callback:cb}};}
+
+function initCharts(){
+  var d=isDk(),T=tc(),G=gc();
+  // Donut
+  mk('cDonut',{type:'doughnut',data:{
+    labels:['Bags','Services','Fuel & Gas','Packing Material','Industrial Chem','Other'],
+    datasets:[{data:[39.98,31.76,16.36,4.20,4.18,3.52],
+      backgroundColor:['#facc15','#3b82f6','#f97316','#ef4444','#06b6d4','#8b5cf6'],
+      borderWidth:2,borderColor:d?'#0d1b2a':'#fff'}]
+  },options:{responsive:true,maintainAspectRatio:false,cutout:'55%',
+    plugins:{legend:{position:'bottom',labels:{color:T,font:{size:10},boxWidth:12,padding:6}},
+    tooltip:{callbacks:{label:function(c){return c.label+': '+c.parsed+'%';}}}}}});
+
+  // Monthly trend
+  var months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  var vals=[9.65,7.87,3.51,5.78,6.55,6.66,8.17,22.00,10.25,6.11,8.05,15.04];
+  var pocs=[226,191,205,225,246,196,250,267,228,304,219,281];
+  mk('cTrend',{type:'bar',data:{labels:months,datasets:[
+    {label:'Spend (AED M)',data:vals,backgroundColor:'#60a5fa',yAxisID:'y',order:2},
+    {label:'PO Count',data:pocs,type:'line',borderColor:'#f97316',backgroundColor:'#f97316',
+     pointRadius:4,pointBackgroundColor:'#f97316',yAxisID:'y2',tension:.3,order:1}
+  ]},options:{responsive:true,maintainAspectRatio:false,
+    scales:{
+      y:{grid:{color:G},ticks:{color:T,font:{size:10},callback:function(v){return v+'M';}},position:'left'},
+      y2:{grid:{drawOnChartArea:false},ticks:{color:T,font:{size:10}},position:'right'},
+      x:{grid:{display:false},ticks:{color:T,font:{size:9}}}
+    },plugins:{legend:{labels:{color:T,font:{size:10},boxWidth:12}}}}});
+
+  // Top 5 Bags (horizontal)
+  mk('cBags',{type:'bar',data:{
+    labels:['Standard Blue-50Kg','CIS Print-50Kg','Jumbo 1200Kg','TCP Special-50Kg','Standard Red-50Kg'],
+    datasets:[{data:[20580000,5352000,4516000,2216000,1823000],
+      backgroundColor:['#facc15','#f59e0b','#d97706','#78716c','#a8a29e']}]
+  },options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    scales:{x:{grid:{color:G},ticks:{color:T,font:{size:9},callback:function(v){return (v/1e6).toFixed(1)+'M';}}},
+            y:{grid:{display:false},ticks:{color:T,font:{size:9}}}},
+    plugins:{legend:{display:false}}}});
+
+  // Top 5 Bag Suppliers
+  mk('cBagSupp',{type:'bar',data:{
+    labels:['Supplier Alpha','Supplier Beta','Supplier Gamma','Supplier Delta','Supplier Epsilon'],
+    datasets:[{data:[10780000,8382000,5623000,4288000,3634000],
+      backgroundColor:['#06b6d4','#0891b2','#0e7490','#155e75','#164e63']}]
+  },options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    scales:{x:{grid:{color:G},ticks:{color:T,font:{size:9},callback:function(v){return (v/1e6).toFixed(1)+'M';}}},
+            y:{grid:{display:false},ticks:{color:T,font:{size:9}}}},
+    plugins:{legend:{display:false}}}});
+
+  // Top 5 Packing
+  mk('cPack',{type:'bar',data:{
+    labels:['Pallet Type A','Pallet Type B','LDPE Sheeting','Textile Thread','Pallet Type C'],
+    datasets:[{data:[2090000,556000,431000,418000,300000],
+      backgroundColor:['#4ade80','#22c55e','#16a34a','#15803d','#166534']}]
+  },options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    scales:{x:{grid:{color:G},ticks:{color:T,font:{size:9},callback:function(v){return (v/1000).toFixed(0)+'K';}}},
+            y:{grid:{display:false},ticks:{color:T,font:{size:9}}}},
+    plugins:{legend:{display:false}}}});
+
+  // Top 5 Chemical Suppliers
+  mk('cChem',{type:'bar',data:{
+    labels:['Chem Supplier 1','Chem Supplier 2','Chem Supplier 3','Chem Supplier 4','Chem Supplier 5'],
+    datasets:[{data:[941000,781000,772000,399000,244000],
+      backgroundColor:['#ef4444','#dc2626','#b91c1c','#991b1b','#7f1d1d']}]
+  },options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    scales:{x:{grid:{color:G},ticks:{color:T,font:{size:9},callback:function(v){return (v/1000).toFixed(0)+'K';}}},
+            y:{grid:{display:false},ticks:{color:T,font:{size:9}}}},
+    plugins:{legend:{display:false}}}});
+
+  // Top 5 Outsource
+  mk('cOut',{type:'bar',data:{
+    labels:['Outsource Alpha','Outsource Beta','Outsource Gamma','Outsource Delta','Outsource Epsilon'],
+    datasets:[{data:[2206000,1707000,830000,459000,340000],
+      backgroundColor:['#8b5cf6','#7c3aed','#6d28d9','#5b21b6','#4c1d95']}]
+  },options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    scales:{x:{grid:{color:G},ticks:{color:T,font:{size:9},callback:function(v){return (v/1000).toFixed(0)+'K';}}},
+            y:{grid:{display:false},ticks:{color:T,font:{size:9}}}},
+    plugins:{legend:{display:false}}}});
+}
+</script>
+</body></html>

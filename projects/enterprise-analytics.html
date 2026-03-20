@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Analytics & AI Intelligence | Vimal Vidyadharan</title>
+  <meta name="description" content="How I built a unified SAP Analytics Cloud intelligence layer across production, procurement, and commercial operations — driving $7M+ in annual savings.">
+  <meta property="og:title" content="Enterprise Analytics & AI Intelligence | Vimal Vidyadharan">
+  <meta property="og:description" content="How I built a unified SAP Analytics Cloud intelligence layer across production, procurement, and commercial operations — driving $7M+ in annual savings.">
+  <meta property="og:image" content="https://lamiv.github.io/assets/og-cover.jpg">
+  <meta property="og:url" content="https://lamiv.github.io/projects/enterprise-analytics.html">
+  <link rel="canonical" href="https://lamiv.github.io/projects/enterprise-analytics.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    (function(){var t=localStorage.getItem('theme');if(t==='dark'||(t===null&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();
+  </script>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans">
+  <!-- SKIP NAV -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-blue-600 text-white px-4 py-2 rounded z-50 text-sm font-medium">Skip to main content</a>
+
+  <!-- NAVBAR -->
+  <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="../index.html" class="font-bold text-lg tracking-tight text-gray-900 hover:text-blue-600 transition-colors">Vimal Vidyadharan</a>
+      <div class="space-x-6 text-sm font-medium text-gray-600">
+        <a href="../index.html" class="hover:text-blue-600 transition-colors">Home</a>
+        <a href="../projects.html" class="text-blue-600 underline underline-offset-4" aria-current="page">Projects</a>
+        <a href="../about.html" class="hover:text-blue-600 transition-colors">About</a>
+        <a href="../contact.html" class="hover:text-blue-600 transition-colors">Contact</a>
+      </div>
+      <button id="theme-toggle" onclick="toggleTheme()" title="Switch theme" aria-label="Toggle dark/light mode">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <main id="main-content" class="max-w-4xl mx-auto px-6 py-16">
+
+    <!-- BREADCRUMB -->
+    <div class="text-sm text-gray-400 mb-8">
+      <a href="../projects.html" class="hover:text-blue-600">Projects</a>
+      <span class="mx-2">→</span>
+      <span class="text-gray-600">Enterprise Analytics & AI Intelligence</span>
+    </div>
+
+    <!-- HEADER -->
+    <div class="mb-10">
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">SAP · Analytics · AI</span>
+        <span class="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">SAP Analytics Cloud</span>
+        <span class="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">S/4HANA</span>
+        <span class="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">Predictive Analytics</span>
+        <span class="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">ELT Pipelines</span>
+      </div>
+      <h1 class="text-4xl font-extrabold text-gray-900 leading-tight">
+        Enterprise Analytics & AI Intelligence
+      </h1>
+      <p class="mt-4 text-lg text-gray-500 leading-relaxed">
+        Built a unified analytics intelligence layer across a large continuous manufacturing enterprise — replacing fragmented manual reporting with real-time SAP Analytics Cloud dashboards, predictive yield optimization, procurement intelligence, and commercial performance analytics.
+      </p>
+    </div>
+
+    <!-- IMPACT METRICS -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+      <div class="bg-purple-600 text-white rounded-xl p-5 text-center">
+        <div class="text-2xl font-extrabold">$7M+</div>
+        <div class="text-purple-200 text-xs mt-1">Annual Savings</div>
+      </div>
+      <div class="bg-purple-600 text-white rounded-xl p-5 text-center">
+        <div class="text-2xl font-extrabold">35%</div>
+        <div class="text-purple-200 text-xs mt-1">Faster Reporting</div>
+      </div>
+      <div class="bg-purple-600 text-white rounded-xl p-5 text-center">
+        <div class="text-2xl font-extrabold">6</div>
+        <div class="text-purple-200 text-xs mt-1">Live Dashboards</div>
+      </div>
+      <div class="bg-purple-600 text-white rounded-xl p-5 text-center">
+        <div class="text-2xl font-extrabold">Real-time</div>
+        <div class="text-purple-200 text-xs mt-1">Operational Visibility</div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="space-y-14">
+
+      <!-- PROBLEM -->
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+          <span class="w-8 h-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center text-sm font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span>
+          Problem
+        </h2>
+        <p class="text-gray-600 leading-relaxed">
+          The enterprise was operating with fragmented data and no unified visibility across production, procurement, HR, and logistics. Reporting relied on manual consolidation from multiple SAP modules, decision-making lagged behind operational reality by days, and there was no mechanism to predict yield loss before it materialized on the production line. Senior leadership had no real-time picture of commercial performance vs. targets.
+        </p>
+      </div>
+
+      <!-- SOLUTION -->
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-sm font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+          Analytics Architecture
+        </h2>
+        <p class="text-gray-600 leading-relaxed mb-6">
+          Implemented SAP Analytics Cloud as the intelligence layer across all business functions, backed by ELT pipelines pulling from S/4HANA, manufacturing execution systems, and logistics data. Four purpose-built dashboards, each targeting a specific decision domain:
+        </p>
+
+        <!-- SAC DASHBOARD PREVIEW -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-4">
+          <h3 class="font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <span class="text-purple-500">📊</span> Yield Performance & Refinery Intelligence
+          </h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">
+            Six-tab SAC dashboard tracking production yield, raw material quality, by-product ratios, and annual trend analysis. Predictive analytics enable proactive intervention before yield loss occurs — the primary source of the <strong class="text-gray-700">$7M+ projected annual savings</strong>.
+          </p>
+          <div class="mt-4 rounded-xl overflow-hidden border border-purple-200 shadow-lg">
+            <div class="bg-purple-50 border-b border-purple-200 px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 bg-purple-600 text-white text-xs font-bold px-2.5 py-1 rounded">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  SAP Analytics Cloud
+                </span>
+                <span class="text-xs font-semibold text-purple-800">Yield Performance Dashboard — Live Preview</span>
+              </div>
+              <a href="../assets/sac-dashboard.html" target="_blank"
+                 class="text-xs font-semibold text-purple-700 hover:text-purple-900 flex items-center gap-1 transition-colors">
+                Open full dashboard
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+            <div class="overflow-x-auto">
+              <iframe src="../assets/sac-dashboard.html" title="SAP Analytics Cloud — Refinery Performance Dashboard"
+                style="width:100%;min-width:0;height:560px;border:none;display:block;" loading="lazy"></iframe>
+            </div>
+            <div class="bg-gray-50 border-t border-purple-100 px-4 py-2 text-center">
+              <p class="text-xs text-gray-400 italic">Dashboard structure and analytics logic are authentic. Figures anonymised for confidentiality. Click tabs to explore all 6 dashboard views.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TRAFFIC DASHBOARD -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-4">
+          <h3 class="font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <span class="text-blue-500">🚚</span> Operations & Traffic Management Intelligence
+          </h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">
+            Real-time logistics visibility dashboard monitoring truck cycle times, loading throughput, and dispatch performance across all product lines and shipping types. Enabled operations management to identify bottlenecks and balance load across dispatch channels.
+          </p>
+          <div class="mt-4 rounded-xl overflow-hidden border border-blue-200 shadow-lg">
+            <div class="bg-blue-50 border-b border-blue-200 px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h8l2-2z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13 6h4l3 3v7h-2"/></svg>
+                  SAP Analytics Cloud
+                </span>
+                <span class="text-xs font-semibold text-blue-800">Traffic Management Dashboard — Live Preview</span>
+              </div>
+              <a href="../assets/traffic-dashboard.html" target="_blank"
+                 class="text-xs font-semibold text-blue-700 hover:text-blue-900 flex items-center gap-1 transition-colors">
+                Open full dashboard
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+            <div class="overflow-x-auto">
+              <iframe src="../assets/traffic-dashboard.html" title="Traffic Management Dashboard"
+                style="width:100%;min-width:0;height:520px;border:none;display:block;" loading="lazy"></iframe>
+            </div>
+            <div class="bg-gray-50 border-t border-blue-100 px-4 py-2 text-center">
+              <p class="text-xs text-gray-400 italic">Live truck monitoring, cycle time KPIs, and multi-dimensional breakdown by shipping type, loading structure, product, and dispatch line. Figures anonymised for confidentiality.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROCUREMENT DASHBOARD -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-4">
+          <h3 class="font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <span class="text-teal-500">🛒</span> Procurement Cost Intelligence
+          </h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">
+            Two-tab procurement analytics dashboard covering YoY cost variance across all material categories, category savings analysis, supplier concentration risk, and monthly spend trends. Powers data-driven procurement negotiations and strategic sourcing decisions.
+          </p>
+          <div class="mt-4 rounded-xl overflow-hidden border border-teal-200 shadow-lg">
+            <div class="bg-teal-50 border-b border-teal-200 px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 bg-teal-600 text-white text-xs font-bold px-2.5 py-1 rounded">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                  Procurement Analytics
+                </span>
+                <span class="text-xs font-semibold text-teal-800">Cost Intelligence Dashboard — Live Preview</span>
+              </div>
+              <a href="../assets/procurement-dashboard.html" target="_blank"
+                 class="text-xs font-semibold text-teal-700 hover:text-teal-900 flex items-center gap-1 transition-colors">
+                Open full dashboard
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+            <div class="overflow-x-auto">
+              <iframe src="../assets/procurement-dashboard.html" title="Procurement Cost Intelligence Dashboard"
+                style="width:100%;min-width:0;height:540px;border:none;display:block;" loading="lazy"></iframe>
+            </div>
+            <div class="bg-gray-50 border-t border-teal-100 px-4 py-2 text-center">
+              <p class="text-xs text-gray-400 italic">Category savings analysis, YoY cost trends, and supplier concentration intelligence. Figures anonymised for confidentiality.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SALES DASHBOARD -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+          <h3 class="font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <span class="text-indigo-500">📈</span> Sales Performance Analytics
+          </h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">
+            Three-tab commercial performance dashboard — revenue overview by product, channel, and customer; target vs. actual analysis revealing channel-level overperformance and underperformance; and margin intelligence identifying where the 35.3% gross margin is earned and where it can be defended.
+          </p>
+          <div class="mt-4 rounded-xl overflow-hidden border border-indigo-200 shadow-lg">
+            <div class="bg-indigo-50 border-b border-indigo-200 px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 bg-indigo-600 text-white text-xs font-bold px-2.5 py-1 rounded">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/><polyline points="1 20 23 20"/></svg>
+                  Sales Analytics
+                </span>
+                <span class="text-xs font-semibold text-indigo-800">Sales Performance Dashboard — Live Preview</span>
+              </div>
+              <a href="../assets/sales-dashboard.html" target="_blank"
+                 class="text-xs font-semibold text-indigo-700 hover:text-indigo-900 flex items-center gap-1 transition-colors">
+                Open full dashboard
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+            <div class="overflow-x-auto">
+              <iframe src="../assets/sales-dashboard.html" title="Sales Performance Analytics Dashboard"
+                style="width:100%;min-width:0;height:540px;border:none;display:block;" loading="lazy"></iframe>
+            </div>
+            <div class="bg-gray-50 border-t border-indigo-100 px-4 py-2 text-center">
+              <p class="text-xs text-gray-400 italic">Revenue, target vs. actual, and margin intelligence across channels, products, and customers. Figures anonymised for confidentiality.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TECH STACK -->
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-sm font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg></span>
+          Tech Stack
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">SAP Analytics Cloud</div>
+          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">SAP S/4HANA</div>
+          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">SAP BTP</div>
+          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">ELT Pipelines</div>
+          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">Predictive Analytics</div>
+          <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700">Chart.js / HTML5</div>
+        </div>
+      </div>
+
+      <!-- IMPACT -->
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+          <span class="w-8 h-8 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center text-sm font-bold"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></span>
+          Impact
+        </h2>
+        <ul class="space-y-3 text-gray-600">
+          <li class="flex gap-3"><span class="text-green-500 font-bold">✓</span><span><strong class="text-gray-800">$7M+ projected annual savings</strong> from AI-driven yield optimization and predictive intervention</span></li>
+          <li class="flex gap-3"><span class="text-green-500 font-bold">✓</span><span><strong class="text-gray-800">35% reduction</strong> in reporting cycle time — from multi-day manual consolidation to real-time dashboards</span></li>
+          <li class="flex gap-3"><span class="text-green-500 font-bold">✓</span><span><strong class="text-gray-800">4 live intelligence dashboards</strong> deployed across production, logistics, procurement, and commercial functions</span></li>
+          <li class="flex gap-3"><span class="text-green-500 font-bold">✓</span><span>Procurement intelligence enabled data-driven negotiation, with AED 1.8M+ in identified cost savings</span></li>
+          <li class="flex gap-3"><span class="text-green-500 font-bold">✓</span><span>Sales dashboard surfaced channel-level target deviations, enabling commercial strategy correction within the year</span></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="mt-16 pt-8 border-t border-gray-200 flex justify-between items-center">
+      <a href="digital-transformation.html" class="text-sm text-blue-600 hover:underline font-medium">← Digital Transformation Program</a>
+      <a href="leo.html" class="text-sm text-blue-600 hover:underline font-medium">Next: LEO AI →</a>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-200 bg-white mt-8">
+    <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+      <span>© 2026 Vimal Vidyadharan. All rights reserved.</span>
+      <div class="space-x-6 mt-4 md:mt-0">
+        <a href="https://linkedin.com/in/vimz" target="_blank" class="hover:text-gray-700">LinkedIn</a>
+        <a href="mailto:vimzpy@gmail.com" class="hover:text-gray-700">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/theme.js"></script>
+</body>
+</html>

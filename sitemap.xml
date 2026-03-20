@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://lamiv.github.io/</loc><priority>1.0</priority></url>
+  <url><loc>https://lamiv.github.io/projects.html</loc><priority>0.9</priority></url>
+  <url><loc>https://lamiv.github.io/about.html</loc><priority>0.8</priority></url>
+  <url><loc>https://lamiv.github.io/contact.html</loc><priority>0.7</priority></url>
+  <url><loc>https://lamiv.github.io/projects/enterprise-analytics.html</loc><priority>0.85</priority></url>
+  <url><loc>https://lamiv.github.io/projects/digital-transformation.html</loc><priority>0.85</priority></url>
+  <url><loc>https://lamiv.github.io/projects/leo.html</loc><priority>0.8</priority></url>
+  <url><loc>https://lamiv.github.io/projects/ecodrisil.html</loc><priority>0.8</priority></url>
+  <url><loc>https://lamiv.github.io/projects/vision-ai.html</loc><priority>0.75</priority></url>
+  <url><loc>https://lamiv.github.io/projects/ai-research.html</loc><priority>0.75</priority></url>
+</urlset>

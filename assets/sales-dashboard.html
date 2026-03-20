@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Performance Analytics</title>
+<script>
+(function(){
+  var t=localStorage.getItem('theme');
+  if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
+    document.documentElement.classList.add('dark');
+  }
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;background:#f8fafc;color:#1e293b;transition:background .2s,color .2s}
+html.dark body{background:#0f172a;color:#e2e8f0}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 60%,#4338ca 100%);color:#fff;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-shrink:0}
+.hdr-left{display:flex;align-items:center;gap:.75rem}
+.hdr-icon{width:2.25rem;height:2.25rem;background:rgba(255,255,255,.18);border-radius:.5rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{font-size:1.05rem;font-weight:700;letter-spacing:-.01em}
+.hdr-sub{font-size:.75rem;color:rgba(255,255,255,.65);margin-top:.1rem}
+.hdr-right{display:flex;align-items:center;gap:.5rem}
+.hdr-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:1rem;padding:.25rem .65rem;font-size:.7rem;font-weight:600;color:#e0e7ff}
+
+/* THEME TOGGLE */
+#themeBtn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:.4rem;width:2rem;height:2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#e0e7ff;transition:background .15s}
+#themeBtn:hover{background:rgba(255,255,255,.22)}
+#themeBtn svg{width:1rem;height:1rem;fill:currentColor}
+
+/* TABS */
+.tab-bar{background:#fff;border-bottom:1px solid #e2e8f0;display:flex;gap:0;padding:0 1.5rem;flex-shrink:0}
+html.dark .tab-bar{background:#1e293b;border-color:#334155}
+.tab-btn{padding:.65rem 1.1rem;font-size:.8rem;font-weight:600;color:#64748b;border:none;border-bottom:2.5px solid transparent;background:transparent;cursor:pointer;transition:color .15s,border-color .15s;white-space:nowrap}
+.tab-btn:hover{color:#4f46e5}
+.tab-btn.active{color:#4f46e5;border-bottom-color:#4f46e5}
+html.dark .tab-btn{color:#94a3b8}
+html.dark .tab-btn.active{color:#818cf8;border-bottom-color:#818cf8}
+html.dark .tab-btn:hover{color:#a5b4fc}
+
+/* PANELS */
+.tab-panel{display:none;padding:1.25rem 1.5rem;overflow-y:auto;flex:1;min-height:0}
+.tab-panel.active{display:block}
+
+/* KPI TILES */
+.kpi-row{display:grid;gap:.75rem;margin-bottom:1.25rem}
+.kpi-row.cols-4{grid-template-columns:repeat(4,1fr)}
+.kpi-row.cols-2{grid-template-columns:repeat(2,1fr)}
+.kpi-row.cols-3{grid-template-columns:repeat(3,1fr)}
+.kpi{background:#fff;border:1px solid #e2e8f0;border-radius:.6rem;padding:.85rem 1rem;position:relative;overflow:hidden}
+html.dark .kpi{background:#1e293b;border-color:#334155}
+.kpi-label{font-size:.7rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem}
+html.dark .kpi-label{color:#94a3b8}
+.kpi-val{font-size:1.35rem;font-weight:700;color:#1e293b;line-height:1.1}
+html.dark .kpi-val{color:#f1f5f9}
+.kpi-sub{font-size:.72rem;color:#64748b;margin-top:.2rem}
+html.dark .kpi-sub{color:#94a3b8}
+.kpi-badge{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .45rem;border-radius:.25rem;font-size:.7rem;font-weight:700;margin-top:.3rem}
+.kpi-badge.up{background:#dcfce7;color:#166534}
+.kpi-badge.dn{background:#fee2e2;color:#991b1b}
+html.dark .kpi-badge.up{background:#052e16;color:#86efac}
+html.dark .kpi-badge.dn{background:#450a0a;color:#fca5a5}
+.kpi-accent{position:absolute;top:0;right:0;width:.3rem;height:100%;border-radius:0 .6rem .6rem 0}
+
+/* CHART CARDS */
+.chart-grid{display:grid;gap:.75rem;margin-bottom:1.25rem}
+.chart-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.chart-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.chart-grid.cols-1{grid-template-columns:1fr}
+.chart-card{background:#fff;border:1px solid #e2e8f0;border-radius:.6rem;padding:.9rem 1rem}
+html.dark .chart-card{background:#1e293b;border-color:#334155}
+.card-title{font-size:.78rem;font-weight:700;color:#1e293b;margin-bottom:.65rem;display:flex;align-items:center;gap:.5rem}
+html.dark .card-title{color:#e2e8f0}
+.card-title-dot{width:.55rem;height:.55rem;border-radius:50%;flex-shrink:0}
+.chart-wrap{position:relative}
+
+/* TARGET VS ACTUAL SECTION */
+.tva-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-bottom:1rem}
+.tva-card{background:#fff;border:1px solid #e2e8f0;border-radius:.6rem;padding:1rem;display:flex;flex-direction:column;gap:.7rem}
+html.dark .tva-card{background:#1e293b;border-color:#334155}
+.tva-header{display:flex;align-items:center;justify-content:space-between}
+.tva-channel{font-size:.85rem;font-weight:700;color:#1e293b}
+html.dark .tva-channel{color:#f1f5f9}
+.tva-pill{padding:.2rem .6rem;border-radius:1rem;font-size:.72rem;font-weight:700}
+.tva-pill.pos{background:#dcfce7;color:#166534}
+.tva-pill.neg{background:#fee2e2;color:#991b1b}
+html.dark .tva-pill.pos{background:#052e16;color:#86efac}
+html.dark .tva-pill.neg{background:#450a0a;color:#fca5a5}
+.tva-vals{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.tva-val-block{text-align:center;padding:.4rem;border-radius:.35rem}
+.tva-val-block.target{background:#f1f5f9}
+.tva-val-block.actual{background:#ede9fe}
+html.dark .tva-val-block.target{background:#334155}
+html.dark .tva-val-block.actual{background:#1e1b4b}
+.tva-val-label{font-size:.65rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.03em}
+html.dark .tva-val-label{color:#94a3b8}
+.tva-val-num{font-size:1.05rem;font-weight:700;color:#1e293b;margin-top:.1rem}
+html.dark .tva-val-num{color:#f1f5f9}
+.tva-bar-wrap{height:.45rem;background:#e2e8f0;border-radius:.25rem;overflow:hidden}
+html.dark .tva-bar-wrap{background:#334155}
+.tva-bar-fill{height:100%;border-radius:.25rem;transition:width .4s ease}
+
+/* MARGIN SECTION */
+.margin-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.25rem}
+
+/* SECTION HEADER */
+.section-hdr{font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;padding-bottom:.35rem;border-bottom:1px solid #e2e8f0}
+html.dark .section-hdr{color:#94a3b8;border-color:#334155}
+
+/* LAYOUT */
+.dashboard{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+</style>
+</head>
+<body>
+<div class="dashboard">
+<div style="background:#1e293b;color:#94a3b8;font-size:11px;text-align:center;padding:5px 12px;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <span>Sample recreation of a real enterprise SAP Analytics Cloud dashboard &mdash; data anonymised and scaled for confidentiality. Analytics logic, layout, and structure are authentic.</span>
+</div>
+
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/><polyline points="1 20 23 20"/></svg>
+    </div>
+    <div>
+      <div class="hdr-title">Sales Performance Analytics</div>
+      <div class="hdr-sub">Revenue · Targets · Margin Intelligence — FY 2025</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-badge">FY 2025</span>
+    <span class="hdr-badge">AED</span>
+    <button id="themeBtn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle dark/light mode">
+      <svg id="iconSun" viewBox="0 0 24 24" style="display:none"><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 5a7 7 0 100 14A7 7 0 0012 5z"/></svg>
+      <svg id="iconMoon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar" role="tablist">
+  <button class="tab-btn active" onclick="switchTab(0)" role="tab">Revenue Overview</button>
+  <button class="tab-btn" onclick="switchTab(1)" role="tab">Target vs Actual</button>
+  <button class="tab-btn" onclick="switchTab(2)" role="tab">Margin Analysis</button>
+</div>
+
+<!-- PANEL 0: REVENUE OVERVIEW -->
+<div class="tab-panel active" id="panel-0">
+
+  <!-- KPI row -->
+  <div class="kpi-row cols-4">
+    <div class="kpi" style="border-top:3px solid #4f46e5">
+      <div class="kpi-label">Total Revenue 2025</div>
+      <div class="kpi-val">AED 172.6M</div>
+      <div class="kpi-sub">vs AED 144.7M in 2024</div>
+      <span class="kpi-badge up">▲ +19.4% YoY</span>
+    </div>
+    <div class="kpi" style="border-top:3px solid #0891b2">
+      <div class="kpi-label">Total Volume 2025</div>
+      <div class="kpi-val">148,400 MT</div>
+      <div class="kpi-sub">vs 131,200 MT in 2024</div>
+      <span class="kpi-badge up">▲ +13.1% YoY</span>
+    </div>
+    <div class="kpi" style="border-top:3px solid #059669">
+      <div class="kpi-label">Avg Realised Price</div>
+      <div class="kpi-val">AED 1,163/MT</div>
+      <div class="kpi-sub">vs AED 1,103/MT in 2024</div>
+      <span class="kpi-badge up">▲ +5.4% YoY</span>
+    </div>
+    <div class="kpi" style="border-top:3px solid #d97706">
+      <div class="kpi-label">Active Customers</div>
+      <div class="kpi-val">247</div>
+      <div class="kpi-sub">Across 4 sales channels</div>
+      <span class="kpi-badge up">▲ +18 new</span>
+    </div>
+  </div>
+
+  <!-- Charts row 1: By product family + By channel -->
+  <div class="chart-grid cols-2">
+    <div class="chart-card">
+      <div class="card-title"><span class="card-title-dot" style="background:#4f46e5"></span>Revenue by Product Line (AED M)</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="c_prodLine"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="card-title"><span class="card-title-dot" style="background:#0891b2"></span>Revenue by Channel — 2025 vs 2024 (AED M)</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="c_channel"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts row 2: Top customers + By class -->
+  <div class="chart-grid cols-2">
+    <div class="chart-card">
+      <div class="card-title"><span class="card-title-dot" style="background:#7c3aed"></span>Top 10 Customers by Revenue — 2025 (AED M)</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="c_topCust"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="card-title"><span class="card-title-dot" style="background:#059669"></span>Revenue by Grade Class — 2025 vs 2024 (AED M)</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="c_gradeClass"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- PANEL 1: TARGET VS ACTUAL -->
+<div class="tab-panel" id="panel-1">
+
+  <div class="kpi-row cols-3" style="margin-bottom:.9rem">
+    <div class="kpi" style="border-top:3px solid #4f46e5">
+      <div class="kpi-label">Total Actual Revenue</div>
+      <div class="kpi-val">AED 172.6M</div>
+      <span class="kpi-badge up">▲ +19.4% vs 2024</span>
+    </div>
+    <div class="kpi" style="border-top:3px solid #64748b">
+      <div class="kpi-label">Total Target Revenue</div>
+      <div class="kpi-val">AED 196.4M</div>
+      <div class="kpi-sub">Annual board-approved budget</div>
+    </div>
+    <div class="kpi" style="border-top:3px solid #ef4444">
+      <div class="kpi-label">Overall Target Achievement</div>
+      <div class="kpi-val">87.9%</div>
+      <div class="kpi-sub">Shortfall: AED 23.8M</div>
+      <span class="kpi-badge dn">▼ -12.1% vs target</span>
+    </div>
+  </div>
+
+  <!-- 2x2 channel cards -->
+  <div class="tva-grid">
+
+    <!-- LOCAL -->
+    <div class="tva-card">
+      <div class="tva-header">
+        <div class="tva-channel">Local Sales</div>
+        <span class="tva-pill pos">+18.8% vs target</span>
+      </div>
+      <div class="tva-vals">
+        <div class="tva-val-block target">
+          <div class="tva-val-label">Target</div>
+          <div class="tva-val-num">AED 65.8M</div>
+        </div>
+        <div class="tva-val-block actual">
+          <div class="tva-val-label">Actual</div>
+          <div class="tva-val-num" style="color:#4f46e5">AED 78.2M</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.68rem;color:#64748b;margin-bottom:.3rem">Achievement: 118.8%</div>
+        <div class="tva-bar-wrap">
+          <div class="tva-bar-fill" style="width:100%;background:linear-gradient(90deg,#4f46e5,#818cf8)"></div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:120px"><canvas id="c_tva_local"></canvas></div>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="tva-card">
+      <div class="tva-header">
+        <div class="tva-channel">Export Sales</div>
+        <span class="tva-pill neg">-46.2% vs target</span>
+      </div>
+      <div class="tva-vals">
+        <div class="tva-val-block target">
+          <div class="tva-val-label">Target</div>
+          <div class="tva-val-num">AED 78.1M</div>
+        </div>
+        <div class="tva-val-block actual">
+          <div class="tva-val-label">Actual</div>
+          <div class="tva-val-num" style="color:#ef4444">AED 42.0M</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.68rem;color:#64748b;margin-bottom:.3rem">Achievement: 53.8%</div>
+        <div class="tva-bar-wrap">
+          <div class="tva-bar-fill" style="width:53.8%;background:linear-gradient(90deg,#ef4444,#fca5a5)"></div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:120px"><canvas id="c_tva_export"></canvas></div>
+    </div>
+
+    <!-- COMMERCIAL -->
+    <div class="tva-card">
+      <div class="tva-header">
+        <div class="tva-channel">Commercial</div>
+        <span class="tva-pill neg">-18.3% vs target</span>
+      </div>
+      <div class="tva-vals">
+        <div class="tva-val-block target">
+          <div class="tva-val-label">Target</div>
+          <div class="tva-val-num">AED 38.2M</div>
+        </div>
+        <div class="tva-val-block actual">
+          <div class="tva-val-label">Actual</div>
+          <div class="tva-val-num" style="color:#ef4444">AED 31.2M</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.68rem;color:#64748b;margin-bottom:.3rem">Achievement: 81.7%</div>
+        <div class="tva-bar-wrap">
+          <div class="tva-bar-fill" style="width:81.7%;background:linear-gradient(90deg,#f59e0b,#fcd34d)"></div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:120px"><canvas id="c_tva_comm"></canvas></div>
+    </div>
+
+    <!-- TECHNICAL -->
+    <div class="tva-card">
+      <div class="tva-header">
+        <div class="tva-channel">Technical</div>
+        <span class="tva-pill pos">+19.5% vs target</span>
+      </div>
+      <div class="tva-vals">
+        <div class="tva-val-block target">
+          <div class="tva-val-label">Target</div>
+          <div class="tva-val-num">AED 14.3M</div>
+        </div>
+        <div class="tva-val-block actual">
+          <div class="tva-val-label">Actual</div>
+          <div class="tva-val-num" style="color:#4f46e5">AED 21.2M</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.68rem;color:#64748b;margin-bottom:.3rem">Achievement: 119.5%</div>
+        <div class="tva-bar-wrap">
+          <div class="tva-bar-fill" style="width:100%;background:linear-gradient(90deg,#059669,#34d399)"></div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:120px"><canvas id="c_tva_tech"></canvas></div>
+    </div>
+
+  </div><!-- /tva-grid -->
+
+</div>
+
+<!-- PANEL 2: MARGIN ANALYSIS -->
+<div class="tab-panel" id="panel-2">
+
+  <!-- Margin KPIs -->
+  <div class="kpi-row cols-3">
+    <div class="kpi" style="border-top:3px solid #4f46e5">
+      <div class="kpi-label">Gross Margin 2025</div>
+      <div class="kpi-val">35.3%</div>
+      <div class="kpi-sub">Gross Profit: AED 60.9M</div>
+      <span class="kpi-badge up">▲ +3.7pp vs 2024</span>
+    </div>
+    <div class="kpi" style="border-top:3px solid #94a3b8">
+      <div class="kpi-label">Gross Margin 2024</div>
+      <div class="kpi-val">31.6%</div>
+      <div class="kpi-sub">Gross Profit: AED 45.7M</div>
+      <span class="kpi-badge up">Baseline year</span>
+    </div>
+    <div class="kpi" style="border-top:3px solid #059669">
+      <div class="kpi-label">Margin Uplift (AED)</div>
+      <div class="kpi-val">+AED 15.2M</div>
+      <div class="kpi-sub">YoY gross profit improvement</div>
+      <span class="kpi-badge up">▲ +33.3% absolute</span>
+    </div>
+  </div>
+
+  <!-- Margin charts -->
+  <div class="chart-grid cols-2">
+    <div class="chart-card">
+      <div class="card-title"><span class="card-title-dot" style="background:#4f46e5"></span>Margin % by Product Line — 2025 vs 2024</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="c_marg_prod"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="card-title"><span class="card-title-dot" style="background:#0891b2"></span>Margin % by Sales Channel — 2025 vs 2024</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="c_marg_chan"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-grid cols-2">
+    <div class="chart-card">
+      <div class="card-title"><span class="card-title-dot" style="background:#059669"></span>Margin % by Grade Class</div>
+      <div class="chart-wrap" style="height:185px"><canvas id="c_marg_grade"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="card-title"><span class="card-title-dot" style="background:#d97706"></span>Gross Profit Contribution by Product Line (AED M)</div>
+      <div class="chart-wrap" style="height:185px"><canvas id="c_marg_contrib"></canvas></div>
+    </div>
+  </div>
+
+</div><!-- /panel-2 -->
+
+</div><!-- /dashboard -->
+
+<script>
+// ── Theme ─────────────────────────────────────────────────────────────
+function syncIcon(){
+  var d=document.documentElement.classList.contains('dark');
+  document.getElementById('iconSun').style.display=d?'block':'none';
+  document.getElementById('iconMoon').style.display=d?'none':'block';
+}
+function toggleTheme(){
+  var d=document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme',d?'dark':'light');
+  syncIcon();
+  updateCharts();
+}
+syncIcon();
+
+// Hide own toggle when embedded in iframe
+if(window.self!==window.top){
+  document.getElementById('themeBtn').style.display='none';
+}
+
+// Listen for postMessage from parent portfolio
+window.addEventListener('message',function(e){
+  if(e.data==='set-dark'){document.documentElement.classList.add('dark');syncIcon();updateCharts();}
+  else if(e.data==='set-light'){document.documentElement.classList.remove('dark');syncIcon();updateCharts();}
+});
+// Listen for localStorage changes (same-origin tabs)
+window.addEventListener('storage',function(e){
+  if(e.key==='theme'){
+    if(e.newValue==='dark'){document.documentElement.classList.add('dark');}
+    else{document.documentElement.classList.remove('dark');}
+    syncIcon();updateCharts();
+  }
+});
+
+// ── Tabs ──────────────────────────────────────────────────────────────
+var tabInited=[false,false,false];
+function switchTab(idx){
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){b.classList.toggle('active',i===idx);});
+  document.querySelectorAll('.tab-panel').forEach(function(p,i){p.classList.toggle('active',i===idx);});
+  if(!tabInited[idx]){tabInited[idx]=true;initTab(idx);}
+}
+
+// ── Chart helpers ─────────────────────────────────────────────────────
+var AC=[];
+function mk(id,cfg){
+  var canvas=document.getElementById(id);
+  if(!canvas)return null;
+  var c=new Chart(canvas,cfg);
+  AC.push(c);
+  return c;
+}
+
+function cTheme(){
+  var d=document.documentElement.classList.contains('dark');
+  return{
+    tc: d?'#94a3b8':'#64748b',
+    gc: d?'#1a3050':'#e8edf2',
+    bg: d?'#1e293b':'#ffffff',
+    label: d?'#cbd5e1':'#374151'
+  };
+}
+
+function updateCharts(){
+  var th=cTheme();
+  AC.forEach(function(c){
+    if(c.options.scales){
+      Object.values(c.options.scales).forEach(function(ax){
+        if(ax.ticks)ax.ticks.color=th.tc;
+        if(ax.grid)ax.grid.color=th.gc;
+      });
+    }
+    if(c.options.plugins&&c.options.plugins.legend&&c.options.plugins.legend.labels){
+      c.options.plugins.legend.labels.color=th.label;
+    }
+    c.update('none');
+  });
+}
+
+function baseScales(opts){
+  var th=cTheme();
+  var def={x:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc}},y:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc}}};
+  if(opts&&opts.horizontal){
+    def.x.grid={color:th.gc};
+    def.y.grid={display:false};
+  }
+  return def;
+}
+
+function miniLineOpts(label, color){
+  var th=cTheme();
+  return{
+    type:'line',
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{enabled:true}},
+      scales:{
+        x:{display:false},
+        y:{display:false}
+      },
+      elements:{point:{radius:2}}
+    }
+  };
+}
+
+// ── Tab 0: Revenue Overview ───────────────────────────────────────────
+function initTab0(){
+  var th=cTheme();
+
+  // Product line grouped bar
+  mk('c_prodLine',{
+    type:'bar',
+    data:{
+      labels:['Standard Grade','Premium Grade','Specialty Grade','Industrial Grade'],
+      datasets:[
+        {label:'2025',data:[68.4,51.2,37.8,15.2],backgroundColor:'rgba(79,70,229,0.85)',borderRadius:4},
+        {label:'2024',data:[58.1,42.3,31.5,12.8],backgroundColor:'rgba(165,180,252,0.7)',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:th.label,font:{size:11}},position:'top'}},
+      scales:{
+        x:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc}},
+        y:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc},beginAtZero:true}
+      }
+    }
+  });
+
+  // Channel grouped bar
+  mk('c_channel',{
+    type:'bar',
+    data:{
+      labels:['Local','Export','Commercial','Technical'],
+      datasets:[
+        {label:'2025',data:[78.2,42.0,31.2,21.2],backgroundColor:'rgba(8,145,178,0.85)',borderRadius:4},
+        {label:'2024',data:[65.8,35.2,32.1,11.6],backgroundColor:'rgba(103,232,249,0.6)',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:th.label,font:{size:11}},position:'top'}},
+      scales:{
+        x:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc}},
+        y:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc},beginAtZero:true}
+      }
+    }
+  });
+
+  // Top 10 Customers horizontal bar
+  mk('c_topCust',{
+    type:'bar',
+    data:{
+      labels:['Client Alpha','Client Beta','Client Gamma','Client Delta','Client Epsilon','Client Zeta','Client Eta','Client Theta','Client Iota','Client Kappa'],
+      datasets:[{
+        label:'Revenue (AED M)',
+        data:[18.4,14.7,12.1,10.8,9.3,8.5,7.2,6.4,5.9,5.2],
+        backgroundColor:'rgba(124,58,237,0.82)',
+        borderRadius:3
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:th.tc,font:{size:10}},grid:{color:th.gc},beginAtZero:true},
+        y:{ticks:{color:th.tc,font:{size:10}},grid:{display:false}}
+      }
+    }
+  });
+
+  // Grade class grouped bar
+  mk('c_gradeClass',{
+    type:'bar',
+    data:{
+      labels:['Class A','Class B','Class C','Class D'],
+      datasets:[
+        {label:'2025',data:[82.4,51.6,28.3,10.3],backgroundColor:'rgba(5,150,105,0.85)',borderRadius:4},
+        {label:'2024',data:[69.1,43.8,22.9,8.9],backgroundColor:'rgba(110,231,183,0.6)',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:th.label,font:{size:11}},position:'top'}},
+      scales:{
+        x:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc}},
+        y:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc},beginAtZero:true}
+      }
+    }
+  });
+}
+
+// ── Tab 1: Target vs Actual (mini line charts per channel) ─────────────
+function initTab1(){
+  var th=cTheme();
+
+  function tvaLine(id, actData, tgtData, actColor, tgtColor){
+    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    mk(id,{
+      type:'line',
+      data:{
+        labels:months,
+        datasets:[
+          {label:'Actual',data:actData,borderColor:actColor,backgroundColor:actColor.replace('1)','0.1)'),borderWidth:2,fill:true,tension:0.35,pointRadius:2},
+          {label:'Target',data:tgtData,borderColor:tgtColor,backgroundColor:'transparent',borderWidth:1.5,borderDash:[4,3],tension:0.35,pointRadius:0}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{labels:{color:th.label,font:{size:10}},position:'bottom'},
+          tooltip:{mode:'index'}
+        },
+        scales:{
+          x:{ticks:{color:th.tc,font:{size:9}},grid:{color:th.gc}},
+          y:{ticks:{color:th.tc,font:{size:9}},grid:{color:th.gc},beginAtZero:true}
+        }
+      }
+    });
+  }
+
+  // Local: overperforms - actual above target all year, surges mid-year
+  tvaLine('c_tva_local',
+    [5.1,5.4,5.8,5.9,6.1,7.2,7.8,7.4,7.0,7.1,6.8,6.6],
+    [4.8,4.9,5.1,5.2,5.4,5.6,5.8,5.8,5.9,6.0,5.8,5.5],
+    'rgba(79,70,229,1)','rgba(148,163,184,0.9)'
+  );
+
+  // Export: severely underperforms - actual well below target
+  tvaLine('c_tva_export',
+    [4.2,4.8,4.1,3.6,3.2,3.0,3.1,3.4,3.8,3.9,4.2,4.7],
+    [6.2,6.3,6.5,6.5,6.7,6.8,6.9,6.8,6.7,6.6,6.5,6.6],
+    'rgba(239,68,68,1)','rgba(148,163,184,0.9)'
+  );
+
+  // Commercial: moderate underperformance with late recovery
+  tvaLine('c_tva_comm',
+    [2.2,2.4,2.5,2.6,2.7,2.5,2.6,2.7,2.9,3.0,3.3,3.8],
+    [3.0,3.1,3.2,3.2,3.3,3.2,3.2,3.3,3.4,3.4,3.3,3.6],
+    'rgba(245,158,11,1)','rgba(148,163,184,0.9)'
+  );
+
+  // Technical: overperforms strongly H2
+  tvaLine('c_tva_tech',
+    [1.2,1.3,1.5,1.6,1.8,1.9,2.0,2.1,2.0,1.9,1.8,1.7],
+    [1.1,1.1,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2],
+    'rgba(5,150,105,1)','rgba(148,163,184,0.9)'
+  );
+}
+
+// ── Tab 2: Margin Analysis ────────────────────────────────────────────
+function initTab2(){
+  var th=cTheme();
+
+  // Margin by product line
+  mk('c_marg_prod',{
+    type:'bar',
+    data:{
+      labels:['Standard Grade','Premium Grade','Specialty Grade','Industrial Grade'],
+      datasets:[
+        {label:'2025 Margin %',data:[32.1,38.7,41.2,28.4],backgroundColor:'rgba(79,70,229,0.85)',borderRadius:4},
+        {label:'2024 Margin %',data:[28.9,34.1,37.8,25.0],backgroundColor:'rgba(165,180,252,0.6)',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:th.label,font:{size:11}},position:'top'}},
+      scales:{
+        x:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc}},
+        y:{ticks:{color:th.tc,font:{size:11},callback:function(v){return v+'%'}},grid:{color:th.gc},beginAtZero:true,max:55}
+      }
+    }
+  });
+
+  // Margin by channel
+  mk('c_marg_chan',{
+    type:'bar',
+    data:{
+      labels:['Local','Export','Commercial','Technical'],
+      datasets:[
+        {label:'2025 Margin %',data:[37.4,29.8,33.2,42.5],backgroundColor:'rgba(8,145,178,0.85)',borderRadius:4},
+        {label:'2024 Margin %',data:[33.1,27.2,29.8,38.1],backgroundColor:'rgba(103,232,249,0.6)',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:th.label,font:{size:11}},position:'top'}},
+      scales:{
+        x:{ticks:{color:th.tc,font:{size:11}},grid:{color:th.gc}},
+        y:{ticks:{color:th.tc,font:{size:11},callback:function(v){return v+'%'}},grid:{color:th.gc},beginAtZero:true,max:60}
+      }
+    }
+  });
+
+  // Margin by grade class horizontal bar
+  mk('c_marg_grade',{
+    type:'bar',
+    data:{
+      labels:['Class A','Class B','Class C','Class D'],
+      datasets:[
+        {label:'2025',data:[36.2,34.8,31.5,29.1],backgroundColor:'rgba(5,150,105,0.85)',borderRadius:4},
+        {label:'2024',data:[32.4,30.9,28.2,25.7],backgroundColor:'rgba(110,231,183,0.6)',borderRadius:4}
+      ]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:th.label,font:{size:10}},position:'bottom'}},
+      scales:{
+        x:{ticks:{color:th.tc,font:{size:10},callback:function(v){return v+'%'}},grid:{color:th.gc},beginAtZero:true,max:50},
+        y:{ticks:{color:th.tc,font:{size:10}},grid:{display:false}}
+      }
+    }
+  });
+
+  // Gross profit contribution (AED M) horizontal bar
+  mk('c_marg_contrib',{
+    type:'bar',
+    data:{
+      labels:['Standard Grade','Premium Grade','Specialty Grade','Industrial Grade'],
+      datasets:[
+        {label:'2025 GP (AED M)',data:[22.0,19.8,15.6,4.3],backgroundColor:'rgba(217,119,6,0.85)',borderRadius:4},
+        {label:'2024 GP (AED M)',data:[16.8,14.4,11.9,3.2],backgroundColor:'rgba(253,211,77,0.65)',borderRadius:4}
+      ]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:th.label,font:{size:10}},position:'bottom'}},
+      scales:{
+        x:{ticks:{color:th.tc,font:{size:10}},grid:{color:th.gc},beginAtZero:true},
+        y:{ticks:{color:th.tc,font:{size:10}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+// ── Router ─────────────────────────────────────────────────────────────
+function initTab(idx){
+  if(idx===0)initTab0();
+  else if(idx===1)initTab1();
+  else if(idx===2)initTab2();
+}
+
+// Init first tab on load
+initTab(0);
+tabInited[0]=true;
+</script>
+</body>
+</html>

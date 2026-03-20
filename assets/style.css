@@ -120,3 +120,16 @@ html { transition: background-color 0.2s ease, color 0.2s ease; }
 
 /* Print */
 @media print { nav, footer, #theme-toggle { display: none; } }
+
+/* ── Skip Navigation ─────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+}
+.focus\:not-sr-only:focus {
+  position: absolute; width: auto; height: auto;
+  padding: .5rem 1rem; margin: 0; overflow: visible;
+  clip: auto; white-space: normal;
+}
+
