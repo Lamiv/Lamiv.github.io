@@ -1,200 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vimal Vidyadharan – AI Transformation Leader</title>
-  <meta name="description" content="Vimal Vidyadharan — AI Transformation Leader with 20+ years in SAP, AI, and enterprise digital transformation. $7M+ value created.">
-  <meta property="og:title" content="Vimal Vidyadharan – AI Transformation Leader">
-  <meta property="og:description" content="AI Transformation Leader with 20+ years in SAP, analytics, and enterprise intelligence. Explore projects, publications, and capabilities.">
-  <meta property="og:image" content="https://lamiv.github.io/assets/og-cover.jpg">
-  <meta property="og:url" content="https://lamiv.github.io/">
-  <link rel="canonical" href="https://lamiv.github.io/">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="Enterprise AI transformation leader building intelligent systems across SAP, analytics, and agentic AI. 20+ years spanning manufacturing, supply chain, and digital transformation." />
+  <meta property="og:title" content="Vimal Vidyadharan – AI Transformation Leader" />
+  <meta property="og:description" content="Building enterprise-grade intelligence systems across SAP, analytics, and agentic AI." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lamiv.github.io/" />
+  <link rel="canonical" href="https://lamiv.github.io/" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
   <script>
-    // Prevent FOUC: apply saved theme before render
-    (function(){var t=localStorage.getItem('theme');if(t==='dark'||(t===null&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
   </script>
-  <link rel="stylesheet" href="assets/style.css">
 </head>
+<body>
+  <a href="#main" class="skip-nav">Skip to main content</a>
 
-<body class="bg-gray-50 text-gray-900 font-sans">
-
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-blue-600 text-white px-4 py-2 rounded z-50 text-sm font-medium">Skip to main content</a>
-
-  <!-- NAVBAR -->
-  <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="index.html" class="font-bold text-lg tracking-tight text-gray-900 hover:text-blue-600 transition-colors">Vimal Vidyadharan</a>
-      <div class="space-x-6 text-sm font-medium text-gray-600">
-        <a href="index.html" class="text-blue-600 underline underline-offset-4" aria-current="page">Home</a>
-        <a href="projects.html" class="hover:text-blue-600 transition-colors">Projects</a>
-        <a href="about.html" class="hover:text-blue-600 transition-colors">About</a>
-        <a href="contact.html" class="hover:text-blue-600 transition-colors">Contact</a>
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">Vimal Vidyadharan</a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="about.html">About</a></li>
+        <li><a href="platforms.html">Platforms</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="sap-analytics.html">SAP Analytics</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()"></button>
+        <button class="nav-mobile-toggle" id="nav-mobile-toggle" aria-label="Toggle navigation" onclick="toggleMobileNav()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
       </div>
-      <button id="theme-toggle" onclick="toggleTheme()" title="Switch to dark mode" aria-label="Toggle theme">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
     </div>
   </nav>
 
-  <main id="main-content">
+  <main id="main">
 
     <!-- HERO -->
-    <section class="bg-white border-b border-gray-100">
-      <div class="max-w-6xl mx-auto px-6 py-20">
-        <p class="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-4">Digital Transformation · SAP · Artificial Intelligence</p>
-        <h1 class="text-5xl font-extrabold text-gray-900 leading-tight max-w-3xl">
-          AI Transformation Leader
-        </h1>
-        <p class="mt-5 text-xl text-gray-500 max-w-2xl leading-relaxed">
-          Driving enterprise intelligence through SAP, AI, and agent-driven platforms. 20+ years of transforming manufacturing, supply chain, and enterprise operations.
+    <section class="hero">
+      <div class="container">
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-dot"></span>
+          AI Transformation &middot; SAP Intelligence &middot; Agent Platforms
+        </div>
+        <h1 class="hero-title">AI Transformation Leader for SAP and Intelligent Enterprises</h1>
+        <p class="hero-sub">
+          I build enterprise-grade intelligence systems across SAP, analytics, and agentic AI. With 20+ years of experience spanning manufacturing, supply chain, operations, and digital transformation, I focus on turning process-heavy enterprises into intelligence-driven organizations.
         </p>
-        <div class="mt-8 flex flex-wrap gap-4">
-          <a href="projects.html" class="bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">View Projects</a>
-          <a href="about.html" class="bg-gray-100 text-gray-800 px-6 py-3 rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors">About Me</a>
-          <a href="assets/cv-vimal-vidyadharan.pdf" download class="bg-white border border-gray-200 text-gray-700 px-6 py-3 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors">Download CV</a>
-
+        <div class="hero-actions">
+          <a href="platforms.html" class="btn btn--primary">Explore Platforms</a>
+          <a href="projects.html" class="btn btn--secondary">View Projects</a>
+          <a href="assets/Vimal_Vidyadharan_CV.pdf" class="btn btn--ghost" download>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CV
+          </a>
         </div>
-      </div>
-    </section>
-
-    <!-- KEY METRICS -->
-    <section class="bg-blue-600">
-      <div class="max-w-6xl mx-auto px-6 py-12">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-white text-center">
-          <div>
-            <div class="text-4xl font-extrabold">$7M+</div>
-            <div class="mt-1 text-blue-200 text-sm font-medium">Value Created</div>
-            <div class="text-xs text-blue-300 mt-0.5">from AKS transformation</div>
+        <div class="metrics-bar">
+          <div class="metric-item">
+            <div class="metric-value">$7M+</div>
+            <div class="metric-label">Value Potential Identified across transformation initiatives</div>
           </div>
-          <div>
-            <div class="text-4xl font-extrabold">20%+</div>
-            <div class="mt-1 text-blue-200 text-sm font-medium">Efficiency Gains</div>
+          <div class="metric-item">
+            <div class="metric-value">20%+</div>
+            <div class="metric-label">Operational Efficiency Gains</div>
           </div>
-          <div>
-            <div class="text-4xl font-extrabold">70%</div>
-            <div class="mt-1 text-blue-200 text-sm font-medium">Reduction in Manual Errors</div>
+          <div class="metric-item">
+            <div class="metric-value">70%</div>
+            <div class="metric-label">Reduction in Process Errors</div>
           </div>
-          <div>
-            <div class="text-4xl font-extrabold">35%</div>
-            <div class="mt-1 text-blue-200 text-sm font-medium">Faster Reporting</div>
+          <div class="metric-item">
+            <div class="metric-value">35%</div>
+            <div class="metric-label">Faster Business Reporting</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- FEATURED PROJECTS -->
-    <section class="max-w-6xl mx-auto px-6 py-20">
-      <h2 class="text-2xl font-bold text-gray-900 mb-2">Featured Work</h2>
-      <p class="text-gray-500 mb-10 text-sm">A selection of enterprise AI and SAP transformation initiatives.</p>
-
-      <div class="grid md:grid-cols-2 gap-6">
-
-        <!-- LEO -->
-        <div class="bg-white rounded-xl border border-gray-200 p-7 hover:shadow-md transition-shadow">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">AI Platform</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">LangGraph · MCP · SAP</span>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900">LEO – Enterprise AI Agent Platform</h3>
-          <p class="mt-3 text-gray-500 text-sm leading-relaxed">
-            Agent-native orchestration platform bringing LLM-driven automation to SAP enterprise landscapes — multi-agent workflows, semantic layers over S/4HANA data, and MCP-style tool calling.
-          </p>
-          <a href="projects/leo.html" class="mt-5 inline-flex items-center text-blue-600 font-semibold text-sm hover:underline">View Project →</a>
+    <!-- WHAT I BUILD -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Approach</span>
+          <h2 class="section-title">What I Build</h2>
+          <p class="section-lead">I work across three layers of enterprise transformation — combining platform thinking, technical depth, and business outcome focus.</p>
         </div>
-
-        <!-- Ecodrisil -->
-        <div class="bg-white rounded-xl border border-gray-200 p-7 hover:shadow-md transition-shadow">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">ESG · AI</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">Strategic Advisor</span>
+        <div class="build-grid">
+          <div class="build-item">
+            <div class="build-number">01</div>
+            <div class="build-title">AI Platforms that Enable Agentic Execution</div>
+            <div class="build-desc">Orchestration layers, agent runtimes, and knowledge-aware systems that allow enterprises to automate complex, multi-step business processes.</div>
           </div>
-          <h3 class="text-xl font-bold text-gray-900">Ecodrisil – ESG Intelligence Platform</h3>
-          <p class="mt-3 text-gray-500 text-sm leading-relaxed">
-            Pro-bono Strategic AI Advisor — shaped the AI architecture behind automated ESG reporting, sustainability compliance intelligence, and NLQ-driven data access.
-          </p>
-          <a href="projects/ecodrisil.html" class="mt-5 inline-flex items-center text-blue-600 font-semibold text-sm hover:underline">View Project →</a>
+          <div class="build-item">
+            <div class="build-number">02</div>
+            <div class="build-title">Analytics Systems that Improve Decision Speed</div>
+            <div class="build-desc">SAP Analytics Cloud intelligence layers, predictive models, and unified dashboards that replace static reporting with live, decision-ready insight.</div>
+          </div>
+          <div class="build-item">
+            <div class="build-number">03</div>
+            <div class="build-title">SAP-Connected Solutions that Modernize Operations</div>
+            <div class="build-desc">SAP S/4HANA transformations, BTP and CPI integrations, and digital workflows that eliminate manual effort and connect enterprise operations.</div>
+          </div>
         </div>
-
-        <!-- Enterprise Analytics -->
-        <div class="bg-white rounded-xl border border-gray-200 p-7 hover:shadow-md transition-shadow">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">SAP · Analytics · AI</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">$7M+ Impact</span>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900">Enterprise Analytics & AI Intelligence</h3>
-          <p class="mt-3 text-gray-500 text-sm leading-relaxed">
-            Built a unified SAP Analytics Cloud intelligence layer across production, procurement, logistics, and sales — replacing manual reporting with 4 live dashboards and predictive yield optimization.
-          </p>
-          <div class="mt-3 flex flex-wrap gap-1.5">
-            <span class="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">Yield Dashboard</span>
-            <span class="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">Traffic & Logistics</span>
-            <span class="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">Procurement Intelligence</span>
-            <span class="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">Sales Analytics</span>
-          </div>
-          <a href="projects/enterprise-analytics.html" class="mt-4 inline-flex items-center text-blue-600 font-semibold text-sm hover:underline">View Project + Live Dashboards →</a>
-        </div>
-
-        <!-- Digital Transformation -->
-        <div class="bg-white rounded-xl border border-gray-200 p-7 hover:shadow-md transition-shadow">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Digital Transformation</span>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900">Digital Transformation Program</h3>
-          <p class="mt-3 text-gray-500 text-sm leading-relaxed">
-            End-to-end digitization of HR, ecommerce, and logistics for a large manufacturing enterprise — replacing paper-based operations with SAP-integrated digital workflows and a purpose-built driver mobile app.
-          </p>
-          <div class="mt-3 flex flex-wrap gap-1.5">
-            <span class="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">HR · SuccessFactors</span>
-            <span class="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">Ecommerce × S/4HANA</span>
-            <span class="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">Driver Mobile App</span>
-          </div>
-          <a href="projects/digital-transformation.html" class="mt-4 inline-flex items-center text-blue-600 font-semibold text-sm hover:underline">View Project →</a>
-        </div>
-
-        <!-- AI Research — spans full width as a closer -->
-        <div class="bg-white rounded-xl border border-gray-200 p-7 hover:shadow-md transition-shadow md:col-span-2">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">AI Research</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">IEEE Published</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">ML · NLP · Healthcare</span>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900">Early Diabetes Detection – IEEE SCCI 2021</h3>
-          <p class="mt-3 text-gray-500 text-sm leading-relaxed max-w-2xl">
-            Mixture of Experts ML model with an NLP-driven clinical interview interface for early-stage diabetes detection. Research conducted with Community Tracks, London and published at IEEE SCCI 2021.
-          </p>
-          <a href="projects/ai-research.html" class="mt-5 inline-flex items-center text-blue-600 font-semibold text-sm hover:underline">View Research →</a>
-        </div>
-
-      </div>
-      <div class="mt-8 text-center">
-        <a href="projects.html" class="text-sm text-blue-600 font-semibold hover:underline">View all projects →</a>
       </div>
     </section>
 
-    <!-- CTA -->
-    <section class="max-w-6xl mx-auto px-6 py-20">
-      <div class="bg-gray-900 text-white rounded-2xl px-10 py-14 text-center">
-        <h2 class="text-3xl font-bold mb-4">Let's work together</h2>
-        <p class="text-gray-400 mb-8 max-w-xl mx-auto">Open to leadership roles, consulting engagements, and strategic partnerships in AI and digital transformation.</p>
-        <a href="contact.html" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-sm hover:bg-blue-500 transition-colors">Get in Touch</a>
+    <!-- FLAGSHIP PLATFORMS AND INITIATIVES -->
+    <section class="section" id="work">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Work</span>
+          <h2 class="section-title">Flagship Platforms and Enterprise Initiatives</h2>
+          <p class="section-lead">Selected platforms, transformation programmes, analytics systems, and AI-led initiatives built across manufacturing, supply chain, operations, sustainability, and enterprise technology.</p>
+        </div>
+
+        <div class="project-grid">
+
+          <!-- LEO -->
+          <div class="project-card project-card--flagship">
+            <div class="project-card-body">
+              <div class="tag-row">
+                <span class="tag">Flagship Platform</span>
+                <span class="tag">Agent Runtime</span>
+                <span class="tag">Knowledge Layer</span>
+                <span class="tag">SAP</span>
+              </div>
+              <h3 class="card-title">LEO &ndash; Enterprise AI Orchestration Platform</h3>
+              <p class="card-desc">LEO is an enterprise AI orchestration platform designed to bring agentic execution into SAP landscapes. It combines agent runtime patterns, semantic retrieval, tool invocation, and governed workflows to support intelligent automation across enterprise processes.</p>
+              <ul class="card-bullets">
+                <li>Agent-based workflow execution across enterprise processes</li>
+                <li>Semantic retrieval and knowledge-aware access to enterprise data</li>
+                <li>Governed orchestration patterns for multi-step intelligent workflows</li>
+              </ul>
+            </div>
+            <div class="project-card-footer">
+              <span class="status-badge status-badge--progress">In Progress</span>
+              <a href="platforms.html#leo" class="card-link" style="margin-left:1rem;">Explore LEO &rarr;</a>
+            </div>
+          </div>
+
+          <!-- ECODRISIL -->
+          <div class="project-card">
+            <div class="project-card-body">
+              <div class="tag-row">
+                <span class="tag">ESG Intelligence</span>
+                <span class="tag">AI Architecture</span>
+                <span class="tag">Sustainability</span>
+              </div>
+              <h3 class="card-title">Ecodrisil &ndash; ESG and Sustainability Intelligence</h3>
+              <p class="card-desc">Contributed to the AI architecture for an ESG intelligence platform focused on automated reporting, sustainability insight generation, and natural language access to compliance and performance data.</p>
+              <ul class="card-bullets">
+                <li>Automated ingestion and interpretation of ESG-related documents</li>
+                <li>Natural language access to sustainability and compliance information</li>
+                <li>Benchmarking and insight generation for sustainability performance</li>
+              </ul>
+            </div>
+            <div class="project-card-footer">
+              <span class="status-badge status-badge--progress">In Progress</span>
+              <a href="platforms.html#ecodrisil" class="card-link" style="margin-left:1rem;">View Platform &rarr;</a>
+            </div>
+          </div>
+
+          <!-- ANALYTICS -->
+          <div class="project-card">
+            <div class="project-card-body">
+              <div class="tag-row">
+                <span class="tag">SAP Analytics</span>
+                <span class="tag">Decision Intelligence</span>
+                <span class="tag">Enterprise Reporting</span>
+              </div>
+              <h3 class="card-title">Enterprise Analytics and Decision Intelligence</h3>
+              <p class="card-desc">Built an integrated SAP Analytics Cloud intelligence layer across production, procurement, logistics, and commercial operations. The focus was not only reporting modernization, but also faster business decisions through live dashboards and predictive insight models.</p>
+              <div class="tag-row" style="margin-top:.75rem;margin-bottom:0;">
+                <span class="tag">Yield Analytics</span>
+                <span class="tag">Procurement Intel</span>
+                <span class="tag">Traffic Mgmt</span>
+                <span class="tag">Sales Analytics</span>
+              </div>
+            </div>
+            <div class="project-card-footer">
+              <span class="status-badge">Live</span>
+              <a href="sap-analytics.html" class="card-link" style="margin-left:1rem;">View Dashboards &rarr;</a>
+            </div>
+          </div>
+
+          <!-- DIGITAL TRANSFORMATION -->
+          <div class="project-card">
+            <div class="project-card-body">
+              <div class="tag-row">
+                <span class="tag">Digital Transformation</span>
+                <span class="tag">SAP Integration</span>
+                <span class="tag">Operational Digitization</span>
+              </div>
+              <h3 class="card-title">Enterprise Digital Transformation Program</h3>
+              <p class="card-desc">Led end-to-end digitization initiatives across HR, ecommerce, logistics, and operational workflows for a large manufacturing enterprise, replacing fragmented manual processes with SAP-integrated digital systems and purpose-built business applications.</p>
+              <ul class="card-bullets">
+                <li>SAP SuccessFactors HR transformation</li>
+                <li>Ecommerce and SAP S/4HANA integration via BTP and CPI</li>
+                <li>Driver mobile application for field logistics</li>
+              </ul>
+            </div>
+            <div class="project-card-footer">
+              <span class="status-badge">Live</span>
+              <a href="projects/digital-transformation.html" class="card-link" style="margin-left:1rem;">View Programme &rarr;</a>
+            </div>
+          </div>
+
+          <!-- RESEARCH - full width -->
+          <div class="project-card project-card--full">
+            <div style="display:flex;align-items:flex-start;gap:2rem;flex-wrap:wrap;">
+              <div class="project-card-body" style="flex:1;min-width:240px;">
+                <div class="tag-row">
+                  <span class="tag">Applied AI Research</span>
+                  <span class="tag">NLP</span>
+                  <span class="tag">Machine Learning</span>
+                  <span class="tag">Healthcare</span>
+                </div>
+                <h3 class="card-title">Early Diabetes Detection Using Machine Learning</h3>
+                <p class="card-desc">Designed a Mixture of Experts machine learning approach paired with an NLP-driven clinical interview workflow to support early-stage diabetes risk detection. Conducted with Community Tracks, London and published at IEEE SCCI 2021.</p>
+              </div>
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:1rem;">
+                <span class="status-badge">Published</span>
+                <a href="projects/ai-research.html" class="card-link">View Research &rarr;</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="margin-top:2rem;text-align:right;">
+          <a href="projects.html" class="btn btn--secondary btn--sm">View all initiatives &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="cta-banner">
+      <div class="container">
+        <h2 class="cta-banner-title">Let's Build Intelligent Enterprises</h2>
+        <p class="cta-banner-sub">Open to senior leadership roles, strategic advisory work, consulting engagements, and enterprise collaborations in AI transformation, SAP intelligence, and agentic systems.</p>
+        <div class="cta-banner-actions">
+          <a href="contact.html" class="btn btn--secondary">Get in Touch</a>
+          <a href="about.html" class="btn btn--ghost" style="color:rgba(255,255,255,.7);">About Me</a>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-gray-200 bg-white">
-    <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-      <span>© 2026 Vimal Vidyadharan. All rights reserved.</span>
-      <div class="space-x-6 mt-4 md:mt-0">
-        <a href="https://linkedin.com/in/vimz" target="_blank" class="hover:text-gray-700">LinkedIn</a>
-        <a href="mailto:vimzpy@gmail.com" class="hover:text-gray-700">Email</a>
-      </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-copy">&copy; 2025 Vimal Vidyadharan</span>
+      <ul class="footer-links">
+        <li><a href="https://linkedin.com/in/vimz" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="mailto:vimzpy@gmail.com">Email</a></li>
+        <li><a href="https://github.com/Lamiv" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
     </div>
   </footer>
 
   <script src="assets/theme.js"></script>
+  <script>
+    function toggleMobileNav() {
+      document.getElementById('nav-links').classList.toggle('open');
+    }
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'theme') {
+        if (e.newValue === 'dark') document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+      }
+    });
+  </script>
 </body>
 </html>

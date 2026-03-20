@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAP Analytics – Vimal Vidyadharan</title>
+  <meta name="description" content="SAP Analytics Cloud dashboards and decision intelligence systems built across manufacturing operations. Yield optimization, procurement intelligence, and sales analytics." />
+  <link rel="canonical" href="https://lamiv.github.io/sap-analytics.html" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+  <style>
+    .decision-row {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1px;
+      background: var(--color-border);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .decision-item {
+      background: var(--color-bg-card);
+      padding: 1.5rem;
+      transition: background-color var(--transition);
+    }
+    .decision-item:hover { background: var(--color-bg-card-hover); }
+    .decision-label {
+      font-size: .6875rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: .5rem;
+    }
+    .decision-text {
+      font-size: .9375rem;
+      color: var(--color-text);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    @media (max-width: 680px) {
+      .decision-row { grid-template-columns: 1fr; }
+      .decision-item { border-bottom: 1px solid var(--color-border); background: var(--color-bg-card); }
+      .decision-item:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-nav">Skip to main content</a>
+
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">Vimal Vidyadharan</a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="about.html">About</a></li>
+        <li><a href="platforms.html">Platforms</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="sap-analytics.html" aria-current="page">SAP Analytics</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()"></button>
+        <button class="nav-mobile-toggle" aria-label="Toggle navigation" onclick="document.getElementById('nav-links').classList.toggle('open')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+
+    <!-- PAGE HEADER -->
+    <section class="hero" style="padding:4rem 0 3rem;">
+      <div class="container">
+        <span class="section-eyebrow">SAP Analytics &amp; Decision Intelligence</span>
+        <h1 class="hero-title" style="font-size:clamp(1.75rem,3.5vw,2.75rem);max-width:700px;">Analytics Built for Decisions, Not Just Reporting</h1>
+        <p class="hero-sub">Designed and implemented analytics solutions across manufacturing and operations, focusing on actionable insights rather than reporting. The goal at every stage: enable faster, better-informed business decisions.</p>
+      </div>
+    </section>
+
+    <!-- CONTEXT -->
+    <section class="section section--alt">
+      <div class="container">
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:3rem;align-items:start;">
+          <div>
+            <span class="section-eyebrow">Background</span>
+            <h2 class="section-title">The Programme</h2>
+            <div class="prose">
+              <p>This analytics programme was built to replace fragmented, manual reporting across a large manufacturing operation with an integrated SAP Analytics Cloud intelligence layer. The focus was not just dashboard delivery — it was about enabling real-time decision-making across production, procurement, logistics, and commercial operations.</p>
+              <p>Key design principles: every dashboard had to answer a specific business question, every metric had to be traceable to a decision, and every insight had to be accessible without technical support.</p>
+              <p>The four dashboards below are sample recreations of the live systems, built with anonymised and scaled data to preserve confidentiality. The analytics logic, layout, and decision frameworks are authentic.</p>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="padding:1.5rem;">
+              <h3 style="font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:1rem;">Impact Summary</h3>
+              <div style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--color-border);">
+                <div style="font-size:1.75rem;font-weight:800;letter-spacing:-.03em;color:var(--color-text);">$7M+</div>
+                <div style="font-size:.8125rem;color:var(--color-text-muted);">Value potential from yield optimization insights</div>
+              </div>
+              <div style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--color-border);">
+                <div style="font-size:1.75rem;font-weight:800;letter-spacing:-.03em;color:var(--color-text);">35%</div>
+                <div style="font-size:.8125rem;color:var(--color-text-muted);">Faster business reporting cycles</div>
+              </div>
+              <div>
+                <div style="font-size:1.75rem;font-weight:800;letter-spacing:-.03em;color:var(--color-text);">4</div>
+                <div style="font-size:.8125rem;color:var(--color-text-muted);">Live decision intelligence dashboards</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD 1: YIELD -->
+    <section class="section" id="yield">
+      <div class="container">
+        <div style="margin-bottom:2rem;">
+          <span class="section-eyebrow">Dashboard 01</span>
+          <h2 class="section-title">Yield Performance &amp; Operational Analytics</h2>
+          <p class="section-lead">Production yield tracking across processing stages, with variance analysis and predictive optimization. Enables operations leadership to identify loss points and act before they compound.</p>
+        </div>
+
+        <div class="decision-row" style="margin-bottom:2rem;">
+          <div class="decision-item">
+            <div class="decision-label">Decision Enabled</div>
+            <div class="decision-text">Daily yield review and corrective action before shift close</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-label">Insight Delivered</div>
+            <div class="decision-text">Stage-by-stage efficiency and loss point identification</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-label">Business Impact</div>
+            <div class="decision-text">$7M+ projected annual value through yield recovery</div>
+          </div>
+        </div>
+
+        <div class="dashboard-preview-wrapper">
+          <div class="dashboard-preview-header">
+            <span class="dashboard-preview-title">Yield Performance Dashboard &mdash; SAP Analytics Cloud Recreation</span>
+            <span class="status-badge">Sample</span>
+          </div>
+          <iframe
+            src="assets/sac-dashboard.html"
+            class="dashboard-iframe"
+            title="Yield Performance Dashboard"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD 2: TRAFFIC -->
+    <section class="section section--alt" id="traffic">
+      <div class="container">
+        <div style="margin-bottom:2rem;">
+          <span class="section-eyebrow">Dashboard 02</span>
+          <h2 class="section-title">Traffic &amp; Logistics Management</h2>
+          <p class="section-lead">Inbound and outbound logistics visibility across gate movements, vehicle turnaround, and throughput. Designed to reduce waiting time, improve dock utilization, and flag operational bottlenecks in real time.</p>
+        </div>
+
+        <div class="decision-row" style="margin-bottom:2rem;">
+          <div class="decision-item">
+            <div class="decision-label">Decision Enabled</div>
+            <div class="decision-text">Gate scheduling, vehicle prioritization, and bottleneck response</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-label">Insight Delivered</div>
+            <div class="decision-text">Average turnaround time, queue length, and peak load patterns</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-label">Business Impact</div>
+            <div class="decision-text">Reduced demurrage and improved operational throughput</div>
+          </div>
+        </div>
+
+        <div class="dashboard-preview-wrapper">
+          <div class="dashboard-preview-header">
+            <span class="dashboard-preview-title">Traffic Management Dashboard &mdash; SAP Analytics Cloud Recreation</span>
+            <span class="status-badge">Sample</span>
+          </div>
+          <iframe
+            src="assets/traffic-dashboard.html"
+            class="dashboard-iframe"
+            title="Traffic Management Dashboard"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD 3: PROCUREMENT -->
+    <section class="section" id="procurement">
+      <div class="container">
+        <div style="margin-bottom:2rem;">
+          <span class="section-eyebrow">Dashboard 03</span>
+          <h2 class="section-title">Procurement Intelligence</h2>
+          <p class="section-lead">Supplier performance, purchase order tracking, and cost analytics. Gives procurement leadership a consolidated view of spend, delivery adherence, and supplier quality to drive better sourcing decisions.</p>
+        </div>
+
+        <div class="decision-row" style="margin-bottom:2rem;">
+          <div class="decision-item">
+            <div class="decision-label">Decision Enabled</div>
+            <div class="decision-text">Supplier selection, contract renewal, and escalation prioritization</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-label">Insight Delivered</div>
+            <div class="decision-text">On-time delivery rates, spend variance, and quality trends by supplier</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-label">Business Impact</div>
+            <div class="decision-text">Improved procurement governance and reduced cost exposure</div>
+          </div>
+        </div>
+
+        <div class="dashboard-preview-wrapper">
+          <div class="dashboard-preview-header">
+            <span class="dashboard-preview-title">Procurement Intelligence Dashboard &mdash; SAP Analytics Cloud Recreation</span>
+            <span class="status-badge">Sample</span>
+          </div>
+          <iframe
+            src="assets/procurement-dashboard.html"
+            class="dashboard-iframe"
+            title="Procurement Intelligence Dashboard"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD 4: SALES -->
+    <section class="section section--alt" id="sales">
+      <div class="container">
+        <div style="margin-bottom:2rem;">
+          <span class="section-eyebrow">Dashboard 04</span>
+          <h2 class="section-title">Sales Performance Analytics</h2>
+          <p class="section-lead">Commercial performance tracking across revenue, target attainment, and margin. Connects sales data with production and procurement insights to give leadership a complete picture of commercial health.</p>
+        </div>
+
+        <div class="decision-row" style="margin-bottom:2rem;">
+          <div class="decision-item">
+            <div class="decision-label">Decision Enabled</div>
+            <div class="decision-text">Monthly target review, channel prioritization, and margin recovery</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-label">Insight Delivered</div>
+            <div class="decision-text">Revenue by channel, target vs actual variance, and margin trends</div>
+          </div>
+          <div class="decision-item">
+            <div class="decision-label">Business Impact</div>
+            <div class="decision-text">Faster commercial decisions and improved forecast accuracy</div>
+          </div>
+        </div>
+
+        <div class="dashboard-preview-wrapper">
+          <div class="dashboard-preview-header">
+            <span class="dashboard-preview-title">Sales Performance Dashboard &mdash; SAP Analytics Cloud Recreation</span>
+            <span class="status-badge">Sample</span>
+          </div>
+          <iframe
+            src="assets/sales-dashboard.html"
+            class="dashboard-iframe"
+            title="Sales Performance Dashboard"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- DISCLAIMER -->
+    <section class="section">
+      <div class="container--narrow">
+        <div style="padding:1.5rem;background:var(--color-bg-alt);border:1px solid var(--color-border);border-radius:var(--radius-md);display:flex;gap:1rem;align-items:flex-start;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:.1rem;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p style="font-size:.875rem;color:var(--color-text-muted);line-height:1.6;">These dashboards are sample recreations of real enterprise SAP Analytics Cloud implementations. Data has been anonymised and scaled for confidentiality. The analytics logic, layout, KPI structure, and business decision frameworks are authentic to the original systems.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-copy">&copy; 2025 Vimal Vidyadharan</span>
+      <ul class="footer-links">
+        <li><a href="https://linkedin.com/in/vimz" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="mailto:vimzpy@gmail.com">Email</a></li>
+        <li><a href="https://github.com/Lamiv" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="assets/theme.js"></script>
+  <script>
+    // Sync theme to iframes on load and on toggle
+    document.querySelectorAll('iframe').forEach(function(frame) {
+      frame.addEventListener('load', function() {
+        var dark = document.documentElement.classList.contains('dark');
+        try { frame.contentWindow.postMessage({ type: 'portfolioTheme', dark: dark }, '*'); } catch(e) {}
+      });
+    });
+  </script>
+</body>
+</html>
