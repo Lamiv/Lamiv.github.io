@@ -585,6 +585,14 @@ html.dark .status-badge--progress {
   color: #fcd34d;
   background: #1c1500;
 }
+.status-badge--live {
+  color: #065f46;           /* deep green */
+  background: #ecfdf5;      /* light green */
+}
+html.dark .status-badge--live {
+  color: #34d399;           /* softer green for dark */
+  background: #022c22;      /* deep muted green */
+}
 
 /* === PLATFORMS PAGE === */
 .platform-hero {
