@@ -374,6 +374,14 @@ html.dark .btn--primary:hover {
   background: var(--color-bg-alt);
   border-color: var(--color-text-muted);
 }
+.btn--secondary--inverse {
+  color: #ffffff;
+  border-color: rgba(255,255,255,.4);
+}
+
+.btn--secondary--inverse:hover {
+  background: rgba(255,255,255,.1);
+}
 .btn--ghost {
   background: transparent;
   color: var(--color-text-muted);
