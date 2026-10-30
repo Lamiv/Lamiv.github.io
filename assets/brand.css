@@ -52,6 +52,7 @@ section{padding-block:clamp(56px,8vw,112px);border-top:1px solid var(--line);dis
 /* proof */
 .proof{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:32px 40px}
 .num b{display:block;font:800 clamp(3.2rem,6.4vw,5.6rem)/1 var(--display);font-variant-numeric:tabular-nums}
+.aed{display:inline-block;height:.74em;width:.74em;margin-inline:.03em .05em;vertical-align:-.02em}
 .num p{color:var(--mist);font-size:.95rem;max-width:30ch;margin-top:8px}
 .num p.label{font-size:.74rem;margin:0 0 8px;color:var(--sodium)}
 .clients{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px}
