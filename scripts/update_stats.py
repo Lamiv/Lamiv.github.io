@@ -6,7 +6,6 @@ import re
 import urllib.request
 
 USER = "Lamiv"
-FIRST_YEAR = 2016
 OUT = pathlib.Path(__file__).resolve().parent.parent / "assets" / "github-stats.js"
 
 
@@ -24,7 +23,7 @@ def main():
     this_year = dt.date.today().year
     years = [
         [y, total(fetch(f"?from={y}-01-01&to={y}-12-31"))]
-        for y in range(FIRST_YEAR, this_year + 1)
+        for y in (this_year - 1, this_year)
     ]
     stats = {
         "updated": dt.date.today().isoformat(),

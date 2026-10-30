@@ -83,7 +83,7 @@ section{padding-block:clamp(56px,8vw,112px);border-top:1px solid var(--line);dis
 .gh{display:grid;gap:24px;border-top:1px solid var(--line);padding-top:32px}
 .gh-head{display:flex;flex-wrap:wrap;gap:16px 48px;justify-content:space-between;align-items:end}
 .note{font-size:.88rem;color:var(--mist);max-width:52ch}
-.years{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:clamp(3px,1vw,10px);height:190px;margin-top:12px}
+.years{max-width:320px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:clamp(3px,1vw,10px);height:190px;margin-top:12px}
 .years div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;min-width:0;font:400 .7rem var(--mono);color:var(--mist)}
 .years i{display:block;width:100%;background:var(--mist);height:var(--h)}
 .years div:last-child i{background:var(--sodium)}
