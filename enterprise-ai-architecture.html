@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Enterprise AI Architecture</title>
+<meta name="description" content="Designing the systems behind enterprise AI, from agent orchestration and memory to business capabilities, governed execution and operational reliability.">
+<meta property="og:title" content="Enterprise AI Architecture: Vimal Vidyadharan">
+<meta property="og:description" content="Designing the systems behind enterprise AI, from agent orchestration and memory to business capabilities, governed execution and operational reliability.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lamiv.github.io/enterprise-ai-architecture.html">
+<link rel="canonical" href="https://lamiv.github.io/enterprise-ai-architecture.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/brand.css?v=5">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="mark" href="index.html"><i></i>Vimal Vidyadharan</a>
+  <nav aria-label="Sections"><a href="#overview">Overview</a><a href="#runtime">Runtime</a><a href="#memory">Memory</a><a href="#capabilities">Capabilities</a><a href="#knowledge">Knowledge</a><a href="#governance">Governance</a><a href="#evidence">Evidence</a><a href="index.html">Home</a></nav>
+</div></header>
+<main id="main" class="wrap arch">
+
+<section class="hero arch-hero">
+  <p class="label who"><span><strong>Architecture &amp; engineering</strong></span><span><a href="index.html">Back to home</a></span></p>
+  <h1>Enterprise AI <em>architecture.</em></h1>
+  <p class="lede">From intelligent applications to the platforms, memory systems and governed capabilities that make enterprise AI work.</p>
+  <p class="lede">The hard part is rarely getting a model to produce a useful answer. It is letting an AI system work with enterprise data, invoke real business capabilities, keep the right context and operate reliably inside organisational boundaries. This work draws on enterprise AI platform architecture, SAP-connected agents, commercial AI products and two decades of enterprise integration.</p>
+  <div class="status" aria-label="Status key"><span><i class="lamp on" aria-hidden="true"></i>Production</span><span><i class="lamp dev" aria-hidden="true"></i>Architecture &amp; engineering in progress</span><span><i class="lamp res" aria-hidden="true"></i>Design or exploration</span></div>
+</section>
+
+<section id="overview">
+  <div class="sec-head"><p class="label">Overview</p><h2>Four layers, five concerns that cut across them</h2></div>
+  <figure class="arch-map">
+    <div class="map" role="img" aria-label="Enterprise AI reference architecture. Four layers from top to bottom: business applications and interfaces; agent orchestration and runtime; enterprise capabilities and execution; enterprise systems and operational data. A deterministic path runs from applications directly to enterprise capabilities without passing through the agent runtime. Cross-cutting concerns: memory and context serves the runtime; knowledge and retrieval connects the runtime to enterprise data; identity, authorisation and policy, and evaluation, observability and audit span all four layers; human oversight spans interfaces, runtime and execution approval gates.">
+      <div class="layer" style="--r:1"><span class="label">1 · Interfaces</span><b>Business applications &amp; interfaces</b><p>Conversational applications, enterprise portals, AI-assisted workflows and operational interfaces.</p></div>
+      <div class="layer" style="--r:2"><span class="label">2 · Reasoning</span><b>Agent orchestration &amp; runtime</b><p>Planning, specialist agents, delegation, sessions, execution state and checkpoints.</p></div>
+      <div class="layer" style="--r:3"><span class="label">3 · Execution</span><b>Enterprise capabilities &amp; execution</b><p>Capability registry, tools, APIs, MCP interfaces, workflow execution and approval gates.</p></div>
+      <div class="layer sys" style="--r:4"><span class="label">4 · Record</span><b>Enterprise systems &amp; operational data</b><p>SAP S/4HANA, SAP BTP, OData services, enterprise databases, document repositories and operational systems.</p></div>
+      <p class="label map-x">Across the layers</p>
+      <div class="path" style="--rows:1/4"><b>Deterministic path</b><span>Layers 1 → 3. Workflows and APIs call capabilities directly, with no agent involved.</span></div>
+      <div class="rail" style="--rows:2/3;--c:3"><b>Memory &amp; context</b><span>Layer 2. Scoped context for each agent run.</span></div>
+      <div class="rail" style="--rows:2/5;--c:4"><b>Knowledge &amp; retrieval</b><span>Layers 2–4. Grounds agents in enterprise data and documents.</span></div>
+      <div class="rail" style="--rows:1/5;--c:5"><b>Identity, authorisation &amp; policy</b><span>All layers. The user's authority travels with every call.</span></div>
+      <div class="rail" style="--rows:1/5;--c:6"><b>Evaluation, observability &amp; audit</b><span>All layers. Every run and tool call is traceable.</span></div>
+      <div class="rail hitl" style="--rows:1/4;--c:7"><b>Human oversight</b><span>Layers 1–3. Intervention in the runtime, approval at execution.</span></div>
+    </div>
+    <figcaption>Read top to bottom. The dashed deterministic path reaches enterprise capabilities without the agent runtime. Cross-cutting concerns are drawn against the layers they apply to.</figcaption>
+  </figure>
+  <p class="note-box">Not every enterprise process needs an agent. Deterministic workflows, APIs and conventional software remain the backbone; agentic reasoning is added where it gives a clear advantage, and calls the same governed capabilities.</p>
+</section>
+
+<section id="runtime">
+  <div class="split">
+    <div class="copy">
+      <p class="label">Agent orchestration &amp; runtime</p>
+      <h2>Orchestrating agents, tools and business workflows</h2>
+      <p>Enterprise agents need more than a model and a set of tools. They need a runtime that manages execution, coordinates specialist capabilities, preserves context and handles failures or interruptions.</p>
+      <p>A central design decision is separating the continuity of a user interaction from individual agent executions. A session can hold many runs, and each run can be tracked, interrupted, resumed and evaluated on its own, instead of treating a whole conversation as one execution.</p>
+    </div>
+    <div class="side">
+      <div><p class="label">Architecture topics</p><ul class="topics"><li>Agent and capability registries</li><li>Specialist agents and orchestration</li><li>Session versus execution (run) state</li><li>Workflow planning and delegation</li><li>Checkpoints and recovery</li><li>Human approval and intervention</li><li>Execution history and observability</li></ul></div>
+      <div><p class="label">In context</p><p>Python, LangGraph, enterprise APIs, runtime persistence and checkpoints, containerised services.</p></div>
+      <div class="status"><span><i class="lamp on" aria-hidden="true"></i>Production: SAP-integrated multi-agent customer-service system</span><span><i class="lamp dev" aria-hidden="true"></i>LEO enterprise AI orchestration architecture</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="memory">
+  <div class="split">
+    <div class="copy">
+      <p class="label">Memory &amp; context engineering</p>
+      <h2>Memory that extends beyond the conversation</h2>
+      <p>Temporary conversational context, historical interactions, durable knowledge and operational state serve different purposes and should not be treated as interchangeable.</p>
+      <p>The design problem is less about persistence than about judgement: what should be remembered, how knowledge is updated, who may access it, and when stored information should stop influencing a decision.</p>
+      <table class="mem">
+        <thead><tr><th scope="col">Memory</th><th scope="col">Purpose</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Working</th><td>Context needed for the current execution</td></tr>
+          <tr><th scope="row">Session</th><td>Continuity across a conversation or active workflow</td></tr>
+          <tr><th scope="row">Episodic</th><td>Historical interactions, events and outcomes</td></tr>
+          <tr><th scope="row">Semantic</th><td>Durable facts, relationships and structured knowledge</td></tr>
+          <tr><th scope="row">Procedural</th><td>Reusable instructions, processes and execution patterns</td></tr>
+          <tr><th scope="row">Long-term</th><td>Information persisted and available across sessions</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="side">
+      <div><p class="label">Design considerations</p><ul class="topics"><li>User, agent, workspace and enterprise scopes</li><li>Private versus shared memory</li><li>Promotion and consolidation</li><li>Retrieval relevance and temporal validity</li><li>Provenance and access control</li><li>Retention and correction</li><li>Vector and graph-based retrieval</li></ul></div>
+      <div><p class="label">Design references</p><p>PostgreSQL, vector retrieval, Graphiti, Neo4j and temporal knowledge graphs.</p></div>
+      <div class="status"><span><i class="lamp dev" aria-hidden="true"></i>LEO memory architecture</span><span><i class="lamp res" aria-hidden="true"></i>MemPalace context-engineering exploration</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="capabilities">
+  <div class="split">
+    <div class="copy">
+      <p class="label">Enterprise capabilities &amp; SAP integration</p>
+      <h2>Connecting AI to enterprise systems</h2>
+      <p>An agent becomes operationally useful when it can work with real business capabilities, not only retrieve information. This combines two decades of SAP and enterprise integration with AI tool architecture: OData services, REST APIs, reusable tools, capability discovery and governed transaction execution.</p>
+      <p>The challenge is making business capabilities available to AI systems while keeping enterprise authorisation, validation, auditability and operational controls intact. MCP is treated as an interoperability layer in the architecture, alongside OData and REST rather than in place of them.</p>
+    </div>
+    <div class="side">
+      <div><p class="label">Architecture topics</p><ul class="topics"><li>Capability and tool registries</li><li>API and tool discovery</li><li>SAP OData metadata and service interfaces</li><li>REST-based enterprise integration</li><li>MCP interoperability</li><li>Identity and authorisation propagation</li><li>Transaction validation and approval-controlled execution</li><li>Error handling and audit trails</li></ul></div>
+      <div><p class="label">In context</p><p>SAP Integration Suite, OData, REST, MCP, Event Mesh, Microsoft Graph, S/4HANA and BTP.</p></div>
+      <div class="status"><span><i class="lamp on" aria-hidden="true"></i>Production: customer-service agents in SAP workflows</span><span><i class="lamp dev" aria-hidden="true"></i>ZAKS Drive: SAP documents in Microsoft 365, pre-release</span><span><i class="lamp res" aria-hidden="true"></i>MCP: architectural interoperability</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="knowledge">
+  <div class="split">
+    <div class="copy">
+      <p class="label">Enterprise knowledge &amp; retrieval</p>
+      <h2>Grounding AI in enterprise knowledge</h2>
+      <p>Enterprise information is spread across business systems, documents, databases and processes. The objective is relevant, authorised and traceable context, with a clear line between retrieved evidence, model-generated interpretation and business-system records.</p>
+      <p>Applied in ESG intelligence, where teams query sustainability data in plain language, and in master data enrichment and classification.</p>
+    </div>
+    <div class="side">
+      <div><p class="label">Technical areas</p><ul class="topics"><li>Retrieval-augmented generation</li><li>Vector search and semantic retrieval</li><li>Knowledge graphs</li><li>Hybrid structured and unstructured retrieval</li><li>Document ingestion and transformation</li><li>Entity resolution and fuzzy matching</li><li>Master data enrichment and classification</li><li>Provenance and relevance</li></ul></div>
+      <div><p class="label">In context</p><p>RAG, vector search, knowledge graphs, fuzzy matching and NAICS classification in ESGAI.</p></div>
+      <div class="status"><span><i class="lamp on" aria-hidden="true"></i>In market: ESGAI</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="governance">
+  <div class="split">
+    <div class="copy">
+      <p class="label">Governance, evaluation &amp; reliability</p>
+      <h2>Engineering AI for operational control</h2>
+      <p>Reliability cannot rest on model accuracy or a policy document alone. Systems that touch operational processes or execute transactions need enforceable permissions, controlled execution, evaluation, monitoring and clear responsibility for decisions and actions.</p>
+      <p>These concerns are designed in from the start. Accountability stays with people and the organisation: an AI system acts on delegated authority, and someone owns every outcome.</p>
+    </div>
+    <div class="side">
+      <div><p class="label">Design considerations</p><ul class="topics"><li>Capability-level authorisation</li><li>Human-in-the-loop approvals</li><li>Runtime policy enforcement</li><li>Tool invocation logging</li><li>Model and workflow evaluation</li><li>False-positive and false-negative analysis</li><li>Drift and changing operating conditions</li><li>Failure handling and recovery</li><li>Auditability and incident investigation</li><li>System-level risk from interacting agents</li></ul></div>
+      <div class="status"><span><i class="lamp on" aria-hidden="true"></i>In place: post-go-live monitoring of usage, accuracy and incidents; status, risk and benefit reporting to governance forums</span><span><i class="lamp res" aria-hidden="true"></i>Other items: design principles</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="explorations">
+  <div class="sec-head"><p class="label">Engineering explorations</p><h2>Further architecture work</h2></div>
+  <ul class="explore">
+    <li><p class="label">Architecture</p><h3>AI-assisted application testing</h3><p>Multi-agent testing architecture for SAP Fiori applications: planning, script generation, browser execution, supervision, failure analysis and historical test context.</p></li>
+    <li><p class="label">Exploration</p><h3>Agent-generated interfaces</h3><p>Structured agent responses rendered through approved interface components, so AI output becomes a usable enterprise interaction instead of plain text.</p></li>
+    <li><p class="label">Exploration</p><h3>Context engineering for software</h3><p>MemPalace: structured, persistent project context for AI-assisted development, with controlled retrieval and domain-oriented organisation.</p></li>
+  </ul>
+</section>
+
+<section id="evidence">
+  <div class="sec-head"><p class="label">Selected evidence</p><h2>Where this work shows up</h2></div>
+  <ul class="evidence">
+    <li><b>Production AI</b><p>SAP-integrated customer-service agents. Python, LangGraph, local inference, enterprise APIs.</p><a href="index.html#case-agents">Case study →</a></li>
+    <li><b>Enterprise AI products</b><p>ESGAI for sustainability reporting and CareWiz AI for homecare operations.</p><a href="index.html#market">Products →</a></li>
+    <li><b>Enterprise integration</b><p>ZAKS Drive, a Go gateway that lets SAP store documents in SharePoint. Open source, pre-release.</p><a href="https://github.com/Lamiv/zaks-drive">Repository →</a></li>
+    <li><b>Data engineering</b><p>Production accounting and traceability: automated pipelines and operational analytics.</p><a href="index.html#case-yield">Case study →</a></li>
+    <li><b>Architecture</b><p>LEO orchestration and memory architecture. An architecture and engineering initiative; maturity varies by component and it is not deployed as a whole.</p><span class="label">No public link</span></li>
+  </ul>
+</section>
+
+<section class="cta">
+  <h2>Let's talk <em>architecture.</em></h2>
+  <div class="btns"><a class="btn go" href="index.html#contact">Get in touch</a><a class="btn" href="index.html">Back to home</a></div>
+</section>
+</main>
+<footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="index.html">Back to home</a></footer>
+</body>
+</html>
