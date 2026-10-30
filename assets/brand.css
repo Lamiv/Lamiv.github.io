@@ -103,18 +103,12 @@ figure{margin:0}
 .layer p{color:var(--mist);font-size:.96rem}
 
 /* code */
-.code{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(24px,4vw,56px)}
+.code{display:grid;grid-template-columns:minmax(0,1fr);max-width:860px}
 .zaks{display:grid;gap:16px;align-content:start;min-width:0}
 .zaks h3{font:800 clamp(2.4rem,5vw,4rem)/1 var(--display);text-transform:uppercase}
 .zaks>p:not(.label){color:var(--mist)}
 .term{margin:0;padding:18px;background:var(--panel);border:1px solid var(--line);overflow-x:auto;font:400 .82rem/1.75 var(--mono);color:var(--crystal)}
 .term .ok{color:var(--run)}.term .no{color:var(--sodium)}.term .dim{color:var(--mist)}
-.repos{list-style:none;margin:0;padding:0;display:grid;align-content:start}
-.repos li{border-bottom:1px solid var(--line)}
-.repos a{display:grid;gap:2px;padding:13px 0;text-decoration:none}
-.repos a:hover b{color:var(--sodium)}
-.repos b{font:500 .95rem var(--mono)}
-.repos span{color:var(--mist);font-size:.92rem}
 
 /* career: bars share one scale, 2005 to 2027 */
 .gantt{display:grid;gap:14px;--span:22}
@@ -145,6 +139,6 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
 
 @media (max-width:860px){
   .case,.case.big{grid-column:1/-1}
-  .code,.hero-foot,.layer{grid-template-columns:minmax(0,1fr)}
+  .hero-foot,.layer{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
