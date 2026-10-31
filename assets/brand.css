@@ -128,7 +128,9 @@ h4{margin:0}
 .brings li{padding-left:16px;position:relative;font-size:.96rem}
 .brings li::before{content:"";position:absolute;left:0;top:.72em;width:8px;height:1px;background:var(--sodium)}
 .ev li{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:3px}
-.ev b{font-weight:600}.ev p{color:var(--mist);font-size:.94rem}
+.ev b{font-weight:600}
+.ev b a{text-decoration-color:var(--sodium);text-underline-offset:3px}
+.ev b a:hover{color:var(--sodium)}.ev p{color:var(--mist);font-size:.94rem}
 .ev .m{font:500 .8rem/1.4 var(--mono);color:var(--sodium)}
 .more{font:500 .82rem var(--mono);color:var(--sodium)}
 .links{display:flex;flex-wrap:wrap;gap:8px 24px}
