@@ -78,3 +78,32 @@ document.querySelectorAll('iframe').forEach(function(f){
   c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();mouse={x:e.clientX-r.left,y:e.clientY-r.top}});
   c.addEventListener('pointerleave',function(){mouse=null});
 })();
+
+// Hats: one tab selected, arrow keys move between tabs, #hat-N opens one directly.
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.hat'));if(!tabs.length)return;
+  function select(t,focus){
+    tabs.forEach(function(x){
+      var on=x===t;
+      x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+      document.getElementById(x.getAttribute('aria-controls')).hidden=!on;
+    });
+    if(focus)t.focus();
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){select(t)});
+    t.addEventListener('keydown',function(e){
+      var n={ArrowRight:i+1,ArrowDown:i+1,ArrowLeft:i-1,ArrowUp:i-1,Home:0,End:tabs.length-1}[e.key];
+      if(n===undefined)return;
+      e.preventDefault();select(tabs[(n+tabs.length)%tabs.length],true);
+    });
+  });
+  var m=location.hash.match(/^#hat-(\d)$/);
+  select(tabs[m&&tabs[m[1]-1]?m[1]-1:0]);
+})();
+
+// Selected work: a link to an item opens it.
+(function(){
+  function open(){var d=location.hash&&document.querySelector('details'+location.hash);if(d)d.open=true}
+  window.addEventListener('hashchange',open);open();
+})();
