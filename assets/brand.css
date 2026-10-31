@@ -93,6 +93,8 @@ h4{margin:0}
 .bar{height:8px;background:var(--panel);position:relative}
 .bar i{position:absolute;top:0;bottom:0;left:calc((var(--s) - 2005)/var(--span)*100%);width:calc((var(--e) - var(--s))/var(--span)*100%);background:var(--mist)}
 .job.now .bar i{background:var(--sodium)}
+.jobmore summary{cursor:pointer;font:500 .74rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium);width:max-content}
+.jobmore ul{list-style:none;margin:8px 0 4px;padding:0 0 0 14px;border-left:1px solid var(--line);display:grid;gap:4px;font-size:.92rem;color:var(--mist);max-width:80ch}
 .creds{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:28px 40px;padding-top:16px}
 .creds>div{display:grid;gap:10px;align-content:start}
 .creds ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:.96rem}
