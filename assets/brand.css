@@ -47,6 +47,8 @@ section{padding-block:clamp(56px,8vw,112px);border-top:1px solid var(--line);dis
 .nav nav a{font:500 .76rem var(--mono);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:var(--mist);padding-block:4px}
 .nav nav a:hover{color:var(--sodium)}
 .nav nav a[aria-current=page]{color:var(--sodium);box-shadow:inset 0 -2px var(--sodium)}
+.menu{display:none;appearance:none;border:1px solid var(--line);background:none;color:var(--crystal);font:500 .74rem var(--mono);letter-spacing:.08em;text-transform:uppercase;height:36px;padding:0 12px;cursor:pointer}
+.menu[aria-expanded=true]{border-color:var(--sodium);color:var(--sodium)}
 .theme{appearance:none;border:1px solid var(--line);background:none;color:var(--crystal);width:36px;height:36px;padding:0;display:grid;place-items:center;cursor:pointer}
 .theme:hover{border-color:var(--sodium);color:var(--sodium)}
 .theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -262,5 +264,17 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
   .work summary{grid-template-columns:minmax(0,1fr)}
   .work summary span{text-align:left;padding-left:1.4em}
   .case,.case.big{grid-column:1/-1}
+}
+@media (max-width:760px){
+  /* one-row header: name, theme, menu; the links drop down */
+  .js .menu{display:block}
+  .nav .wrap{flex-wrap:nowrap;gap:8px}
+  .js .nav nav{display:none;position:absolute;left:0;right:0;top:100%;background:var(--ink);border-bottom:1px solid var(--line);padding:8px var(--gutter) 14px;flex-direction:column;gap:0}
+  .js .nav nav.open{display:flex}
+  .js .nav nav a{padding:10px 0;border-top:1px solid var(--line);font-size:.82rem}
+  .nav .wrap{position:relative}
+  .nav{position:sticky}
+  .mark{font-size:1.25rem}
+  html:not(.js) .nav .wrap{flex-wrap:wrap}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
