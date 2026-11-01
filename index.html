@@ -12,16 +12,17 @@
 <link rel="canonical" href="https://lamiv.github.io/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
-<link rel="stylesheet" href="assets/brand.css?v=9">
+<link rel="stylesheet" href="assets/brand.css?v=10">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Vimal Vidyadharan","jobTitle":"Enterprise AI & Digital Transformation Leader","address":{"@type":"PostalAddress","addressLocality":"Dubai","addressCountry":"AE"},"url":"https://lamiv.github.io/","sameAs":["https://linkedin.com/in/vimz","https://github.com/Lamiv"]}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav"><div class="wrap">
   <a class="mark" href="#main"><i></i>Vimal Vidyadharan</a>
-  <nav aria-label="Site"><a href="#hats">Capabilities</a><a href="#work">Selected work</a><a href="enterprise-ai-architecture.html">Architecture</a><a href="#career">Career</a><a href="#contact">Contact</a></nav>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="sitenav">Menu</button>
+  <nav aria-label="Site" id="sitenav"><a href="#hats">Capabilities</a><a href="#work">Selected work</a><a href="enterprise-ai-architecture.html">Architecture</a><a href="#career">Career</a><a href="#contact">Contact</a></nav>
   <button class="theme" type="button" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
 </div></header>
 <main id="main" class="wrap">
@@ -40,6 +41,10 @@
     <div class="q"><p class="label">Global delivery</p><p>IBM · Accenture · Wipro · Gavdi, for Shell, AB InBev, Labatt, Nike, Converse, DEWA, ABB, Maersk and Spinneys</p></div>
     <div class="q"><p class="label">Enterprise AI</p><p>From investment cases at a CEO-chaired AI Steering Committee to AI systems in production</p></div>
   </div>
+  <div class="line" role="img" aria-label="Animated diagram: rows of ledger records on the left feed a network of tools, agents, knowledge and governance on the right.">
+    <canvas id="process"></canvas>
+    <span class="label l">System of record</span><span class="label r">System of reason</span>
+  </div>
 </section>
 
 <section class="outcomes" aria-label="Operational outcomes">
@@ -53,32 +58,11 @@
 
 <section id="hats" class="caps">
   <div class="sec-head">
-    <h2><span class="only-dark">Twenty-one years, four signals</span><span class="only-light">The capability atlas</span></h2>
-    <p class="lede"><span class="only-dark">Four capabilities traced across a career. Select a lane, or a single signal, to see the evidence.</span><span class="only-light">Four capabilities, one body of work. Choose a capability to trace its routes to evidence, or choose a piece of evidence to see which capabilities it proves.</span></p>
+    <h2>The capability atlas</h2>
+    <p class="lede">Four capabilities, one body of work. Choose a capability to trace its routes to evidence, or choose a piece of evidence to see which capabilities it proves.</p>
   </div>
 
-  <div class="trace only-dark" id="trace">
-    <span class="era" style="grid-column:2/7">IBM</span><span class="era" style="grid-column:7/8">Accenture</span><span class="era" style="grid-column:8/12">Wipro</span><span class="era" style="grid-column:12/13">Gavdi</span><span class="era" style="grid-column:13/24">In-house · Dubai manufacturing group</span>
-    <button class="lane" type="button" data-hat="1" aria-pressed="true" style="grid-row:2"><i>01</i><b>Transformation leader</b></button><span class="row" style="grid-row:2"></span>
-    <button class="lane" type="button" data-hat="2" aria-pressed="false" style="grid-row:3"><i>02</i><b>ERP &amp; enterprise architect</b></button><span class="row" style="grid-row:3"></span>
-    <button class="lane" type="button" data-hat="3" aria-pressed="false" style="grid-row:4"><i>03</i><b>AI strategy &amp; governance</b></button><span class="row" style="grid-row:4"></span>
-    <button class="lane" type="button" data-hat="4" aria-pressed="false" style="grid-row:5"><i>04</i><b>AI architect &amp; builder</b></button><span class="row" style="grid-row:5"></span>
-    <button class="sig" type="button" data-hat="1" data-when="2011–14" data-href="#work-erp" style="grid-row:2;grid-column:8/12" data-d="Project and Technical Lead for Nike, Converse and DEWA, Wipro">Project leadership</button>
-    <button class="sig" type="button" data-hat="1" data-when="2014–15" data-href="#work-hr" style="grid-row:2;grid-column:12/13" data-d="Led Managed Services, Centre of Excellence activities, technical pre-sales and project delivery at Gavdi">Gavdi</button>
-    <button class="sig" type="button" data-hat="1" data-when="In-house" data-href="#case-yield" style="grid-row:2;grid-column:13/24" data-d="Logistics, production accounting and procurement: 24% truck turnaround improvement, ~$7M brought into accurate accounting, ~AED 2M savings">Operational transformation · 24% · ~$7M · ~AED 2M</button>
-    <button class="sig" type="button" data-hat="2" data-when="2005–09" data-href="#work-erp" style="grid-row:3;grid-column:2/7" data-d="Systems Engineer on Shell GSAP (Downstream One), IBM">Shell GSAP</button>
-    <button class="sig" type="button" data-hat="2" data-when="2009–10" data-href="#work-erp" style="grid-row:3;grid-column:7/8" data-d="SAP Technical Lead, AB InBev global ERP rollout to Canada (Labatt), Accenture">AB InBev</button>
-    <button class="sig" type="button" data-hat="2" data-when="2011–14" data-href="#work-hr" style="grid-row:3;grid-column:8/12" data-d="Nike and Converse SAP upgrade and rollout for about 5,000 users; DEWA Kawader SAP HCM, Kawader 2 and PM-WCM">Nike · Converse · DEWA</button>
-    <button class="sig" type="button" data-hat="2" data-when="2014–15" data-href="#work-hr" style="grid-row:3;grid-column:12/13" data-d="SAP HR and SuccessFactors for ABB, Maersk and Spinneys; SAP-based HCM products at Gavdi Labs">HCM</button>
-    <button class="sig" type="button" data-hat="2" data-when="2015–now" data-href="#work-erp" style="grid-row:3;grid-column:13/24" data-d="SAP Technical Architect; ongoing programme including HR transformation and Plant Maintenance; SAP Business AI on Business Data Cloud in development">In-house SAP architecture and modernisation</button>
-    <button class="sig top" type="button" data-hat="3" data-when="2020–now" data-href="#career" style="grid-row:4;grid-column:17/24" data-d="AI Strategic Advisor, Travanleo, pro bono">AI advisory · Travanleo</button>
-    <button class="sig now bot" type="button" data-hat="3" data-when="Now" data-href="#case-agents" style="grid-row:4;grid-column:21/24" data-d="Owns the AI roadmap and delivery portfolio; investment recommendations to a CEO-chaired AI Steering Committee; industrial vision AI in validation">AI portfolio</button>
-    <button class="sig" type="button" data-hat="4" data-when="2021" data-href="#career" style="grid-row:5;grid-column:18/19" data-d="MSc Artificial Intelligence, Distinction, Heriot-Watt; diabetes NLP research presented at SCCI 2021">MSc AI</button>
-    <button class="sig now" type="button" data-hat="4" data-when="Now" data-href="#case-agents" style="grid-row:5;grid-column:20/24" data-d="ERP-integrated AI agents in production; ESGAI and CareWiz AI in market; ZAKS Drive pre-release; LEO in progress">Agents · ESGAI · ZAKS · LEO</button>
-    <div class="axis" aria-hidden="true"><span>05</span><span>06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span></div>
-  </div>
-
-  <div class="atlas only-light" id="atlas">
+  <div class="atlas" id="atlas">
     <svg aria-hidden="true"></svg>
     <ul class="ahats" aria-label="Capabilities">
       <li><button class="ahat" type="button" data-hat="1" aria-pressed="true"><i>01</i><b>Transformation leader</b><span>Business priorities into programmes and outcomes</span></button></li>
@@ -87,22 +71,22 @@
       <li><button class="ahat" type="button" data-hat="4" aria-pressed="false"><i>04</i><b>AI architect &amp; builder</b><span>AI built to work inside enterprise systems</span></button></li>
     </ul>
     <ul class="anodes" aria-label="Evidence">
-      <li><button class="anode" type="button" data-links="1 2" data-href="#case-yield"><b>Operational transformation</b><em>Measured</em><small>Logistics, production accounting, procurement</small></button></li>
-      <li><button class="anode" type="button" data-links="1 2" data-href="#work-hr"><b>Consulting and product leadership</b><em>2014–15</em><small>Managed Services, CoE, technical pre-sales; Gavdi Labs HCM products</small></button></li>
-      <li><button class="anode" type="button" data-links="2 1" data-href="#work-erp"><b>Global ERP rollouts</b><em>2005–14</em><small>Shell GSAP, AB InBev to Canada, Nike and Converse for about 5,000 users</small></button></li>
-      <li><button class="anode" type="button" data-links="2" data-href="#work-hr"><b>HR and asset management on SAP</b><em>2011–15</em><small>DEWA Kawader and PM-WCM; Spinneys payroll</small></button></li>
-      <li><button class="anode" type="button" data-links="3 1" data-href="#case-agents"><b>AI portfolio and investment governance</b><em>Current</em><small>Roadmap; CEO-chaired AI Steering Committee</small></button></li>
-      <li><button class="anode" type="button" data-links="4 3 2" data-href="#case-agents"><b>ERP-integrated AI agents</b><em>Production</em><small>Customer operations into SAP, least-privilege service user</small></button></li>
-      <li><button class="anode" type="button" data-links="3 4" data-href="#work-vision"><b>Industrial vision AI</b><em>UAT</em><small>Equipment, packaging and HSE use cases</small></button></li>
-      <li><button class="anode" type="button" data-links="4" data-href="#work-products"><b>Commercial AI products</b><em>In market</em><small>ESGAI, CareWiz AI</small></button></li>
-      <li><button class="anode" type="button" data-links="4 2" data-href="enterprise-ai-architecture.html#projects"><b>ZAKS Drive · LEO</b><em>Pre-release</em><small>SAP-to-SharePoint gateway; orchestration and memory architecture</small></button></li>
+      <li><button class="anode" type="button" data-id="ops" data-links="1 2"><b>Operational transformation</b><em>Measured</em><small>Logistics, production accounting, procurement</small></button></li>
+      <li><button class="anode" type="button" data-id="consult" data-links="1 2"><b>Consulting and product leadership</b><em>Delivered</em><small>Managed Services, CoE, technical pre-sales; HCM product ownership</small></button></li>
+      <li><button class="anode" type="button" data-id="erp" data-links="2 1"><b>Global ERP programmes</b><em>Delivered</em><small>Implementation, global rollout and large-scale upgrade</small></button></li>
+      <li><button class="anode" type="button" data-id="hr" data-links="2"><b>HR and asset management on SAP</b><em>Delivered</em><small>SAP HCM, SuccessFactors, Plant Maintenance</small></button></li>
+      <li><button class="anode" type="button" data-id="gov" data-links="3 1"><b>AI portfolio and investment governance</b><em>In place</em><small>Roadmap and investment cases at executive level</small></button></li>
+      <li><button class="anode" type="button" data-id="agents" data-links="4 3 2"><b>ERP-integrated AI agents</b><em>Production</em><small>Customer operations routed into SAP</small></button></li>
+      <li><button class="anode" type="button" data-id="vision" data-links="3 4"><b>Industrial vision AI</b><em>UAT</em><small>Equipment, packaging and HSE use cases</small></button></li>
+      <li><button class="anode" type="button" data-id="products" data-links="4"><b>Commercial AI products</b><em>In market</em><small>ESGAI, CareWiz AI</small></button></li>
+      <li><button class="anode" type="button" data-id="platform" data-links="4 2"><b>ZAKS Drive · LEO</b><em>Pre-release</em><small>Integration gateway; orchestration and memory architecture</small></button></li>
     </ul>
   </div>
 
   <div class="brief" id="brief" aria-live="polite">
     <p class="label" id="brief-k">Capability 01</p>
-    <div><h3 id="brief-t">Transformation leader</h3><p class="prop" id="brief-p">Transformation that starts from a business problem and is judged by what changes in the operation.</p><ul class="brings" id="brief-b"><li>Transformation strategy and roadmaps</li><li>Business cases and value realisation</li><li>Cross-functional, multi-vendor delivery</li><li>Process redesign and adoption (Lean Six Sigma Green Belt)</li></ul></div>
-    <ul class="ev" id="brief-e"><li><a href="#case-yield">Operational transformation</a><span>24% truck turnaround improvement · ~$7M made traceable · ~AED 2M savings</span></li><li><a href="#work-hr">Consulting and product leadership</a><span>At Gavdi, led Managed Services, Centre of Excellence activities, technical pre-sales engagements and project delivery, alongside product ownership of SAP-based HCM solutions at Gavdi Labs.</span></li><li><a href="#career">From architecture to business excellence</a><span>In-house progression from SAP Technical Architect to Business Excellence, then AI &amp; Digital Transformation.</span></li></ul>
+    <div><h3 id="brief-t">Transformation leader</h3><p class="prop" id="brief-p">Transformation that starts from a business problem and is judged by what changes in the operation.</p></div>
+    <div class="brief-r" id="brief-r"><p class="label">What I bring</p><ul class="brings"><li>Transformation strategy and roadmaps</li><li>Business cases and value realisation</li><li>Cross-functional, multi-vendor delivery</li><li>Process redesign and adoption (Lean Six Sigma Green Belt)</li></ul></div>
   </div>
 </section>
 
@@ -173,6 +157,6 @@
 </section>
 </main>
 <footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><span>Dubai, UAE</span></footer>
-<script src="assets/brand.js?v=5"></script>
+<script src="assets/brand.js?v=6"></script>
 </body>
 </html>
