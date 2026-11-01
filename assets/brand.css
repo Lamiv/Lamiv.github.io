@@ -90,6 +90,11 @@ section{padding-block:clamp(56px,8vw,112px);border-top:1px solid var(--line);dis
 [data-theme=light] .outcomes b{color:var(--sodium);font-size:1.6rem}
 .outcomes span{color:var(--mist);font-size:.95rem}
 
+/* hero animation: ledger records feeding a network of agents */
+.hero .line{grid-column:1/-1;position:relative;border-block:1px solid var(--line)}
+#process{display:block;width:100%;height:clamp(170px,20vw,260px)}
+.line span{position:absolute;top:10px}.line .l{left:0}.line .r{right:0;color:var(--sodium)}
+
 /* capabilities: shared brief */
 .caps h2{font-size:clamp(2rem,4.4vw,3.4rem)}
 .brief{display:grid;grid-template-columns:110px minmax(0,1fr) minmax(0,1.1fr);gap:16px clamp(28px,4vw,56px);border-top:1px solid var(--line);padding-top:24px}
