@@ -1,3 +1,12 @@
+// Small screens: the site links fold behind a Menu button.
+(function(){
+  var m=document.querySelector('.menu'),nav=document.getElementById('sitenav');if(!m||!nav)return;
+  function set(open){m.setAttribute('aria-expanded',open);nav.classList.toggle('open',open)}
+  m.addEventListener('click',function(){set(m.getAttribute('aria-expanded')!=='true')});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false)});
+})();
+
 // Theme: dark (signal trace) by default, light (capability atlas) on request.
 // The choice is stored under "theme", the key the embedded dashboards also read.
 (function(){
