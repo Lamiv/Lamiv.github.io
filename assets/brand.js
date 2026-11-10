@@ -27,7 +27,7 @@
 })();
 
 // Capability atlas. A capability lights its routes and shows what it brings;
-// a piece of evidence shows where it happened, what it proves and where to read more.
+// a piece of evidence shows where it happened and where to read more.
 // The panel never repeats the text already on the evidence itself.
 (function(){
   var atlas=document.getElementById('atlas');if(!atlas)return;
@@ -42,25 +42,39 @@
        b:['Enterprise AI architecture and platforms','Agentic AI integrated with SAP and enterprise APIs','Retrieval and knowledge systems','MSc Artificial Intelligence, Distinction']}
   };
   // where, role and outcome: shown only when the evidence is opened
+  var WHERE=['Where','Industrial manufacturing group, Dubai'];
   var E={
-    ops:{d:[['Logistics','Traffic management, scheduling and dispatch: 24% truck turnaround improvement'],['Production accounting','Estimates replaced by measurement: ~$7M annual product value brought into accurate accounting'],['Procurement','SAP process redesign and negotiation analytics: ~AED 2M savings delivered by the negotiating teams'],['Where','Industrial manufacturing group, Dubai · 2015 onward']],
-         l:[['Selected work','#case-yield'],['Sample dashboards','sap-analytics.html']]},
-    consult:{d:[['Gavdi · 2014–15','Led Managed Services, Centre of Excellence activities, technical pre-sales engagements and project delivery'],['Gavdi Labs','Product ownership, design and development of SAP-based HCM products'],['Clients','ABB and Maersk; UAE-localised payroll for Spinneys']],
-         l:[['Selected work','#work-hr'],['Career detail','#career']]},
-    erp:{d:[['IBM · 2005–09','Systems Engineer, Shell GSAP (Downstream One)'],['Accenture · 2009–10','SAP Technical Lead, AB InBev global ERP rollout to Canada (Labatt)'],['Wipro · 2011–14','Project and Technical Lead: Nike and Converse upgrade and rollout for about 5,000 users; DEWA']],
-         l:[['Selected work','#work-erp']]},
-    hr:{d:[['DEWA · Wipro','SAP HCM (Kawader), e-Recruitment and Learning (Kawader 2), Plant Maintenance with work clearance management'],['Gavdi','SAP HR and SuccessFactors for ABB, Maersk and Spinneys'],['In-house','HR transformation and Plant Maintenance on the ongoing SAP programme']],
-         l:[['Selected work','#work-hr']]},
-    gov:{d:[['Portfolio','I own the AI roadmap and delivery portfolio: agents and pricing AI in production; vision AI in validation; agentic delivery coordination and SAP Business AI in development'],['Forum','Investment recommendations to a CEO-chaired AI Steering Committee with Legal, Risk & Assurance and Finance'],['Controls','Privacy, cybersecurity, human oversight and performance, developed alongside the portfolio']],
-         l:[['Selected work','#case-agents']]},
-    agents:{d:[['Build','Designed and built in Python and LangGraph, on local inference'],['Integration','Enquiries, complaints and release orders routed into SAP through a least-privilege service user'],['Operation','Monitored after go-live for usage, accuracy and incidents; pricing AI serves the same commercial team']],
-         l:[['Selected work','#case-agents'],['Architecture & engineering','enterprise-ai-architecture.html']]},
+    logistics:{d:[['What','Truck traffic management, scheduling and dispatch with real-time monitoring and intervention'],['Next','Weighbridge automation integrated with SAP and dispatch, in implementation'],WHERE],
+      l:[['Selected work','#case-yield'],['Sample dashboard','sap-analytics.html#traffic']]},
+    prodacc:{d:[['What','Statistical yield estimates replaced by automated, measurement-driven reporting across output, process losses and work-in-progress'],WHERE],
+      l:[['Selected work','#case-yield'],['Sample dashboard','sap-analytics.html#yield']]},
+    procure:{d:[['What','Procurement redesigned on SAP best practice, with analytics and dashboards for negotiators'],WHERE],
+      l:[['Selected work','#case-yield'],['Sample dashboard','sap-analytics.html#procurement']]},
+    shell:{d:[['Role','Systems Engineer, IBM'],['When','2005 to 2009']],l:[['Selected work','#work-erp']]},
+    abi:{d:[['Role','SAP Technical Lead, Accenture'],['When','2009 to 2010']],l:[['Selected work','#work-erp']]},
+    nike:{d:[['Role','Project and Technical Lead, Wipro'],['When','2011 to 2014']],l:[['Selected work','#work-erp']]},
+    dewa:{d:[['Scope','SAP HCM (Kawader), then e-Recruitment and Learning (Kawader 2); Plant Maintenance with work clearance management'],['Role','Wipro, 2011 to 2014']],l:[['Selected work','#work-hr']]},
+    gavdi:{d:[['Role','Senior Manager; Manager, Customer Innovations'],['Led','Managed Services, Centre of Excellence activities, technical pre-sales engagements and project delivery'],['Clients','ABB and Maersk; UAE-localised payroll for Spinneys'],['When','2014 to 2015']],
+      l:[['Selected work','#work-hr'],['Career detail','#career']]},
+    gavdilabs:{d:[['Role','Manager, Gavdi Labs'],['Work','Product design and development; regional HR localisation, smart identity management, SuccessFactors integration, SAP cloud and mobile'],['When','2014 to 2015']],
+      l:[['Career detail','#career']]},
+    inhouse:{d:[['Role','SAP Technical Architect from 2015, then Business Excellence, now AI & Digital Transformation'],['Now','SAP Business AI on Business Data Cloud (development); weighbridge automation integrated with SAP (implementation)']],
+      l:[['Selected work','#work-erp']]},
+    zaks:{d:[['What','Go gateway that implements SAP\u2019s content-server protocol on SharePoint'],['Verified','S/4HANA 2025 with SAP DMS']],
+      l:[['Architecture & engineering','enterprise-ai-architecture.html#projects'],['On GitHub','https://github.com/Lamiv/zaks-drive']]},
+    portfolio:{d:[['Portfolio','I own the AI roadmap and delivery portfolio'],['Forum','Investment recommendations to a CEO-chaired AI Steering Committee with Legal, Risk & Assurance and Finance'],['Controls','Privacy, cybersecurity, human oversight and performance, developed alongside the portfolio']],
+      l:[['Selected work','#case-agents']]},
+    agents:{d:[['Build','Designed and built in Python and LangGraph, on local inference'],['Integration','Enquiries, complaints and release orders routed into SAP through a least-privilege service user'],['Operation','Monitored after go-live for usage, accuracy and incidents']],
+      l:[['Selected work','#case-agents'],['Architecture & engineering','enterprise-ai-architecture.html']]},
+    pricing:{d:[['Use','Supports the commercial team\u2019s pricing decisions in B2B commodity sales']],l:[['Selected work','#case-agents']]},
     vision:{d:[['Use cases','Equipment monitoring on belts and conveyors; packaging operations; HSE, with PPE detection and incident reporting'],['Status','Validation and UAT; not yet in production']],
-         l:[['Selected work','#work-vision']]},
-    products:{d:[['ESGAI','Plain-language queries over ESG data, with reports aligned to GRI, ESRS, BRSR and VSME'],['CareWiz AI','Machine-learning scheduling that matches caregivers to staffing needs']],
-         l:[['Selected work','#work-products'],['ecodrisil.com','https://ecodrisil.com/']]},
-    platform:{d:[['ZAKS Drive','Open-source Go gateway that lets SAP store documents in SharePoint; verified on S/4HANA 2025'],['LEO','Enterprise AI orchestration and memory architecture; components at different stages']],
-         l:[['Architecture & engineering','enterprise-ai-architecture.html#projects'],['ZAKS Drive on GitHub','https://github.com/Lamiv/zaks-drive']]}
+      l:[['Selected work','#work-vision']]},
+    esgai:{d:[['What','Plain-language queries over ESG data, with reports aligned to GRI, ESRS, BRSR and VSME'],['Product','ESG Xpress, Ecodrisil']],
+      l:[['Selected work','#work-products'],['ecodrisil.com','https://ecodrisil.com/']]},
+    carewiz:{d:[['What','Machine-learning scheduling that matches available caregivers to staffing needs']],
+      l:[['Selected work','#work-products'],['carewiz.org','https://carewiz.org/']]},
+    leo:{d:[['Architecture','An agent runtime, scoped memory and shared business capabilities that new AI use cases build on'],['Status','Components at different stages; not deployed as a whole']],
+      l:[['Architecture & engineering','enterprise-ai-architecture.html#projects']]}
   };
   var svg=atlas.querySelector('svg'),hats=[].slice.call(atlas.querySelectorAll('.ahat')),nodes=[].slice.call(atlas.querySelectorAll('.anode'));
   var state={hat:'1',node:null},K=document.getElementById('brief-k'),T=document.getElementById('brief-t'),P=document.getElementById('brief-p'),R=document.getElementById('brief-r');
@@ -77,8 +91,6 @@
     K.textContent='Evidence · '+n.querySelector('em').textContent;T.textContent=n.querySelector('b').textContent;P.hidden=true;
     var dl=el('ul','facts');e.d.forEach(function(r){var li=el('li');li.appendChild(el('span','label',r[0]));li.appendChild(el('span','',r[1]));dl.appendChild(li)});
     T.parentNode.appendChild(dl);
-    R.appendChild(el('p','label','Proves'));
-    var pr=el('div','proves');links(n).forEach(function(k){var b=el('button','chip','0'+k+' '+H[k].t);b.type='button';b.addEventListener('click',function(){state={hat:k,node:null};render()});pr.appendChild(b)});R.appendChild(pr);
     var lk=el('p','golinks');e.l.forEach(function(x){var a=el('a','',x[0]+' →');a.href=x[1];lk.appendChild(a)});R.appendChild(lk);
   }
   function render(){
@@ -90,6 +102,11 @@
       n.classList.toggle('on',state.node?n===state.node:links(n).indexOf(state.hat)>-1);
       n.setAttribute('aria-pressed',n===state.node);
       n.parentNode.classList.toggle('off',links(n).indexOf(state.hat)<0);
+    });
+    [].forEach.call(atlas.querySelectorAll('.anodes .grp'),function(g){
+      var x=g.nextElementSibling,any=false;
+      while(x&&!x.classList.contains('grp')){if(!x.classList.contains('off'))any=true;x=x.nextElementSibling}
+      g.classList.toggle('off',!any);
     });
     [].forEach.call(svg.children,function(p){p.classList.toggle('on',state.node?nodes[p.dataset.n]===state.node:p.dataset.h===state.hat)});
     atlas.classList.add('focus');panel();
