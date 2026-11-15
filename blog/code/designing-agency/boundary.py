@@ -49,6 +49,14 @@ class MockSAP:
         self.outputs: list[tuple[str, int]] = []   # what suppliers received
         self.processed_keys: dict[str, str] = {}   # idempotency key -> result
         self.lose_next_response = False
+        # Authorisations as an SAP administrator configured them. The buyer can
+        # release small orders, a common setting, so anything acting as the
+        # buyer can release too: the role check cannot tell person from agent.
+        self.authorised = {"buyer": {"create", "change", "release"},
+                           "manager": {"release", "send"}}
+
+    def allows(self, user: str, activity: str) -> bool:
+        return activity in self.authorised.get(user, set())
 
     def create(self, user: str, terms: dict) -> PurchaseOrder:
         po = PurchaseOrder(f"45{len(self.orders) + 1:08d}", user, dict(terms))
@@ -61,7 +69,9 @@ class MockSAP:
         po.version += 1
         return po
 
-    def release(self, number: str) -> None:
+    def release(self, user: str, number: str) -> None:
+        if not self.allows(user, "release"):
+            raise Denied(f"SAP: {user} has no release authorisation")
         self.orders[number].status = "released"
 
     def send(self, number: str, key: str) -> str:
@@ -103,14 +113,17 @@ class Boundary:
     agent_may: set[str] = field(default_factory=lambda: {"stage", "change"})
     approvals: dict[str, Approval] = field(default_factory=dict)
     audit: list[str] = field(default_factory=list)
+    alerts: list[str] = field(default_factory=list)
 
     def log(self, user: str, actor: str, action: str, detail: str) -> None:
         self.audit.append(f"{action:<9} sub={user:<7} act={actor:<10} {detail}")
 
-    def check(self, actor: str, action: str) -> None:
+    def check(self, actor: str, action: str, record: bool = True) -> None:
         """Deterministic pre-action check: agents only stage and change drafts."""
         if actor.startswith("agent") and action not in self.agent_may:
-            raise Denied(f"{actor} may not {action}: that step belongs to a person")
+            if record:
+                self.alerts.append(f"{actor} attempted {action}")   # detect, not only prevent
+            raise Denied(f"boundary policy: {actor} may not {action}")
 
     # The agent's tools
     def stage(self, user: str, agent: str, terms: dict) -> PurchaseOrder:
@@ -142,15 +155,15 @@ class Boundary:
         if when > appr.expires:
             raise Denied(f"approval for {number} expired on {appr.expires:%d %b}")
         if fingerprint(po) != appr.fingerprint:
-            changed = {k: f"{appr.terms[k]} -> {po.terms[k]}"
-                       for k in MATERIAL_TERMS if appr.terms[k] != po.terms[k]}
-            raise Denied(f"approval covers an earlier version of {number}; changed: {changed}")
+            changed = ", ".join(f"{k} {appr.terms[k]} -> {po.terms[k]}"
+                                for k in MATERIAL_TERMS if appr.terms[k] != po.terms[k])
+            raise Denied(f"approval covers an earlier version; changed: {changed}")
 
-    def release(self, actor: str, number: str, when: datetime = NOW) -> None:
-        self.check(actor, "release")
+    def release(self, user: str, number: str, when: datetime = NOW, agent: str | None = None) -> None:
+        self.check(agent or user, "release")         # the boundary knows if an agent asks
         self._still_approved(number, when)
-        self.sap.release(number)
-        self.log(actor, "-", "release", f"{number} v{self.sap.orders[number].version}")
+        self.sap.release(user, number)               # SAP only sees the user
+        self.log(user, agent or "-", "release", f"{number} v{self.sap.orders[number].version}")
 
     def send(self, actor: str, number: str, when: datetime = NOW) -> str:
         self.check(actor, "send")
@@ -184,6 +197,18 @@ def attempt(label: str, fn, *args, **kwargs):
         print(f"  blocked {label}\n          reason: {reason}")
 
 
+def control_test(gate: Boundary, number: str) -> bool:
+    """A negative test to run on every change of roles or policy: it passes only
+    if the agent is refused each forbidden action, whatever SAP would allow."""
+    for action in ("release", "send"):
+        try:
+            gate.check("agent-proc", action, record=False)
+            return False
+        except Denied:
+            pass
+    return True
+
+
 def main() -> None:
     sap = MockSAP()
     gate = Boundary(sap, approvers={"buyer": "manager"})
@@ -194,7 +219,8 @@ def main() -> None:
     po = attempt("agent stages a draft order", gate.stage, "buyer", "agent-proc", terms)
 
     print("2. The agent tries to go further")
-    attempt("agent releases the order", gate.release, "agent-proc", po.number)
+    print(f"  (SAP itself would allow the buyer to release: {sap.allows('buyer', 'release')})")
+    attempt("agent releases the order as the buyer", gate.release, "buyer", po.number, agent="agent-proc")
 
     print("3. Approval")
     attempt("buyer approves own order", gate.approve, "buyer", po.number)
@@ -215,6 +241,10 @@ def main() -> None:
     attempt("output to supplier", gate.send, "manager", po.number)
     attempt("output to supplier, retried", gate.send, "manager", po.number)
     print(f"  the supplier received {len(sap.outputs)} order(s): {sap.outputs}")
+
+    print("7. Control test: forbidden actions must be refused")
+    print("  passed" if control_test(gate, po.number) else "  FAILED: the agent could act beyond its policy")
+    print(f"\nAlerts for review: {gate.alerts}")
 
     print("\nAudit trail (sub = SAP identity, act = agent)")
     for line in gate.audit:

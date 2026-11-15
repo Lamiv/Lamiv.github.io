@@ -48,6 +48,7 @@ In procurement they look ordinary. Misuse is a supplier's email that steers the 
 5. **When the agent's inputs turn against it**: injected instructions and poisoned memory.
 6. **How does an agent earn more autonomy?** Evidence for widening authority, and triggers for narrowing it.
 7. **Build the boundary**: a small working example.
+8. **When the role is wrong**: defence in depth, and what a risk framework is for.
 
 :::risk
 **Averting risk**

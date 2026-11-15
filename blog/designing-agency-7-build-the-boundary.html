@@ -26,7 +26,7 @@
 <main id="main" class="wrap">
 <article class="post">
 <header class="post-head">
-<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#agent-governance">AI agents and governance</a> · Designing Agency, part 7 of 7</p>
+<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#agent-governance">AI agents and governance</a> · Designing Agency, part 7 of 8</p>
 <p class="label">25 October 2026 · 5 min read</p>
 <h1>Build the boundary</h1>
 <p class="post-sub">A small, runnable boundary around an agent that works with SAP</p>
@@ -42,7 +42,8 @@
 <p>Every call passes a deterministic check outside the model. Agents may stage and change; release and sending belong to people (Parts 1 and 2).</p>
 <pre class="code"><code>def check(self, actor, action):
     if actor.startswith(&quot;agent&quot;) and action not in self.agent_may:
-        raise Denied(f&quot;{actor} may not {action}: that step belongs to a person&quot;)</code></pre>
+        self.alerts.append(f&quot;{actor} attempted {action}&quot;)   # detect, not only prevent
+        raise Denied(f&quot;boundary policy: {actor} may not {action}&quot;)</code></pre>
 <p>The draft is created under the buyer's identity, as principal propagation would do (Part 3), and the audit line records both: <code>sub=buyer act=agent-proc</code>.</p>
 <h2 id="rule-2-the-approver-is-configured-and-is-not-the-creator">Rule 2: the approver is configured, and is not the creator</h2>
 <p>The approver comes from configuration, not from anything the agent says, and the creator cannot approve their own order, as SAP's flexible workflow can enforce by excluding restricted agents (Part 4).</p>
@@ -58,8 +59,9 @@
 <pre class="code"><code>1. The agent stages a proposal for the buyer
   ok      agent stages a draft order
 2. The agent tries to go further
-  blocked agent releases the order
-          reason: agent-proc may not release: that step belongs to a person
+  (SAP itself would allow the buyer to release: True)
+  blocked agent releases the order as the buyer
+          reason: boundary policy: agent-proc may not release
 3. Approval
   blocked buyer approves own order
           reason: buyer created 4500000001 and cannot approve it
@@ -67,7 +69,7 @@
 4. The supplier revises the price and the agent updates the draft
   ok      agent changes price to 2.35
   blocked manager releases
-          reason: approval covers an earlier version of 4500000001; changed: {&#x27;price&#x27;: &#x27;2.10 -&gt; 2.35&#x27;}
+          reason: approval covers an earlier version; changed: price 2.10 -&gt; 2.35
 5. Reapproval of the changed order
   ok      manager approves again
   blocked manager releases, ten days later
@@ -76,34 +78,37 @@
 6. Sending, with a lost response
   ok      output to supplier
   ok      output to supplier, retried
-  the supplier received 1 order(s): [(&#x27;4500000001&#x27;, 2)]</code></pre>
+  the supplier received 1 order(s): [(&#x27;4500000001&#x27;, 2)]
+7. Control test: forbidden actions must be refused
+  passed
+
+Alerts for review: [&#x27;agent-proc attempted release&#x27;]</code></pre>
 <p>Reading it step by step:</p>
 <ol class="list">
 <li>The agent stages a draft under the buyer's identity.</li>
-<li>It tries to release the order and is stopped by the boundary, not by its own judgement.</li>
+<li>It tries to release the order. Note the line above the refusal: SAP <em>would</em> have allowed it, because the buyer may release small orders and the agent acts as the buyer. The refusal comes from the boundary's policy, the one layer that knows an agent is asking. Part 8 is about exactly this.</li>
 <li>The buyer cannot approve their own order; the configured manager can.</li>
-<li>The supplier revises the price and the agent updates the draft. The old approval no longer covers it, and the block says exactly what changed.</li>
-<li>A fresh approval covers the new version. A release attempted after the approval has expired is refused; a timely one goes through.</li>
+<li>The supplier revises the price and the agent updates the draft. The old approval no longer covers it, and the block says what changed.</li>
+<li>A fresh approval covers the new version. A release after the approval has expired is refused; a timely one goes through.</li>
 <li>The first send takes effect but its response is lost. The boundary reconciles with SAP before retrying, and the retry does nothing. The supplier receives one order, not two.</li>
+<li>A control test tries every forbidden action as the agent and passes only if each is refused. Run on every change to roles or policy, it catches a widened permission before production.</li>
 </ol>
-<p>The audit trail that follows the output records every step with <code>sub</code>, the SAP identity, and <code>act</code>, the agent where one acted: enough to answer the auditor's question from Part 3.</p>
+<p>The refused attempt also raises an alert, and the audit trail records every step with <code>sub</code>, the SAP identity, and <code>act</code>, the agent where one acted: enough to answer the auditor's question from Part 3.</p>
 <h2 id="what-production-would-add">What production would add</h2>
 <p>This is teaching code. A real boundary would use SAP's own workflow for approver choice and release, principal propagation for the executing identity, durable storage for approvals and keys, signed audit records, and monitoring with the triggers from Part 6. The rules would stay the same.</p>
 <aside class="box risk">
-<p><strong>Averting risk: the whole series</strong></p>
-<div class="tablewrap"><table><thead><tr><th>Risk</th><th>Strategy</th><th>Part</th></tr></thead><tbody><tr><td>One vague request is read as a grant of every step</td><td>Grant authority per step</td><td>Prologue</td></tr><tr><td>The agent drifts into irreversible steps</td><td>Agents stage; people release and send</td><td>1, 2</td></tr><tr><td>Undo is assumed but impossible</td><td>Label actions restore, compensate or live with it</td><td>2</td></tr><tr><td>The agent acts with too much, or someone else's, authority</td><td>Propagate the requester's identity; narrow the agent's tools; log <code>sub</code> and <code>act</code></td><td>3</td></tr><tr><td>An approval covers something nobody saw</td><td>Fingerprint material terms; check at release and before sending; expire approvals</td><td>4</td></tr><tr><td>Inputs and memory steer the agent</td><td>Untrusted data, tiered memory, a deterministic gate</td><td>5</td></tr><tr><td>Autonomy outruns evidence</td><td>Shadow runs, workflow red-teaming, triggers for narrowing</td><td>6</td></tr><tr><td>Retries duplicate orders</td><td>Idempotency keys and reconciliation after timeouts</td><td>7</td></tr></tbody></table></div>
+<p><strong>Averting risk</strong></p>
+<div class="tablewrap"><table><thead><tr><th>Risk</th><th>Strategy</th><th>What it still does not cover</th></tr></thead><tbody><tr><td>The agent releases or sends</td><td>A policy check in front of SAP that knows an agent is asking</td><td>A policy that is itself wrong (Part 8)</td></tr><tr><td>A changed order goes out on an old approval</td><td>Fingerprint the material terms; check at release and before sending; expire approvals</td><td>Terms outside the fingerprint</td></tr><tr><td>A retry duplicates an order</td><td>Idempotency keys; reconcile after a timeout before retrying</td><td>Systems with no way to look a request up</td></tr><tr><td>A permission is widened by mistake</td><td>A control test on every change to roles or policy</td><td>Actions the test does not list</td></tr></tbody></table></div>
 </aside>
-<h2 id="the-question-this-leaves-open">The question this leaves open</h2>
-<p>Everything above checks <em>who</em> may act, <em>when</em>, and <em>on which version</em>. None of it checks whether the proposal itself makes sense. Suppose the agent splits an order 50–50 between two supplier records that belong to the same parent company, under a policy that caps any supplier group at 60%. The boundary would stage it, route it, bind the approval and send it exactly once. How would the system know the proposal broke purchasing policy?</p>
-<p>That question needs a different kind of machinery, explicit knowledge of what a supplier, a group and a policy mean, and it is where the next series, <a href="neural-symbolic-loop.html"><em>Closing the Loop</em></a>, begins.</p>
 <aside class="box question">
-<p><strong>A question to sit with.</strong> Which of the four rules does your current agent design already enforce outside the model, and which ones depend on the model behaving well?</p>
+<p><strong>A question to sit with.</strong> Which of the four rules does your current agent design enforce outside the model, and which depend on the model behaving well?</p>
 </aside>
+<p>The sample's step 2 deserves a closer look. If the boundary's policy were missing, or SAP's role were wrong, what else would stop the agent? Part 8 takes that question on.</p>
 <h2 id="sources">Sources</h2>
 <ol class="sources numbered"><li id="src-1">Jayadeba Jena and Sanjay Dalal, <a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header"><em>The Idempotency-Key HTTP Header Field</em></a>, IETF Internet-Draft, version 08, October 2026.</li><li id="src-2">Microsoft, <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction"><em>Compensating Transaction pattern</em></a>, Azure Architecture Center.</li></ol>
 <ul class="sources">
 </ul>
-<nav class="series-nav" aria-label="Designing Agency series"><div class="pn"><a class="prev" rel="prev" href="designing-agency-6-earning-autonomy.html"><span class="label">← Part 6</span>How does an agent earn more autonomy?</a><a class="next" href="neural-symbolic-loop.html"><span class="label">Next series: Closing the Loop →</span>The neural–symbolic loop</a></div><details><summary class="label">All parts of Designing Agency</summary><ol><li><a href="designing-agency-0-permission.html"><span class="label">Prologue</span> What are we giving the agent permission to do?</a></li><li><a href="designing-agency-1-choose-the-action.html"><span class="label">Part 1</span> Choose the action before the agent</a></li><li><a href="designing-agency-2-can-you-undo-it.html"><span class="label">Part 2</span> Can you undo what it just did?</a></li><li><a href="designing-agency-3-whose-authority.html"><span class="label">Part 3</span> Whose authority is it acting on?</a></li><li><a href="designing-agency-4-what-did-the-human-approve.html"><span class="label">Part 4</span> What exactly did the human approve?</a></li><li><a href="designing-agency-5-inputs-turn-against-it.html"><span class="label">Part 5</span> When the agent&#x27;s inputs turn against it</a></li><li><a href="designing-agency-6-earning-autonomy.html"><span class="label">Part 6</span> How does an agent earn more autonomy?</a></li><li class="here"><a href="designing-agency-7-build-the-boundary.html" aria-current="page"><span class="label">Part 7</span> Build the boundary</a></li></ol></details></nav>
+<nav class="series-nav" aria-label="Designing Agency series"><div class="pn"><a class="prev" rel="prev" href="designing-agency-6-earning-autonomy.html"><span class="label">← Part 6</span>How does an agent earn more autonomy?</a><a class="next" rel="next" href="designing-agency-8-when-the-role-is-wrong.html"><span class="label">Part 8 →</span>When the role is wrong</a></div><details><summary class="label">All parts of Designing Agency</summary><ol><li><a href="designing-agency-0-permission.html"><span class="label">Prologue</span> What are we giving the agent permission to do?</a></li><li><a href="designing-agency-1-choose-the-action.html"><span class="label">Part 1</span> Choose the action before the agent</a></li><li><a href="designing-agency-2-can-you-undo-it.html"><span class="label">Part 2</span> Can you undo what it just did?</a></li><li><a href="designing-agency-3-whose-authority.html"><span class="label">Part 3</span> Whose authority is it acting on?</a></li><li><a href="designing-agency-4-what-did-the-human-approve.html"><span class="label">Part 4</span> What exactly did the human approve?</a></li><li><a href="designing-agency-5-inputs-turn-against-it.html"><span class="label">Part 5</span> When the agent&#x27;s inputs turn against it</a></li><li><a href="designing-agency-6-earning-autonomy.html"><span class="label">Part 6</span> How does an agent earn more autonomy?</a></li><li class="here"><a href="designing-agency-7-build-the-boundary.html" aria-current="page"><span class="label">Part 7</span> Build the boundary</a></li><li><a href="designing-agency-8-when-the-role-is-wrong.html"><span class="label">Part 8</span> When the role is wrong</a></li></ol></details></nav>
 <p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
 </article>
 </main>
