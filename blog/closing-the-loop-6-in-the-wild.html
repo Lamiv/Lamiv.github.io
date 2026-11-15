@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>In the wild, and the road ahead · Vimal Vidyadharan</title>
+<meta name="description" content="Five systems that close the loop, and how much weight each one can bear">
+<link rel="canonical" href="https://lamiv.github.io/blog/closing-the-loop-6-in-the-wild.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="In the wild, and the road ahead">
+<meta property="og:description" content="Five systems that close the loop, and how much weight each one can bear">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/brand.css?v=16">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="mark" href="../index.html"><i></i>Vimal Vidyadharan</a>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="sitenav">Menu</button>
+  <nav aria-label="Site" id="sitenav"><div class="navgrp" data-label="On the home page"><a href="../index.html#hats">Capabilities</a><a href="../index.html#work">Selected work</a><a href="../index.html#career">Career</a><a href="../index.html#contact">Contact</a></div><div class="navgrp pages" data-label="Pages"><a href="../enterprise-ai-architecture.html">Architecture</a><a href="../blog.html" aria-current="page">Blog</a><a href="../cv.html">CV</a></div></nav>
+  <button class="theme" type="button" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
+</div></header>
+<main id="main" class="wrap">
+<article class="post">
+<header class="post-head">
+<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#neuro-symbolic">Neuro-symbolic AI</a> · Closing the Loop, part 6 of 7</p>
+<p class="label">15 November 2026 · 4 min read</p>
+<h1>In the wild, and the road ahead</h1>
+<p class="post-sub">Five systems that close the loop, and how much weight each one can bear</p>
+<p class="label byline">Vimal Vidyadharan</p>
+</header>
+<p>Ideas are cheap; architectures that survive contact with operations are not. Here are five recent systems that put an ontology or explicit rules inside an AI loop, with a note on what kind of evidence stands behind each.</p>
+<h2 id="netflix-an-ontology-for-incidents">Netflix: an ontology for incidents</h2>
+<p>Netflix found that a typical investigation, about four hours in their example, went mostly into reconstructing relationships their systems already knew but had never written down. They built an Observability Ontology on RDF, OWL, SHACL and SPARQL. Dozens of <em>enrichers</em>, some using language models, read noisy input and may only emit typed triples. A correlation engine proposes causal chains scored on timing and severity, discards anything under 0.6 confidence and stores each chain with the evidence that produced it. On top sits AutoRCA, a set of specialist agents that share no vocabulary except the graph's. <a href="https://netflixtechblog.com/ontology-driven-observability-building-an-end-to-end-knowledge-graph-at-netflix-scale-421392cf5adf">Netflix</a></p>
+<p>They are candid about the limits: the ranked hypotheses are sometimes wrong, which is why each carries its evidence, and an engineer still weighs it and writes the fix. AllegroGraph, a graph-database vendor, reads the article as validation of standards-based knowledge graphs for enterprise agents. <a href="https://allegrograph.com/netflixs-ontology-driven-ai-architecture-validates-the-need-for-context-graph/">AllegroGraph</a></p>
+<p><em>Evidence: an engineering account of a production system, without published metrics.</em></p>
+<h2 id="faos-ontologies-around-enterprise-agents">FAOS: ontologies around enterprise agents</h2>
+<p>The FAOS paper grounds enterprise agents in three ontologies: Role, Domain and Interaction. Its sharpest observation is an asymmetry: today's systems constrain what goes <em>into</em> an agent (context, tools, thresholds) but not what comes <em>out</em>, and the authors propose output-side validation. In 1,800 runs across five industries and three models, ontology-coupled agents scored significantly higher on metric accuracy and role consistency. The lift was largest where the models knew least, roughly twice as large in Vietnam-localised domains as in English ones. <a href="https://arxiv.org/abs/2604.00555">Luong Tuan et al.</a></p>
+<p><em>Evidence: a controlled experiment, in a preprint whose lead author is affiliated with the platform; the output-side validation is a proposed framework.</em></p>
+<h2 id="ns-mem-memory-with-rules-in-it">NS-Mem: memory with rules in it</h2>
+<p>NS-Mem gives a multimodal agent a three-layer memory (episodic, semantic and logic rules) and retrieves from it with both similarity search and deterministic symbolic queries. The authors report an average 4.35% gain in reasoning accuracy over purely neural memory, and up to 12.5% on queries with constraints. <a href="https://arxiv.org/abs/2603.15280">Jiang et al.</a></p>
+<p><em>Evidence: benchmark results in a preprint.</em></p>
+<h2 id="metal-printing-an-ontology-inside-a-control-loop">Metal printing: an ontology inside a control loop</h2>
+<p>Researchers at POSTECH put an ontology directly inside the control loop of laser powder bed fusion, a metal 3D-printing process. A description-logic reasoner classifies each upcoming feature, such as an overhang, and selects which constraints the controller must enforce, while a Gaussian process supplies the learned relationships. In a simulation calibrated to a NIST benchmark, it eliminated the dross a geometry-blind controller produced, and it retargets to new alloys by editing ontology data rather than code. The authors say the results establish feasibility, with experimental calibration as the next step. <a href="https://arxiv.org/abs/2608.05773">Hong et al.</a></p>
+<p><em>Evidence: simulation, in a preprint.</em></p>
+<h2 id="ethics-rules-as-guardrails">Ethics: rules as guardrails</h2>
+<p>A survey of hybrid models for risk-sensitive domains argues for rule-based safeguards in healthcare, compliance checks alongside anomaly detection in finance, and systems that remain auditable and human-overridable in critical infrastructure. <a href="https://arxiv.org/abs/2511.17644">Kolli</a></p>
+<p><em>Evidence: a survey with illustrative case studies.</em></p>
+<h2 id="the-road-ahead">The road ahead</h2>
+<p>Read together, the five share one pattern: models propose, explicit knowledge decides what is admissible, and people approve what matters. The open problems are just as consistent. Writing knowledge down precisely still takes effort. Results depend heavily on how good the graph is. Model behaviour shifts with versions and settings, which makes results hard to reproduce. And checking whole semantics at scale, rather than individual statements, remains hard. <a href="https://ceur-ws.org/Vol-4303/pdt-paper103.pdf">McCain et al.</a></p>
+<aside class="box maths">
+<p><strong>For the mathematically curious: what a 0.6 threshold buys</strong></p>
+<p>Netflix keeps a candidate causal chain only if its confidence <em>c</em> ≥ 0.6. Any threshold trades two errors. Raise it and you show engineers fewer wrong hypotheses, but you miss more real causes. Lower it and you catch more causes, but bury them in noise.</p>
+<p>If <em>n</em> chains pass and a fraction <em>p</em> of them are real, an engineer reviewing them all sees <em>n</em>(1 − <em>p</em>) false leads. That is why Netflix's design of storing evidence with every chain matters as much as the threshold: it lowers the cost of rejecting a wrong lead, which lets you afford a lower threshold. The best threshold depends on that review cost, not on the model alone.</p>
+</aside>
+<aside class="box question">
+<p><strong>A question to sit with.</strong> Which of these five is closest to a problem on your desk? And what kind of evidence would you need before you trusted it in production?</p>
+</aside>
+<p>Part 7 builds a small version of the loop, in Python.</p>
+<h2 id="sources">Sources</h2>
+<ul class="sources">
+<li>Netflix Technology Blog, <a href="https://netflixtechblog.com/ontology-driven-observability-building-an-end-to-end-knowledge-graph-at-netflix-scale-421392cf5adf"><em>Ontology-Driven Observability</em></a>, October 2026.</li>
+<li>AllegroGraph, <a href="https://allegrograph.com/netflixs-ontology-driven-ai-architecture-validates-the-need-for-context-graph/"><em>Netflix's Ontology-Driven AI Architecture Validates the Need for Context Graph</em></a>, October 2026.</li>
+<li>Thanh Luong Tuan and colleagues, <a href="https://arxiv.org/abs/2604.00555"><em>Ontology-Constrained Neural Reasoning in Enterprise Agentic Systems</em></a>, arXiv preprint, 2026.</li>
+<li>Rongjie Jiang and colleagues, <a href="https://arxiv.org/abs/2603.15280"><em>Advancing Multimodal Agent Reasoning with Long-Term Neuro-Symbolic Memory</em></a>, arXiv preprint, 2026.</li>
+<li>Gisuk Hong, Jaebong Cho and Hyunbo Cho, <a href="https://arxiv.org/abs/2608.05773"><em>Neuro-Symbolic Closed-Loop Control of Laser Powder Bed Fusion with an In-Loop Ontology</em></a>, arXiv preprint, August 2026.</li>
+<li>Chaitanya Kumar Kolli, <a href="https://arxiv.org/abs/2511.17644"><em>Hybrid Neuro-Symbolic Models for Ethical AI in Risk-Sensitive Domains</em></a>, arXiv preprint, 2025.</li>
+<li>Michael McCain and colleagues, <a href="https://ceur-ws.org/Vol-4303/pdt-paper103.pdf"><em>Selected Research Directions in NeuroSymbolic AI</em></a>, CEUR Workshop Proceedings, Vol. 4303, October 2026.</li>
+</ul>
+<nav class="series-nav" aria-label="Closing the Loop series"><div class="pn"><a class="prev" rel="prev" href="closing-the-loop-5-teaching-a-network-the-rules.html"><span class="label">← Part 5</span>Teaching a network the rules</a><a class="next" rel="next" href="closing-the-loop-7-building-the-loop.html"><span class="label">Part 7 →</span>Building the loop</a></div><details><summary class="label">All parts of Closing the Loop</summary><ol><li><a href="neural-symbolic-loop.html"><span class="label">Prologue</span> The neural–symbolic loop</a></li><li><a href="closing-the-loop-1-two-ways-of-knowing.html"><span class="label">Part 1</span> Two ways of knowing</a></li><li><a href="closing-the-loop-2-words-into-logic.html"><span class="label">Part 2</span> Turning words into logic</a></li><li><a href="closing-the-loop-3-ontology-as-rulebook.html"><span class="label">Part 3</span> The ontology as rulebook</a></li><li><a href="closing-the-loop-4-when-the-rulebook-changes.html"><span class="label">Part 4</span> When the rulebook has to change</a></li><li><a href="closing-the-loop-5-teaching-a-network-the-rules.html"><span class="label">Part 5</span> Teaching a network the rules</a></li><li class="here"><a href="closing-the-loop-6-in-the-wild.html" aria-current="page"><span class="label">Part 6</span> In the wild, and the road ahead</a></li><li><a href="closing-the-loop-7-building-the-loop.html"><span class="label">Part 7</span> Building the loop</a></li></ol></details></nav>
+<p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
+</article>
+</main>
+<footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
+<script src="../assets/brand.js?v=7"></script>
+</body>
+</html>

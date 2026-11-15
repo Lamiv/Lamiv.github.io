@@ -1,6 +1,9 @@
-# The neural–symbolic loop
-
-*What an AI agent should do when it finds a deal the business cannot accept*
+---
+title: The neural–symbolic loop
+subtitle: What an AI agent should do when it finds a deal the business cannot accept
+part: 0
+date: 15 November 2026
+---
 
 This week I heard the phrase “neural–symbolic loop” in discussions among world leaders about AI. It sent me back to a practical question I keep meeting in enterprise work: when an AI agent finds a good deal that the business is not allowed to take, what is supposed to happen next?
 

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Teaching a network the rules · Vimal Vidyadharan</title>
+<meta name="description" content="Compiling an ontology into something a neural network can learn from">
+<link rel="canonical" href="https://lamiv.github.io/blog/closing-the-loop-5-teaching-a-network-the-rules.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Teaching a network the rules">
+<meta property="og:description" content="Compiling an ontology into something a neural network can learn from">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/brand.css?v=16">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="mark" href="../index.html"><i></i>Vimal Vidyadharan</a>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="sitenav">Menu</button>
+  <nav aria-label="Site" id="sitenav"><div class="navgrp" data-label="On the home page"><a href="../index.html#hats">Capabilities</a><a href="../index.html#work">Selected work</a><a href="../index.html#career">Career</a><a href="../index.html#contact">Contact</a></div><div class="navgrp pages" data-label="Pages"><a href="../enterprise-ai-architecture.html">Architecture</a><a href="../blog.html" aria-current="page">Blog</a><a href="../cv.html">CV</a></div></nav>
+  <button class="theme" type="button" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
+</div></header>
+<main id="main" class="wrap">
+<article class="post">
+<header class="post-head">
+<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#neuro-symbolic">Neuro-symbolic AI</a> · Closing the Loop, part 5 of 7</p>
+<p class="label">15 November 2026 · 5 min read</p>
+<h1>Teaching a network the rules</h1>
+<p class="post-sub">Compiling an ontology into something a neural network can learn from</p>
+<p class="label byline">Vimal Vidyadharan</p>
+</header>
+<p>So far the symbolic side has acted after the fact. The model proposes, the ontology checks, and a rejection goes back as feedback. There is another way to close the loop: let the rules shape the network while it is being trained, so it learns to read the world in terms the ontology accepts.</p>
+<h2 id="the-idea-in-plain-words">The idea in plain words</h2>
+<p>Imagine a network that reads scanned delivery notes and must decide, for each line, which supplier and which group it belongs to. You have labels for some of it, but not all. You also have an ontology that says how suppliers, groups and orders must fit together.</p>
+<p>If the network's guesses can be scored by <em>how likely they are to be consistent with the ontology</em>, that score can become part of what the network is trained to improve. Readings that break the rules cost more; readings that fit them cost less. The ontology teaches where the labels are silent.</p>
+<p>The hard part is computing that score exactly, for a real ontology, fast enough to train with.</p>
+<h2 id="baobab">Baobab</h2>
+<p>Olga Mashkova, Asaad Mohammedsaleh, Fernando Zhapa-Camacho and Robert Hoehndorf at KAUST address this for OWL 2 DL, the description logic behind most serious ontologies. Existing learners either embed the ontology in a continuous space, giving up classical entailment, or restrict themselves to a simpler fragment of the logic. Their system, Baobab, compiles a full OWL 2 DL ontology with a finite set of facts into a circuit, a Sentential Decision Diagram, from which that consistency score can be computed in a single pass. The soundness of the compiler is machine-checked in the Lean theorem prover. <a href="https://arxiv.org/abs/2608.17741">Mashkova et al.</a></p>
+<p>Their demonstration is deliberately small. A convolutional network learns to read handwritten MNIST digits that the ontology couples through a successor relation, and it recovers concepts that are never directly labelled, which an independently trained network leaves at chance. The code is public. <a href="https://github.com/bio-ontology-research-group/baobab">Baobab repository</a></p>
+<h2 id="right-answer-wrong-reason">Right answer, wrong reason</h2>
+<p>The most useful part of the paper for practitioners is not the compiler. It is the treatment of <em>reasoning shortcuts</em>: cases where the network finds an assignment that satisfies the ontology but differs from the one that actually produced the example.</p>
+<p>When the evidence admits several consistent readings, a network that scores each concept independently cannot spread its belief across them; it collapses onto one, arbitrarily. In one of their settings, the rules are symmetric under relabelling and the network reaches a digit accuracy of 0.18 against a chance level of 0.20, while still satisfying the training objective. Adding a single extra grounding fact breaks the symmetry. <a href="https://arxiv.org/abs/2608.17741">Mashkova et al.</a></p>
+<p>The business parallel is uncomfortable. A model can learn to pass every compliance check for reasons that have nothing to do with the policy, for instance by always favouring the supplier that happened never to trigger a breach. Passing the checks is not the same as understanding them.</p>
+<p>Their remedy connects to Part 4. They show that a mixture model with one component per <em>justification</em> of the query can represent the uncertainty a single independent model cannot. Seeded from the completions the circuit enumerates, it reaches the Bayes-optimal posterior on their image task. <a href="https://arxiv.org/abs/2608.17741">Mashkova et al.</a></p>
+<aside class="box maths">
+<p><strong>For the mathematically curious: weighted model counting</strong></p>
+<p>Give each true-or-false fact <em>a</em> a probability <em>w</em>(<em>a</em>) from the network. The weighted model count of a theory φ adds up the probability of every world that satisfies it:</p>
+<p class="eq">WMC(φ | <em>w</em>) = Σ<sub>α ⊨ φ</sub> ∏<sub><em>a</em> true in α</sub> <em>w</em>(<em>a</em>) · ∏<sub><em>a</em> false in α</sub> (1 − <em>w</em>(<em>a</em>))</p>
+<p>The sum runs over every world α that satisfies φ. It is exactly the probability that a world drawn from the network's beliefs satisfies φ.</p>
+<p>A tiny example. Let <em>N</em> mean “supplier 100200 is in North” and <em>E</em> mean “it is in East”. The network says <em>w</em>(<em>N</em>) = 0.7 and <em>w</em>(<em>E</em>) = 0.4. The ontology says exactly one is true, so two worlds qualify:</p>
+<p class="eq">WMC = 0.7 × (1 − 0.4) + (1 − 0.7) × 0.4 = 0.42 + 0.12 = 0.54</p>
+<p>Baobab trains with a loss that combines ordinary label error with this count, conditioned on the evidence <em>e</em>:</p>
+<p class="eq">ℒ = BCE(observed labels) + λ · (−log WMC(Θ ∧ <em>e</em> | <em>p</em><sub>θ</sub>))</p>
+<p>Here Θ is the compiled ontology and <em>p</em><sub>θ</sub> the network's beliefs. In the example, −log 0.54 ≈ 0.62. Gradient descent pushes probability away from the impossible worlds, “both” and “neither”, towards the consistent ones. Notice that it does not care <em>which</em> consistent world wins. That indifference is where reasoning shortcuts come from.</p>
+</aside>
+<h2 id="where-this-stands">Where this stands</h2>
+<p>This is research on digits and a demanding logic, not an enterprise product, and it is a preprint. Its value is conceptual. It shows that the rule side and the learning side can share one mathematical object, and it gives a precise name to a failure that every team training models against business rules should look for.</p>
+<aside class="box question">
+<p><strong>A question to sit with.</strong> Where in your business are the labels thin but the rules rich? Those are the places where training against rules might teach a model more than examples can, and where reasoning shortcuts are most likely to hide.</p>
+</aside>
+<h2 id="sources">Sources</h2>
+<ul class="sources">
+<li>Olga Mashkova, Asaad Mohammedsaleh, Fernando Zhapa-Camacho and Robert Hoehndorf, <a href="https://arxiv.org/abs/2608.17741"><em>Neuro-symbolic learning over OWL 2 DL via consequence-based compilation to differentiable circuits</em></a>, arXiv preprint, August 2026.</li>
+<li><a href="https://github.com/bio-ontology-research-group/baobab">Baobab code repository</a>, Bio-Ontology Research Group, KAUST.</li>
+</ul>
+<nav class="series-nav" aria-label="Closing the Loop series"><div class="pn"><a class="prev" rel="prev" href="closing-the-loop-4-when-the-rulebook-changes.html"><span class="label">← Part 4</span>When the rulebook has to change</a><a class="next" rel="next" href="closing-the-loop-6-in-the-wild.html"><span class="label">Part 6 →</span>In the wild, and the road ahead</a></div><details><summary class="label">All parts of Closing the Loop</summary><ol><li><a href="neural-symbolic-loop.html"><span class="label">Prologue</span> The neural–symbolic loop</a></li><li><a href="closing-the-loop-1-two-ways-of-knowing.html"><span class="label">Part 1</span> Two ways of knowing</a></li><li><a href="closing-the-loop-2-words-into-logic.html"><span class="label">Part 2</span> Turning words into logic</a></li><li><a href="closing-the-loop-3-ontology-as-rulebook.html"><span class="label">Part 3</span> The ontology as rulebook</a></li><li><a href="closing-the-loop-4-when-the-rulebook-changes.html"><span class="label">Part 4</span> When the rulebook has to change</a></li><li class="here"><a href="closing-the-loop-5-teaching-a-network-the-rules.html" aria-current="page"><span class="label">Part 5</span> Teaching a network the rules</a></li><li><a href="closing-the-loop-6-in-the-wild.html"><span class="label">Part 6</span> In the wild, and the road ahead</a></li><li><a href="closing-the-loop-7-building-the-loop.html"><span class="label">Part 7</span> Building the loop</a></li></ol></details></nav>
+<p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
+</article>
+</main>
+<footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
+<script src="../assets/brand.js?v=7"></script>
+</body>
+</html>
