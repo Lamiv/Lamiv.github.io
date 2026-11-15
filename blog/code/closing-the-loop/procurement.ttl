@@ -1,0 +1,35 @@
+# Ontology and facts for the "Closing the Loop" sample.
+# Illustrative data only: suppliers, groups and numbers are made up.
+@prefix ex:   <https://example.org/proc#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# --- Ontology: what the words mean -----------------------------------
+ex:Supplier        a owl:Class ; rdfs:comment "A supplier record, identified by its SAP supplier ID." .
+ex:CorporateGroup  a owl:Class ; rdfs:comment "The parent company that one or more supplier records belong to." .
+ex:PurchaseOrder   a owl:Class .
+ex:AllocationLine  a owl:Class ; rdfs:comment "One supplier's share of a purchase order." .
+
+ex:sapId          a owl:DatatypeProperty ; rdfs:domain ex:Supplier .
+ex:memberOf       a owl:ObjectProperty, owl:FunctionalProperty ;
+                  rdfs:domain ex:Supplier ; rdfs:range ex:CorporateGroup .
+ex:hasLine        a owl:ObjectProperty ; rdfs:domain ex:PurchaseOrder ; rdfs:range ex:AllocationLine .
+ex:supplier       a owl:ObjectProperty ; rdfs:domain ex:AllocationLine ; rdfs:range ex:Supplier .
+ex:share          a owl:DatatypeProperty ; rdfs:range xsd:decimal .
+ex:quoteRef       a owl:DatatypeProperty .
+ex:approvalStatus a owl:DatatypeProperty .
+ex:groupCap       a owl:DatatypeProperty ; rdfs:comment "Largest share of one order any single corporate group may receive." .
+
+# --- Policy -------------------------------------------------------------
+ex:PurchasingPolicy ex:groupCap "0.60"^^xsd:decimal .
+
+# --- Facts, as they might be read from SAP -----------------------------------
+ex:GroupNorth a ex:CorporateGroup ; rdfs:label "North Holdings" .
+ex:GroupEast  a ex:CorporateGroup ; rdfs:label "East Trading" .
+
+ex:S100100 a ex:Supplier ; ex:sapId "100100" ; rdfs:label "North Packaging LLC"  ; ex:memberOf ex:GroupNorth .
+ex:S100200 a ex:Supplier ; ex:sapId "100200" ; rdfs:label "North Packaging FZE"  ; ex:memberOf ex:GroupNorth .
+ex:S200300 a ex:Supplier ; ex:sapId "200300" ; rdfs:label "East Containers LLC"  ; ex:memberOf ex:GroupEast .
+
+ex:PO4500 a ex:PurchaseOrder ; ex:approvalStatus "pending" .

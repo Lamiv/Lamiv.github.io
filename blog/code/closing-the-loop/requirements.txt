@@ -1,0 +1,4 @@
+langgraph>=1.2
+rdflib>=7.6
+pyshacl>=0.40
+anthropic>=2.8   # only needed with --live
