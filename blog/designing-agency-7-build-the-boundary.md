@@ -2,10 +2,11 @@
 title: Build the boundary
 subtitle: A small, runnable boundary around an agent that works with SAP
 part: 7
+code: designing-agency
 date: 25 October 2026
 ---
 
-Six parts of argument come down to a few rules that can be written as code. This part builds them as a small Python program, around a mock of SAP S/4HANA, and runs one purchase order through every failure case the series has named. It uses only the standard library. [Sample code](https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency)
+Six parts of argument come down to a few rules that can be written as code. This part builds them as a small Python program, around a mock of SAP S/4HANA, and runs one purchase order through every failure case the series has named. It uses only the standard library. Every file is in the *Code for this part* panel above, to read or download.
 
 ```text
 python boundary.py
@@ -123,6 +124,5 @@ That question needs a different kind of machinery, explicit knowledge of what a 
 
 ## Sources
 
-- [Sample code for this part](https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency): `boundary.py`.
 - Jayadeba Jena and Sanjay Dalal, [*The Idempotency-Key HTTP Header Field*](https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header), IETF Internet-Draft, version 08, October 2026.
 - Microsoft, [*Compensating Transaction pattern*](https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction), Azure Architecture Center.
