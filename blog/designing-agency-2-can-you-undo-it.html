@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Can you undo what it just did? · Vimal Vidyadharan</title>
+<meta name="description" content="Restoring, compensating and living with it are three different promises">
+<link rel="canonical" href="https://lamiv.github.io/blog/designing-agency-2-can-you-undo-it.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Can you undo what it just did?">
+<meta property="og:description" content="Restoring, compensating and living with it are three different promises">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/brand.css?v=18">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="mark" href="../index.html"><i></i>Vimal Vidyadharan</a>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="sitenav">Menu</button>
+  <nav aria-label="Site" id="sitenav"><div class="navgrp" data-label="On the home page"><a href="../index.html#hats">Capabilities</a><a href="../index.html#work">Selected work</a><a href="../index.html#career">Career</a><a href="../index.html#contact">Contact</a></div><div class="navgrp pages" data-label="Pages"><a href="../enterprise-ai-architecture.html">Architecture</a><a href="../blog.html" aria-current="page">Blog</a><a href="../cv.html">CV</a></div></nav>
+  <button class="theme" type="button" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
+</div></header>
+<main id="main" class="wrap">
+<article class="post">
+<header class="post-head">
+<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#agent-governance">AI agents and governance</a> · Designing Agency, part 2 of 7</p>
+<p class="label">11 October 2026 · 5 min read</p>
+<h1>Can you undo what it just did?</h1>
+<p class="post-sub">Restoring, compensating and living with it are three different promises</p>
+<p class="label byline">Vimal Vidyadharan</p>
+</header>
+<p>“Can we undo it?” is the question every approval process quietly depends on. People sign off more easily when they believe a mistake can be reversed. With agents acting at machine speed, it is worth being precise about what reversing means, because there are three quite different answers.</p>
+<h2 id="restore-as-if-it-never-happened">Restore: as if it never happened</h2>
+<p>Some actions can be undone completely. A purchase requisition the agent created can be changed or deleted, and SAP treats requisitions as internal planning elements that can be changed, rescheduled or deleted at almost any time. <a href="https://learning.sap.com/courses/business-processes-in-sap-s-4hana-sourcing-procurement/running-materials-requirements-planning">SAP Learning</a> A draft purchase order that nobody has approved is the same: discard it, and the world is as it was.</p>
+<p>Safin and Balta make restorability a design tactic. <em>Write staging</em> puts a draft or pending layer between an agent's action and its authoritative commit, turning an otherwise irreversible write into a reversible one until the staged output is explicitly promoted. They add a condition that matters for SAP: it applies only where the system of record supports a two-phase approach of draft first, commit later. <a href="https://arxiv.org/abs/2605.12105">Safin and Balta</a></p>
+<h2 id="compensate-a-new-action-that-offsets-the-old-one">Compensate: a new action that offsets the old one</h2>
+<p>Once an order is released, others may act on it. A planner sees the incoming quantity and stops expediting an alternative. A warehouse books dock time. Cancelling the order does not reach back and undo those decisions; it adds a new event that has to be handled, and the people who acted on the first one have to be told.</p>
+<p>Microsoft's architecture guidance describes this as a <em>compensating transaction</em>: work that undoes the effects of completed steps. It warns against thinking you can simply restore the original state, because other activity may have changed the data in the meantime, and <em>it can be more complex to undo a step than to restore the original state</em>, which often needs business-specific rules. Its own example: cancelling a flight reservation might not entitle the customer to a full refund. <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction">Microsoft</a></p>
+<p>Two further points from the same guidance belong in any agent design. Compensating transactions <em>can fail</em>, so the system must record progress and be able to resume. And because a step may run more than once when retried, each step should be idempotent: running it twice must have the same effect as running it once. <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction">Microsoft</a> Part 7 returns to that when the agent's retry meets a timeout.</p>
+<h2 id="live-with-it-effects-outside-your-systems">Live with it: effects outside your systems</h2>
+<p>When SAP sends a released order to the supplier, the most important effects leave the company. The supplier may buy raw material, reserve capacity or turn down another customer's order. You can cancel, but you cannot unsend. What you have then is a commercial conversation, not a database operation, and its cost depends on the contract and the relationship.</p>
+<p>Sales has the same edge. A quotation still in draft can be deleted. One sent to a customer can be withdrawn or revised, but the customer has seen the price, and that shapes the next negotiation whatever the system says.</p>
+<p>The AI Safety Atlas makes the general point about irreversibility: mistakes with permanent consequences are categorically different, because there is no chance to learn from them and correct course. <a href="https://ai-safety-atlas.com/chapters/v1/risks/risk-decomposition">AI Safety Atlas</a> Enterprise mistakes are rarely permanent in that sense, but the logic scales down. An action you cannot restore deserves more care before it happens than one you can.</p>
+<h2 id="who-decides-and-what-is-decided">Who decides, and what is decided</h2>
+<p>Safin and Balta's distinction from the prologue does the work here: <em>whether a human must approve an action is determined by the autonomy design; whether the action can be undone is a property of the action itself.</em> <a href="https://arxiv.org/abs/2605.12105">Safin and Balta</a> You cannot make sending an order reversible by approving it more carefully. You can only decide who sends it and when.</p>
+<div class="tablewrap"><table><thead><tr><th>Action</th><th>Kind of undo</th><th>What undoing involves</th></tr></thead><tbody><tr><td>Requisition, unapproved draft order</td><td>Restore</td><td>Change or delete; nobody outside has seen it</td></tr><tr><td>Released order, not yet sent</td><td>Compensate</td><td>Reset or cancel; tell people who planned around it</td></tr><tr><td>Order sent to the supplier</td><td>Live with it</td><td>Cancel or renegotiate; costs set by contract and goodwill</td></tr></tbody></table></div>
+<aside class="box risk">
+<p><strong>Averting risk</strong></p>
+<div class="tablewrap"><table><thead><tr><th>Risk</th><th>Strategy</th><th>What it still does not cover</th></tr></thead><tbody><tr><td>Approvers assume everything can be undone</td><td>Label each action restore, compensate or live with it, and show the label in the approval</td><td>Labels that drift from reality</td></tr><tr><td>An irreversible step happens by accident</td><td>Keep agent writes staged; reserve release and output for people</td><td>Systems with no draft state</td></tr><tr><td>A cancellation leaves others acting on old information</td><td>Compensation as a designed process: notify, record progress, resume</td><td>People outside the system who already acted</td></tr><tr><td>Undo steps are retried and double up</td><td>Make every step and every compensation idempotent</td><td>Side effects nobody modelled</td></tr></tbody></table></div>
+</aside>
+<aside class="box question">
+<p><strong>A question to sit with.</strong> For the last costly mistake in your purchasing or sales process, which of the three was it: restored, compensated, or lived with? Was that known before the step was taken?</p>
+</aside>
+<p>Part 3 turns from what an action does to whose authority it uses.</p>
+<h2 id="sources">Sources</h2>
+<ul class="sources">
+<li>SAP Learning, <a href="https://learning.sap.com/courses/business-processes-in-sap-s-4hana-sourcing-procurement/running-materials-requirements-planning"><em>Running Materials Requirements Planning</em></a>.</li>
+<li>Damir Safin and Dian Balta, <a href="https://arxiv.org/abs/2605.12105"><em>Autonomy and Agency in Agentic AI: Architectural Tactics for Regulated Contexts</em></a>, arXiv preprint, May 2026.</li>
+<li>Microsoft, <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction"><em>Compensating Transaction pattern</em></a>, Azure Architecture Center.</li>
+<li>Markov Grey and Charbel-Raphaël Segerie, <a href="https://ai-safety-atlas.com/chapters/v1/risks/risk-decomposition"><em>AI Safety Atlas</em>, Risks chapter</a>.</li>
+</ul>
+<nav class="series-nav" aria-label="Designing Agency series"><div class="pn"><a class="prev" rel="prev" href="designing-agency-1-choose-the-action.html"><span class="label">← Part 1</span>Choose the action before the agent</a><a class="next" rel="next" href="designing-agency-3-whose-authority.html"><span class="label">Part 3 →</span>Whose authority is it acting on?</a></div><details><summary class="label">All parts of Designing Agency</summary><ol><li><a href="designing-agency-0-permission.html"><span class="label">Prologue</span> What are we giving the agent permission to do?</a></li><li><a href="designing-agency-1-choose-the-action.html"><span class="label">Part 1</span> Choose the action before the agent</a></li><li class="here"><a href="designing-agency-2-can-you-undo-it.html" aria-current="page"><span class="label">Part 2</span> Can you undo what it just did?</a></li><li><a href="designing-agency-3-whose-authority.html"><span class="label">Part 3</span> Whose authority is it acting on?</a></li><li><a href="designing-agency-4-what-did-the-human-approve.html"><span class="label">Part 4</span> What exactly did the human approve?</a></li><li><a href="designing-agency-5-inputs-turn-against-it.html"><span class="label">Part 5</span> When the agent&#x27;s inputs turn against it</a></li><li><a href="designing-agency-6-earning-autonomy.html"><span class="label">Part 6</span> How does an agent earn more autonomy?</a></li><li><a href="designing-agency-7-build-the-boundary.html"><span class="label">Part 7</span> Build the boundary</a></li></ol></details></nav>
+<p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
+</article>
+</main>
+<footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
+<script src="../assets/brand.js?v=7"></script>
+</body>
+</html>

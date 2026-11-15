@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Build the boundary · Vimal Vidyadharan</title>
+<meta name="description" content="A small, runnable boundary around an agent that works with SAP">
+<link rel="canonical" href="https://lamiv.github.io/blog/designing-agency-7-build-the-boundary.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Build the boundary">
+<meta property="og:description" content="A small, runnable boundary around an agent that works with SAP">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/brand.css?v=18">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="mark" href="../index.html"><i></i>Vimal Vidyadharan</a>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="sitenav">Menu</button>
+  <nav aria-label="Site" id="sitenav"><div class="navgrp" data-label="On the home page"><a href="../index.html#hats">Capabilities</a><a href="../index.html#work">Selected work</a><a href="../index.html#career">Career</a><a href="../index.html#contact">Contact</a></div><div class="navgrp pages" data-label="Pages"><a href="../enterprise-ai-architecture.html">Architecture</a><a href="../blog.html" aria-current="page">Blog</a><a href="../cv.html">CV</a></div></nav>
+  <button class="theme" type="button" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
+</div></header>
+<main id="main" class="wrap">
+<article class="post">
+<header class="post-head">
+<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#agent-governance">AI agents and governance</a> · Designing Agency, part 7 of 7</p>
+<p class="label">25 October 2026 · 5 min read</p>
+<h1>Build the boundary</h1>
+<p class="post-sub">A small, runnable boundary around an agent that works with SAP</p>
+<p class="label byline">Vimal Vidyadharan</p>
+</header>
+<p>Six parts of argument come down to a few rules that can be written as code. This part builds them as a small Python program, around a mock of SAP S/4HANA, and runs one purchase order through every failure case the series has named. It uses only the standard library. <a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency">Sample code</a></p>
+<pre class="code"><code>python boundary.py</code></pre>
+<h2 id="who-does-what">Who does what</h2>
+<div class="tablewrap"><table><thead><tr><th>Party</th><th>In the sample</th><th>What it may do</th></tr></thead><tbody><tr><td>Requester</td><td><code>buyer</code></td><td>Ask for the order; its identity is the one SAP executes under</td></tr><tr><td>Agent</td><td><code>agent-proc</code></td><td>Stage and change draft orders, nothing else</td></tr><tr><td>Approver</td><td><code>manager</code>, from configuration</td><td>Approve a specific version of the order</td></tr><tr><td>The boundary</td><td>A gate in front of SAP</td><td>Check every action before it reaches SAP, and log it</td></tr></tbody></table></div>
+<p>The mock SAP keeps a version number on each order, records what was sent to suppliers, and can lose a response after the action has taken effect, which is the case that causes duplicates in real systems.</p>
+<h2 id="rule-1-the-agent-stages-people-commit">Rule 1: the agent stages, people commit</h2>
+<p>Every call passes a deterministic check outside the model. Agents may stage and change; release and sending belong to people (Parts 1 and 2).</p>
+<pre class="code"><code>def check(self, actor, action):
+    if actor.startswith(&quot;agent&quot;) and action not in self.agent_may:
+        raise Denied(f&quot;{actor} may not {action}: that step belongs to a person&quot;)</code></pre>
+<p>The draft is created under the buyer's identity, as principal propagation would do (Part 3), and the audit line records both: <code>sub=buyer act=agent-proc</code>.</p>
+<h2 id="rule-2-the-approver-is-configured-and-is-not-the-creator">Rule 2: the approver is configured, and is not the creator</h2>
+<p>The approver comes from configuration, not from anything the agent says, and the creator cannot approve their own order, as SAP's flexible workflow can enforce by excluding restricted agents (Part 4).</p>
+<h2 id="rule-3-an-approval-covers-exact-terms-for-a-limited-time">Rule 3: an approval covers exact terms, for a limited time</h2>
+<p>When the manager approves, the boundary stores a fingerprint of the material terms (supplier, material, quantity, price, currency, delivery date) and the version. At release and again before sending, it recomputes the fingerprint. Any difference, or an expired approval, blocks the step and says what changed.</p>
+<pre class="code"><code>def fingerprint(po):
+    material = {k: po.terms[k] for k in MATERIAL_TERMS} | {&quot;version&quot;: po.version}
+    return hashlib.sha256(json.dumps(material, sort_keys=True).encode()).hexdigest()[:12]</code></pre>
+<h2 id="rule-4-a-retry-must-not-create-a-second-order">Rule 4: a retry must not create a second order</h2>
+<p>The IETF's draft standard for an <code>Idempotency-Key</code> HTTP header describes the mechanism: the client sends a unique key with a request, so that the server can recognise a retry of the same request. If a key is reused with a different payload, the server should reject it; if a retry arrives while the original is still being processed, it should answer with a conflict. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header">IETF</a></p>
+<p>The sample derives the key from the order and its version. When a call times out, the outcome is unknown: the order may or may not have gone. Instead of sending again, the boundary first asks SAP whether that key was already processed. Microsoft's guidance makes the same point about recovery in general: a step may run more than once when retried, so design each step as an idempotent command. <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction">Microsoft</a></p>
+<h2 id="running-it">Running it</h2>
+<pre class="code"><code>1. The agent stages a proposal for the buyer
+  ok      agent stages a draft order
+2. The agent tries to go further
+  blocked agent releases the order
+          reason: agent-proc may not release: that step belongs to a person
+3. Approval
+  blocked buyer approves own order
+          reason: buyer created 4500000001 and cannot approve it
+  ok      manager approves
+4. The supplier revises the price and the agent updates the draft
+  ok      agent changes price to 2.35
+  blocked manager releases
+          reason: approval covers an earlier version of 4500000001; changed: {&#x27;price&#x27;: &#x27;2.10 -&gt; 2.35&#x27;}
+5. Reapproval of the changed order
+  ok      manager approves again
+  blocked manager releases, ten days later
+          reason: approval for 4500000001 expired on 27 Oct
+  ok      manager releases
+6. Sending, with a lost response
+  ok      output to supplier
+  ok      output to supplier, retried
+  the supplier received 1 order(s): [(&#x27;4500000001&#x27;, 2)]</code></pre>
+<p>Reading it step by step:</p>
+<ol class="list">
+<li>The agent stages a draft under the buyer's identity.</li>
+<li>It tries to release the order and is stopped by the boundary, not by its own judgement.</li>
+<li>The buyer cannot approve their own order; the configured manager can.</li>
+<li>The supplier revises the price and the agent updates the draft. The old approval no longer covers it, and the block says exactly what changed.</li>
+<li>A fresh approval covers the new version. A release attempted after the approval has expired is refused; a timely one goes through.</li>
+<li>The first send takes effect but its response is lost. The boundary reconciles with SAP before retrying, and the retry does nothing. The supplier receives one order, not two.</li>
+</ol>
+<p>The audit trail that follows the output records every step with <code>sub</code>, the SAP identity, and <code>act</code>, the agent where one acted: enough to answer the auditor's question from Part 3.</p>
+<h2 id="what-production-would-add">What production would add</h2>
+<p>This is teaching code. A real boundary would use SAP's own workflow for approver choice and release, principal propagation for the executing identity, durable storage for approvals and keys, signed audit records, and monitoring with the triggers from Part 6. The rules would stay the same.</p>
+<aside class="box risk">
+<p><strong>Averting risk: the whole series</strong></p>
+<div class="tablewrap"><table><thead><tr><th>Risk</th><th>Strategy</th><th>Part</th></tr></thead><tbody><tr><td>One vague request is read as a grant of every step</td><td>Grant authority per step</td><td>Prologue</td></tr><tr><td>The agent drifts into irreversible steps</td><td>Agents stage; people release and send</td><td>1, 2</td></tr><tr><td>Undo is assumed but impossible</td><td>Label actions restore, compensate or live with it</td><td>2</td></tr><tr><td>The agent acts with too much, or someone else's, authority</td><td>Propagate the requester's identity; narrow the agent's tools; log <code>sub</code> and <code>act</code></td><td>3</td></tr><tr><td>An approval covers something nobody saw</td><td>Fingerprint material terms; check at release and before sending; expire approvals</td><td>4</td></tr><tr><td>Inputs and memory steer the agent</td><td>Untrusted data, tiered memory, a deterministic gate</td><td>5</td></tr><tr><td>Autonomy outruns evidence</td><td>Shadow runs, workflow red-teaming, triggers for narrowing</td><td>6</td></tr><tr><td>Retries duplicate orders</td><td>Idempotency keys and reconciliation after timeouts</td><td>7</td></tr></tbody></table></div>
+</aside>
+<h2 id="the-question-this-leaves-open">The question this leaves open</h2>
+<p>Everything above checks <em>who</em> may act, <em>when</em>, and <em>on which version</em>. None of it checks whether the proposal itself makes sense. Suppose the agent splits an order 50–50 between two supplier records that belong to the same parent company, under a policy that caps any supplier group at 60%. The boundary would stage it, route it, bind the approval and send it exactly once. How would the system know the proposal broke purchasing policy?</p>
+<p>That question needs a different kind of machinery, explicit knowledge of what a supplier, a group and a policy mean, and it is where the next series, <a href="neural-symbolic-loop.html"><em>Closing the Loop</em></a>, begins.</p>
+<aside class="box question">
+<p><strong>A question to sit with.</strong> Which of the four rules does your current agent design already enforce outside the model, and which ones depend on the model behaving well?</p>
+</aside>
+<h2 id="sources">Sources</h2>
+<ul class="sources">
+<li><a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency">Sample code for this part</a>: <code>boundary.py</code>.</li>
+<li>Jayadeba Jena and Sanjay Dalal, <a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header"><em>The Idempotency-Key HTTP Header Field</em></a>, IETF Internet-Draft, version 08, October 2026.</li>
+<li>Microsoft, <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction"><em>Compensating Transaction pattern</em></a>, Azure Architecture Center.</li>
+</ul>
+<nav class="series-nav" aria-label="Designing Agency series"><div class="pn"><a class="prev" rel="prev" href="designing-agency-6-earning-autonomy.html"><span class="label">← Part 6</span>How does an agent earn more autonomy?</a><a class="next" href="neural-symbolic-loop.html"><span class="label">Next series: Closing the Loop →</span>The neural–symbolic loop</a></div><details><summary class="label">All parts of Designing Agency</summary><ol><li><a href="designing-agency-0-permission.html"><span class="label">Prologue</span> What are we giving the agent permission to do?</a></li><li><a href="designing-agency-1-choose-the-action.html"><span class="label">Part 1</span> Choose the action before the agent</a></li><li><a href="designing-agency-2-can-you-undo-it.html"><span class="label">Part 2</span> Can you undo what it just did?</a></li><li><a href="designing-agency-3-whose-authority.html"><span class="label">Part 3</span> Whose authority is it acting on?</a></li><li><a href="designing-agency-4-what-did-the-human-approve.html"><span class="label">Part 4</span> What exactly did the human approve?</a></li><li><a href="designing-agency-5-inputs-turn-against-it.html"><span class="label">Part 5</span> When the agent&#x27;s inputs turn against it</a></li><li><a href="designing-agency-6-earning-autonomy.html"><span class="label">Part 6</span> How does an agent earn more autonomy?</a></li><li class="here"><a href="designing-agency-7-build-the-boundary.html" aria-current="page"><span class="label">Part 7</span> Build the boundary</a></li></ol></details></nav>
+<p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
+</article>
+</main>
+<footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
+<script src="../assets/brand.js?v=7"></script>
+</body>
+</html>
