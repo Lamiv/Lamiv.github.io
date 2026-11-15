@@ -1,6 +1,6 @@
 ---
 title: Choose the action before the agent
-subtitle: SAP has automated procurement steps for decades. The question is which steps, not whether
+subtitle: SAP has automated procurement steps for decades. The question is which steps to hand to an agent, not whether to automate
 part: 1
 date: 4 October 2026
 ---
