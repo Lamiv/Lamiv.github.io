@@ -7,7 +7,7 @@ date: 4 October 2026
 
 Long before anyone spoke of AI agents, SAP was creating purchase requisitions without asking anyone. In reorder point planning, when the stock of a material falls below a predefined level, a replenishment is triggered. [SAP Learning](https://learning.sap.com/courses/exploring-production-planning-in-sap-s-4hana/understanding-mrp-in-sap-s-4hana) A material requirements planning run can create purchase requisitions automatically instead of anyone entering them, given the right configuration and material master data. [SAP Learning](https://learning.sap.com/courses/business-processes-in-sap-s-4hana-sourcing-procurement/running-materials-requirements-planning)
 
-Nobody loses sleep over this, and SAP's own course material says why: planned orders and purchase requisitions are *internal planning elements that can be changed, rescheduled, or deleted at almost any time*. Delivery schedule lines, by contrast, are *fixed elements with a binding character*. [SAP Learning](https://learning.sap.com/courses/business-processes-in-sap-s-4hana-sourcing-procurement/running-materials-requirements-planning)
+Nobody loses sleep over this. Planned orders and purchase requisitions are internal planning elements: they can be changed, rescheduled or deleted at almost any time. A purchase order is different. Once it is approved, released and sent, the supplier plans around it and the company is committed.
 
 That distinction, between proposals that can still change and commitments that bind, is the right place to start with agents. The question is not whether an agent should act. It is which actions it should take, and which stay with people.
 
