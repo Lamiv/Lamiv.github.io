@@ -318,3 +318,39 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
   .cv-skills li,.cv-inline li{display:inline;margin:0}
   .cv-skills li+li::before,.cv-inline li+li::before{content:" | "}
 }
+
+/* Blog: post cards and the article page */
+.posts{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:1px solid var(--line)}
+.postcard{display:grid;gap:8px;padding:22px 0;border-bottom:1px solid var(--line);max-width:80ch}
+.postcard h3{font:800 clamp(1.6rem,3vw,2.3rem)/1.05 var(--display);font-stretch:var(--stretch);text-transform:uppercase}
+.postcard h3 a{text-decoration:none}.postcard h3 a:hover{color:var(--sodium)}
+.postcard p:not(.label){color:var(--mist)}
+.postcard .tags{color:var(--sodium)}
+.blog-hero h1{font-size:clamp(3rem,9vw,7.5rem)}
+.post{max-width:720px;margin:0 auto;padding:clamp(32px,6vw,72px) 0 72px}
+.post-head{display:grid;gap:14px;margin-bottom:36px}
+.post-head a{color:var(--sodium)}
+.post h1{font-size:clamp(2.6rem,7vw,5.2rem);line-height:.92}
+.post-sub{font-size:1.25rem;line-height:1.45;color:var(--mist)}
+.post h2{font:800 clamp(1.5rem,3vw,2rem)/1.1 var(--display);font-stretch:var(--stretch);text-transform:uppercase;margin:40px 0 12px}
+.post p{font-size:1.08rem;line-height:1.7;margin:0 0 18px;max-width:68ch}
+[data-theme=light] .post p{font-size:1.12rem}
+.post p a,.sources a{color:var(--sodium);text-underline-offset:3px}
+.post strong{color:var(--crystal)}
+.sources{padding-left:18px;display:grid;gap:8px;color:var(--mist);font-size:.95rem}
+.post-end{display:flex;flex-wrap:wrap;gap:10px;margin-top:36px}
+.diagram{margin:30px 0 34px;padding:18px;border:1px solid var(--line);background:var(--panel)}
+.diagram svg{display:block;width:100%;height:auto;max-height:640px;font-family:"Figtree",Arial,sans-serif;font-size:15px}
+/* Mermaid names its label groups "label"; keep the site's label style out of the drawing */
+.diagram svg .label{font:inherit;letter-spacing:normal;text-transform:none;color:inherit}
+.diagram .node .label text{text-anchor:middle}
+.diagram figcaption{margin-top:12px;font-size:.92rem;color:var(--mist);font-style:italic}
+.diagram .node rect,.diagram .node polygon{fill:var(--ink);stroke:var(--sodium);stroke-width:1.2px}
+.diagram .node text,.diagram .label text{fill:var(--crystal)}
+.diagram .flowchart-link{stroke:var(--mist);stroke-width:1.3px;fill:none}
+.diagram .arrowMarkerPath{fill:var(--mist);stroke:var(--mist)}
+.diagram .edgeLabel rect,.diagram .edgeLabel .background{fill:var(--panel);opacity:1}
+.diagram .edgeLabel text{fill:var(--mist);font-size:13px}
+.mmd{margin-top:10px}
+.mmd summary{cursor:pointer;font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium)}
+.mmd pre{margin:10px 0 0;padding:12px;overflow-x:auto;background:var(--ink);border:1px solid var(--line);font:400 .78rem/1.5 var(--mono);color:var(--crystal)}
