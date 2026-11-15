@@ -416,3 +416,10 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
 .post .box.risk{border-left:3px solid var(--mist)}
 .post .box .tablewrap{margin:4px 0 16px}
 .post .box table{min-width:480px;font-size:.9rem}
+/* Numbered citations */
+.post sup.cite{font:600 .68em var(--mono);line-height:0;margin-left:1px;white-space:nowrap}
+.post sup.cite a{color:var(--sodium);text-decoration:none;padding:0 1px}
+.post sup.cite a:hover{text-decoration:underline}
+.post ol.sources.numbered{padding-left:26px}
+.post ol.sources.numbered li{scroll-margin-top:90px}
+.post ol.sources.numbered li:target{color:var(--crystal);background:var(--panel)}
