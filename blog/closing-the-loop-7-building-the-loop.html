@@ -13,7 +13,7 @@
 <script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="../assets/brand.css?v=16">
+<link rel="stylesheet" href="../assets/brand.css?v=17">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -27,16 +27,20 @@
 <article class="post">
 <header class="post-head">
 <p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#neuro-symbolic">Neuro-symbolic AI</a> · Closing the Loop, part 7 of 7</p>
-<p class="label">15 November 2026 · 4 min read</p>
+<p class="label">15 November 2026 · 5 min read</p>
 <h1>Building the loop</h1>
 <p class="post-sub">An ontology and SHACL rules inside a LangGraph agent, in Python</p>
 <p class="label byline">Vimal Vidyadharan</p>
 </header>
-<p>Six parts of argument deserve one of practice. This part builds the procurement loop from the prologue as a small LangGraph workflow: a proposer suggests how to split an order, an ontology and SHACL rules check the proposal, and the reasons go back until the proposal passes, the attempts run out or the order reaches the approval gate.</p>
+<p>Six parts of argument deserve one of practice. This part builds the procurement loop from the prologue as a small agent in Python. Claude is the agent's brain: it reads supplier quotes and proposes how to split an order. An ontology and SHACL rules check each proposal, and the reasons go back to Claude until the proposal passes, the attempts run out or the order reaches the approval gate.</p>
 <p>The full sample is three files and runs offline. <a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/closing-the-loop">Sample code</a></p>
 <pre class="code"><code>pip install -r requirements.txt
 python nesy_loop.py          # scripted proposer, no API key needed
 python nesy_loop.py --live   # Claude as the proposer, needs ANTHROPIC_API_KEY</code></pre>
+<h2 id="who-does-what">Who does what</h2>
+<div class="tablewrap"><table><thead><tr><th>Role</th><th>In this sample</th><th>What it decides</th></tr></thead><tbody><tr><td>Neural: the agent's brain</td><td>Claude, called through the Anthropic Python SDK</td><td>How to split the order, given the quotes and any reasons for rejection</td></tr><tr><td>Symbolic: the rulebook</td><td>An ontology in RDF, checked with SHACL rules (rdflib and pySHACL)</td><td>Whether a proposal is allowed, and if not, why</td></tr><tr><td>Workflow</td><td>A LangGraph graph</td><td>What happens next: retry, escalate or go to the release gate</td></tr><tr><td>Release gate</td><td>A check of the order's SAP approval status</td><td>Whether anything is actually released</td></tr></tbody></table></div>
+<p>Claude never decides compliance and never releases anything. It proposes; the rules and the gate decide.</p>
+<p>So that anyone can run the sample without an API key, the default mode swaps Claude for a scripted stand-in that replays three plausible proposals. The <code>--live</code> flag puts Claude back in its seat.</p>
 <h2 id="step-1-write-the-facts-down">Step 1: write the facts down</h2>
 <p>The ontology file declares what a supplier, a corporate group, an order and an allocation line are, then records the facts as SAP would hold them. All names and numbers are made up.</p>
 <pre class="code"><code>ex:S100100 a ex:Supplier ; ex:sapId &quot;100100&quot; ; ex:memberOf ex:GroupNorth .
@@ -55,8 +59,8 @@ ex:PO4500 a ex:PurchaseOrder ; ex:approvalStatus &quot;pending&quot; .</code></p
   FILTER (?total &gt; ?cap)
 }</code></pre>
 <p>Other shapes require every line to name one known supplier, a share between 0 and 1 and a quote reference, require every supplier to have a parent group, and require the shares to add up to the whole order.</p>
-<h2 id="step-3-a-typed-hand-off">Step 3: a typed hand-off</h2>
-<p>The proposer must return data, not prose. A Pydantic model defines the contract (shown here without its field descriptions), and the same model works as Claude's structured-output schema in live mode.</p>
+<h2 id="step-3-a-typed-hand-off-from-claude">Step 3: a typed hand-off from Claude</h2>
+<p>Claude must return data, not prose. A Pydantic model defines the contract (shown here without its field descriptions).</p>
 <pre class="code"><code>class Line(BaseModel):
     supplier_id: str   # SAP supplier ID
     share: float       # fraction of the order
@@ -65,6 +69,18 @@ ex:PO4500 a ex:PurchaseOrder ; ex:approvalStatus &quot;pending&quot; .</code></p
 class Proposal(BaseModel):
     lines: list[Line]
     rationale: str</code></pre>
+<p>The live proposer sends Claude the quotes, plus the reasons for any earlier rejection, and asks for an answer in exactly that shape. The SDK's structured-output support enforces the schema and returns a validated <code>Proposal</code> object, so the rules always receive supplier IDs, numbers and quote references, never a paragraph.</p>
+<pre class="code"><code>prompt = f&quot;Split purchase order PO4500 between suppliers to get the best price.\n\nQuotes:\n{QUOTES}\n&quot;
+if violations:
+    prompt += &quot;\nYour last proposal was rejected by the policy check:\n- &quot; + &quot;\n- &quot;.join(violations) + &quot;\nRevise it.&quot;
+response = client.beta.messages.parse(
+    model=&quot;claude-opus-5-5&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: prompt}],
+    output_format=Proposal,   # Claude&#x27;s answer must fit the typed contract
+    ...                       # token limit, effort and fallback settings
+)
+proposal = response.parsed_output</code></pre>
+<p>Notice what Claude is <em>not</em> told: which suppliers belong to which group. It sees three quotes from three supplier records. The names hint that two are related, but hints are not facts. Group membership lives in the ontology, and the prompt mentions a group only when a rejection names one.</p>
 <h2 id="step-4-ground-then-check">Step 4: ground, then check</h2>
 <p>Grounding turns each SAP ID into an entity in the ontology; an unknown ID becomes a reason rather than a crash. Checking runs pySHACL over the facts plus the proposal and returns the violation messages as plain sentences the model can act on.</p>
 <pre class="code"><code>def check(proposal: Proposal) -&gt; list[str]:
@@ -85,20 +101,39 @@ class Proposal(BaseModel):
     V --&gt;|&quot;violations,&lt;br/&gt;attempts left&quot;| P
     V --&gt;|&quot;violations,&lt;br/&gt;no attempts left&quot;| X[&quot;escalate to a buyer&quot;]
     V --&gt;|&quot;passes&quot;| G[&quot;release gate&lt;br/&gt;checks SAP approval&quot;]</pre></details></figure>
-<p>The release gate is deliberately separate from the policy check. A compliant proposal for an order still awaiting approval is routed for approval, not released.</p>
-<h2 id="what-it-prints">What it prints</h2>
+<h2 id="running-it">Running it</h2>
+<p>Here is the complete output of <code>python nesy_loop.py</code>, the offline mode with the scripted proposer:</p>
 <pre class="code"><code>[attempt 1] proposes 100100: 80%, 200300: 20%
+  why: Take the 15% discount on most of the volume.
   check: fails
     - Group North Holdings would receive 0.8 of the order; the cap is 0.60.
+
 [attempt 2] proposes 100100: 50%, 100200: 50%
+  why: Split evenly between the two cheapest suppliers.
   check: fails
     - Group North Holdings would receive 1.0 of the order; the cap is 0.60.
+
 [attempt 3] proposes 100100: 60%, 200300: 40%
+  why: Keep North at the cap and still earn the 15% tier.
   check: passes
 
 Compliant draft routed for approval (status: pending); nothing released.</code></pre>
-<p>Attempt 2 is the prologue's trap: two supplier IDs, one parent, the whole order. A per-supplier check would have passed it. The ontology does not.</p>
-<p>The offline proposer replays three scripted attempts so that anyone can run the sample. With <code>--live</code>, Claude proposes instead, and each retry carries the violation messages from the previous attempt.</p>
+<p>Each block is one trip around the loop:</p>
+<ul class="list">
+<li><strong><code>proposes</code></strong> is the split the proposer suggested, as SAP supplier IDs and shares of the order.</li>
+<li><strong><code>why</code></strong> is the proposer's own rationale, carried in the <code>Proposal</code>.</li>
+<li><strong><code>check</code></strong> is the verdict from the ontology and SHACL rules.</li>
+<li><strong>The indented lines</strong> are the reasons, sent back word for word as input to the next attempt.</li>
+<li><strong>The last line</strong> is the release gate's decision.</li>
+</ul>
+<p>In plain words, here is what happened:</p>
+<ol class="list">
+<li>It chased the 15% discount with 80% to supplier 100100. Rejected: North Holdings would get 80% against a 60% cap.</li>
+<li>It split the order 50–50 between 100100 and 100200. Rejected again: both records belong to North Holdings, which would get the whole order. This is the prologue's trap, which a per-record check would have passed.</li>
+<li>It kept North at exactly 60%, still inside the 15% tier, and gave 40% to East. Passed.</li>
+</ol>
+<p>The release gate then checked SAP. Approval was still pending, so the compliant draft was routed for approval and nothing was released.</p>
+<p>In live mode, Claude writes the proposals and rationales, so the attempts will differ from run to run. A proposal may pass at the first attempt, or the loop may run out of attempts and escalate to a buyer. The loop, the reasons and the gate stay the same.</p>
 <h2 id="what-production-would-add">What production would add</h2>
 <p>This is teaching code. A real deployment would read suppliers and groups from SAP master data rather than a file, pause for a human approver (LangGraph supports interrupting a graph and resuming it), record every proposal, reason and decision for audit, keep provenance on every fact as Part 4 described, and be evaluated the way the prologue suggested: by inspecting the first proposal, the check's response and the next proposal, not only the final outcome.</p>
 <aside class="box maths">
@@ -115,7 +150,7 @@ Compliant draft routed for approval (status: pending); nothing released.</code><
 <li><a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/closing-the-loop">Sample code for this part</a>: <code>procurement.ttl</code>, <code>shapes.ttl</code>, <code>nesy_loop.py</code>.</li>
 <li><a href="https://github.com/langchain-ai/langgraph">LangGraph</a>, <a href="https://github.com/RDFLib/rdflib">rdflib</a> and <a href="https://github.com/RDFLib/pySHACL">pySHACL</a>, the open-source libraries the sample uses.</li>
 </ul>
-<nav class="series-nav" aria-label="Closing the Loop series"><div class="pn"><a class="prev" rel="prev" href="closing-the-loop-6-in-the-wild.html"><span class="label">← Part 6</span>In the wild, and the road ahead</a></div><details><summary class="label">All parts of Closing the Loop</summary><ol><li><a href="neural-symbolic-loop.html"><span class="label">Prologue</span> The neural–symbolic loop</a></li><li><a href="closing-the-loop-1-two-ways-of-knowing.html"><span class="label">Part 1</span> Two ways of knowing</a></li><li><a href="closing-the-loop-2-words-into-logic.html"><span class="label">Part 2</span> Turning words into logic</a></li><li><a href="closing-the-loop-3-ontology-as-rulebook.html"><span class="label">Part 3</span> The ontology as rulebook</a></li><li><a href="closing-the-loop-4-when-the-rulebook-changes.html"><span class="label">Part 4</span> When the rulebook has to change</a></li><li><a href="closing-the-loop-5-teaching-a-network-the-rules.html"><span class="label">Part 5</span> Teaching a network the rules</a></li><li><a href="closing-the-loop-6-in-the-wild.html"><span class="label">Part 6</span> In the wild, and the road ahead</a></li><li class="here"><a href="closing-the-loop-7-building-the-loop.html" aria-current="page"><span class="label">Part 7</span> Building the loop</a></li></ol></details></nav>
+<nav class="series-nav" aria-label="Closing the Loop series"><div class="pn"><a class="prev" rel="prev" href="closing-the-loop-6-in-the-wild.html"><span class="label">← Part 6</span>In the wild, and the road ahead</a></div><details><summary class="label">All parts of Closing the Loop</summary><ol><li><a href="neural-symbolic-loop.html"><span class="label">Prologue</span> The neural–symbolic loop</a></li><li><a href="closing-the-loop-1-two-ways-of-knowing.html"><span class="label">Part 1</span> Two ways of knowing</a></li><li><a href="closing-the-loop-2-words-into-logic.html"><span class="label">Part 2</span> Turning words into logic</a></li><li><a href="closing-the-loop-3-ontology-as-rulebook.html"><span class="label">Part 3</span> The ontology as rulebook</a></li><li><a href="closing-the-loop-4-when-the-rulebook-changes.html"><span class="label">Part 4</span> When the rulebook has to change</a></li><li><a href="closing-the-loop-5-teaching-a-network-the-rules.html"><span class="label">Part 5</span> When the rules cannot choose</a></li><li><a href="closing-the-loop-6-in-the-wild.html"><span class="label">Part 6</span> In the wild, and the road ahead</a></li><li class="here"><a href="closing-the-loop-7-building-the-loop.html" aria-current="page"><span class="label">Part 7</span> Building the loop</a></li></ol></details></nav>
 <p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
 </article>
 </main>

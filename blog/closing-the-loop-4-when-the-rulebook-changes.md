@@ -40,7 +40,7 @@ A justification for a conclusion φ is a subset *J* of the knowledge base such t
 
 A knowledge base can contain several justifications for the same contradiction. To repair it, you must remove at least one statement from *every* justification, so a repair is a *hitting set* across them. The smallest repair is not always the right one: removing a single axiom such as “nothing belongs to two groups” fixes everything at once and quietly breaks the policy. That is why repair tools propose and people dispose.
 
-Justifications come back in Part 5, where they turn out to matter for training neural networks as well.
+Part 5 looks at the opposite problem: two readings that are both consistent, where no statement has to go and logic alone cannot choose.
 :::
 
 :::question
