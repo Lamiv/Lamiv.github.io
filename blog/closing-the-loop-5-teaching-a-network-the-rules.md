@@ -1,63 +1,59 @@
 ---
-title: Teaching a network the rules
-subtitle: Compiling an ontology into something a neural network can learn from
+title: When the rules cannot choose
+subtitle: Two readings can both satisfy every rule, and only evidence can pick the right one
 part: 5
 date: 11 November 2026
 ---
 
-So far the symbolic side has acted after the fact. The model proposes, the ontology checks, and a rejection goes back as feedback. There is another way to close the loop: let the rules shape the network while it is being trained, so it learns to read the world in terms the ontology accepts.
+So far the rules have done their work after the fact: the model proposes, the ontology checks, and a rejection goes back as a reason. This part is about a failure that checking cannot catch, because nothing is broken. Two different interpretations both satisfy every rule, and the system has to choose between them.
 
-## The idea in plain words
+## Two records, one name
 
-Imagine a network that reads scanned delivery notes and must decide, for each line, which supplier and which group it belongs to. You have labels for some of it, but not all. You also have an ontology that says how suppliers, groups and orders must fit together.
+A scanned delivery note says “North Packaging, 4,000 cartons”. The model reading it must decide which supplier record the line belongs to. SAP holds two candidates: North Packaging LLC (100100) and North Packaging FZE (100200). Both belong to North Holdings.
 
-If the network's guesses can be scored by *how likely they are to be consistent with the ontology*, that score can become part of what the network is trained to improve. Readings that break the rules cost more; readings that fit them cost less. The ontology teaches where the labels are silent.
+Now run the checks from Part 3. The 60% cap is counted per group, and both records are in the same group, so the cap gives the same answer either way. Every supplier has a parent group, the shares add up, and the quote reference exists. Both readings pass.
 
-The hard part is computing that score exactly, for a real ontology, fast enough to train with.
+But they are not the same reading. The invoice goes to a different legal entity, the tax treatment may differ, and the contract terms may not match. The rules are satisfied and the answer can still be wrong.
 
-## Baobab
+## Why rules alone do not help
 
-Olga Mashkova, Asaad Mohammedsaleh, Fernando Zhapa-Camacho and Robert Hoehndorf at KAUST address this for OWL 2 DL, the description logic behind most serious ontologies. Existing learners either embed the ontology in a continuous space, giving up classical entailment, or restrict themselves to a simpler fragment of the logic. Their system, Baobab, compiles a full OWL 2 DL ontology with a finite set of facts into a circuit, a Sentential Decision Diagram, from which that consistency score can be computed in a single pass. The soundness of the compiler is machine-checked in the Lean theorem prover. [Mashkova et al.](https://arxiv.org/abs/2608.17741)
+This is not a flaw in the rules. They were written to stop concentration at group level, and they do. They were never meant to tell two sister companies apart. Logically, the knowledge base is *indifferent* between the two readings: both are consistent with it.
 
-Their demonstration is deliberately small. A convolutional network learns to read handwritten MNIST digits that the ontology couples through a successor relation, and it recovers concepts that are never directly labelled, which an independently trained network leaves at chance. The code is public. [Baobab repository](https://github.com/bio-ontology-research-group/baobab)
+The danger is greater when the rules are used to train a model rather than to check one. A model rewarded for consistency with the rules learns nothing from the rules about which sister company is meant, because both answers earn the same reward. It will settle on one, and the choice can be arbitrary: whichever record appeared first in training, or whichever happened never to trigger a review. It passes every check, for reasons that have nothing to do with the delivery note. Researchers call this a *reasoning shortcut*: the right answer by the rules, the wrong answer by the world.
 
-## Right answer, wrong reason
+## What the research shows
 
-The most useful part of the paper for practitioners is not the compiler. It is the treatment of *reasoning shortcuts*: cases where the network finds an assignment that satisfies the ontology but differs from the one that actually produced the example.
+Olga Mashkova, Asaad Mohammedsaleh, Fernando Zhapa-Camacho and Robert Hoehndorf at KAUST study exactly this, in a deliberately small setting. Their system, Baobab, compiles an OWL 2 DL ontology into a form a neural network can be trained against, and their test task asks a network to read handwritten digits linked by ontology rules. [Mashkova et al.](https://arxiv.org/abs/2608.17741)
 
-When the evidence admits several consistent readings, a network that scores each concept independently cannot spread its belief across them; it collapses onto one, arbitrarily. In one of their settings, the rules are symmetric under relabelling and the network reaches a digit accuracy of 0.18 against a chance level of 0.20, while still satisfying the training objective. Adding a single extra grounding fact breaks the symmetry. [Mashkova et al.](https://arxiv.org/abs/2608.17741)
+In one setting the rules allow five different readings that are all consistent, much like our two sister companies. Trained against the rules alone, the network's accuracy is 0.18, slightly below the 0.20 it would get by guessing, even though it satisfies the training objective. The fix is not better rules but more evidence: one additional fact cuts the consistent readings from five to three, and the full set of such facts cuts them to one, after which the network reads the digits correctly. [Mashkova et al.](https://arxiv.org/abs/2608.17741)
 
-The business parallel is uncomfortable. A model can learn to pass every compliance check for reasons that have nothing to do with the policy, for instance by always favouring the supplier that happened never to trigger a breach. Passing the checks is not the same as understanding them.
+It is research on digits and a preprint, not an enterprise product. But the lesson carries straight over.
 
-Their remedy connects to Part 4. They show that a mixture model with one component per *justification* of the query can represent the uncertainty a single independent model cannot. Seeded from the completions the circuit enumerates, it reaches the Bayes-optimal posterior on their image task. [Mashkova et al.](https://arxiv.org/abs/2608.17741)
+## Evidence chooses, rules constrain
+
+In procurement, the deciding evidence is usually mundane: the tax registration number on the delivery note, the legal entity named on the quote, the bank account on the invoice. The design consequences are practical:
+
+- **Ask the checker a second question.** Not only “does this pass?” but “is there more than one way it could pass?” If two supplier records satisfy every rule, that is a reason to look for evidence, not a green light.
+- **Make the model show its evidence.** A proposal should say why it picked 100200 over 100100, citing the field that decided it, just as it cites the quote its figures came from.
+- **Route genuine ties to a person.** When no evidence separates the readings, the honest output is “ambiguous”, with both candidates and what would settle it.
 
 :::maths
-**For the mathematically curious: weighted model counting**
+**For the mathematically curious: why consistency cannot break a tie**
 
-Give each true-or-false fact *a* a probability *w*(*a*) from the network. The weighted model count of a theory φ adds up the probability of every world that satisfies it:
+Give each candidate fact a probability from the model: *w*(*L*) for “the line belongs to 100100 (LLC)” and *w*(*F*) for “it belongs to 100200 (FZE)”. The rules say exactly one is true. The probability that the model's beliefs satisfy the rules is the *weighted model count*, summed over the consistent worlds:
 
-WMC(φ | *w*) = Σ_{α ⊨ φ} ∏_{*a* true in α} *w*(*a*) · ∏_{*a* false in α} (1 − *w*(*a*))
+WMC = *w*(*L*)(1 − *w*(*F*)) + (1 − *w*(*L*))*w*(*F*)
 
-The sum runs over every world α that satisfies φ. It is exactly the probability that a world drawn from the network's beliefs satisfies φ.
+A model that is sure of LLC, with *w*(*L*) = 1 and *w*(*F*) = 0, scores 1. A model that is sure of FZE scores 1 too. Training to maximise consistency, as Baobab does with a loss of −log WMC, rewards both equally, so it cannot prefer the right one.
 
-A tiny example. Let *N* mean “supplier 100200 is in North” and *E* mean “it is in East”. The network says *w*(*N*) = 0.7 and *w*(*E*) = 0.4. The ontology says exactly one is true, so two worlds qualify:
-
-WMC = 0.7 × (1 − 0.4) + (1 − 0.7) × 0.4 = 0.42 + 0.12 = 0.54
-
-Baobab trains with a loss that combines ordinary label error with this count, conditioned on the evidence *e*:
-
-ℒ = BCE(observed labels) + λ · (−log WMC(Θ ∧ *e* | *p*_{θ}))
-
-Here Θ is the compiled ontology and *p*_{θ} the network's beliefs. In the example, −log 0.54 ≈ 0.62. Gradient descent pushes probability away from the impossible worlds, “both” and “neither”, towards the consistent ones. Notice that it does not care *which* consistent world wins. That indifference is where reasoning shortcuts come from.
+Add evidence *e*, for example “the tax number on the note matches 100200”. Conditioning on it removes the LLC world, and only the FZE reading can score. The rules did not get smarter; the set of consistent worlds got smaller.
 :::
-
-## Where this stands
-
-This is research on digits and a demanding logic, not an enterprise product, and it is a preprint. Its value is conceptual. It shows that the rule side and the learning side can share one mathematical object, and it gives a precise name to a failure that every team training models against business rules should look for.
 
 :::question
-**A question to sit with.** Where in your business are the labels thin but the rules rich? Those are the places where training against rules might teach a model more than examples can, and where reasoning shortcuts are most likely to hide.
+**A question to sit with.** Where in your processes could two different answers both pass every control you have? Which piece of evidence would tell them apart, and does any system capture it?
 :::
+
+Part 6 looks at five systems that put explicit knowledge to work, and asks what decision the knowledge actually shapes in each.
 
 ## Sources
 

@@ -405,3 +405,11 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
 @media (max-width:560px){.series-nav .pn{grid-template-columns:1fr}.series-nav .next{grid-column:auto}}
 .post .post-head p.label{font-size:.76rem;line-height:1.6;margin:0}
 @media screen{.cv section>p{margin:0 0 10px}}
+.post ul.list,.post ol.list{margin:0 0 20px;padding-left:22px;display:grid;gap:8px;max-width:68ch}
+.post .list li{font-size:1.04rem;line-height:1.65}
+.post .list li::marker{color:var(--sodium)}
+.post .tablewrap{overflow-x:auto;margin:6px 0 26px}
+.post table{border-collapse:collapse;width:100%;min-width:520px;font-size:.95rem;line-height:1.5}
+.post th{text-align:left;font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium);padding:8px 10px;border-bottom:1px solid var(--sodium)}
+.post td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--mist)}
+.post td:first-child{color:var(--crystal);font-weight:600}
