@@ -2,7 +2,7 @@
 title: The ontology as rulebook
 subtitle: What counts as one supplier, answered precisely
 part: 3
-date: 15 November 2026
+date: 1 November 2026
 ---
 
 An ontology sounds philosophical. In engineering it is practical. Netflix's engineers describe it as a formal specification of types, the properties they carry and the relationships they may have, with the triple as its unit: one fact expressed as subject, predicate and object. [Netflix](https://netflixtechblog.com/ontology-driven-observability-building-an-end-to-end-knowledge-graph-at-netflix-scale-421392cf5adf)

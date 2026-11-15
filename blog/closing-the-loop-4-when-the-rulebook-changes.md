@@ -2,7 +2,7 @@
 title: When the rulebook has to change
 subtitle: Models that help build ontologies, and the people who approve the changes
 part: 4
-date: 15 November 2026
+date: 8 November 2026
 ---
 
 The case for ontologies has always run into the same objection: they are expensive. Somebody has to decide what a supplier is, write it down, keep it current and reconcile it with every system that disagrees. Language models change that cost, and they also add a new kind of risk.
