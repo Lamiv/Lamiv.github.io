@@ -2,7 +2,7 @@
 title: Teaching a network the rules
 subtitle: Compiling an ontology into something a neural network can learn from
 part: 5
-date: 8 November 2026
+date: 11 November 2026
 ---
 
 So far the symbolic side has acted after the fact. The model proposes, the ontology checks, and a rejection goes back as feedback. There is another way to close the loop: let the rules shape the network while it is being trained, so it learns to read the world in terms the ontology accepts.

@@ -2,7 +2,7 @@
 title: Two ways of knowing
 subtitle: Why a model that reads well still needs something that counts
 part: 1
-date: 25 October 2026
+date: 8 November 2026
 ---
 
 The prologue ended with an awkward question. An agent proposed a 50–50 split between two supplier IDs, comfortably under a 60% cap, and both IDs belonged to the same parent company. What counts as one supplier?

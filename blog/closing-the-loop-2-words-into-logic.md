@@ -2,7 +2,7 @@
 title: Turning words into logic
 subtitle: Semantic parsing, and why the first translation is usually wrong
 part: 2
-date: 1 November 2026
+date: 8 November 2026
 ---
 
 A reasoner cannot read a purchasing policy. It needs the policy as formal statements: symbols, relationships and rules with exact meanings. Someone, or something, has to translate. Translating natural language into a formal representation is called semantic parsing, and it is where most of the neuro-symbolic loop is won or lost.
