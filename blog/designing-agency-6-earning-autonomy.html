@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How does an agent earn more autonomy? · Vimal Vidyadharan</title>
+<meta name="description" content="Evidence for widening authority, and triggers for narrowing it again">
+<link rel="canonical" href="https://lamiv.github.io/blog/designing-agency-6-earning-autonomy.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How does an agent earn more autonomy?">
+<meta property="og:description" content="Evidence for widening authority, and triggers for narrowing it again">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/brand.css?v=18">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="mark" href="../index.html"><i></i>Vimal Vidyadharan</a>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="sitenav">Menu</button>
+  <nav aria-label="Site" id="sitenav"><div class="navgrp" data-label="On the home page"><a href="../index.html#hats">Capabilities</a><a href="../index.html#work">Selected work</a><a href="../index.html#career">Career</a><a href="../index.html#contact">Contact</a></div><div class="navgrp pages" data-label="Pages"><a href="../enterprise-ai-architecture.html">Architecture</a><a href="../blog.html" aria-current="page">Blog</a><a href="../cv.html">CV</a></div></nav>
+  <button class="theme" type="button" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
+</div></header>
+<main id="main" class="wrap">
+<article class="post">
+<header class="post-head">
+<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#agent-governance">AI agents and governance</a> · Designing Agency, part 6 of 7</p>
+<p class="label">25 October 2026 · 5 min read</p>
+<h1>How does an agent earn more autonomy?</h1>
+<p class="post-sub">Evidence for widening authority, and triggers for narrowing it again</p>
+<p class="label byline">Vimal Vidyadharan</p>
+</header>
+<p>No agent should start with the authority it might eventually deserve. The question is what evidence justifies more, and what takes it back.</p>
+<h2 id="a-case-not-a-feeling">A case, not a feeling</h2>
+<p>The AI Safety Atlas describes the <em>safety case</em>: a structured argument, supported by evidence, that a system meets the thresholds for deployment. It can include threat modelling, red-teaming results and post-deployment monitoring plans, and it supports both approval up front and tracking afterwards. <a href="https://ai-safety-atlas.com/chapters/v1/governance/implementation">AI Safety Atlas</a> The Atlas discusses frontier AI, but the idea transfers. Before moving an agent a step up the ladder from Part 1, write down the claim, for example “the agent can draft purchase orders that need no material correction 95% of the time”, and the evidence for it.</p>
+<h2 id="shadow-runs">Shadow runs</h2>
+<p>The cheapest evidence comes from running the agent beside the existing process without letting it act. Christopher Koch and Joshua Wellbrock call this shadow mode <em>the most important discipline</em>: the agent processes real or realistic cases next to the existing process, but without autonomous external effect. It reveals missing data, kinds of hallucination, fragile integrations, false escalations, prompt injection issues and hidden employee correction work. Their playbook puts shadow mode before a human-in-the-loop production test, and that before a go or no-go decision on scaling. <a href="https://arxiv.org/abs/2606.16649">Koch and Wellbrock</a></p>
+<p>For purchasing, the agent drafts an order for every requisition and the drafts are compared with what buyers actually did. The <em>hidden correction work</em> is the number to watch: if buyers quietly fix agent drafts, the agent is not ready, whatever its accuracy on paper.</p>
+<h2 id="testing-the-whole-workflow">Testing the whole workflow</h2>
+<p>Shadow runs show ordinary behaviour. Adversarial testing must cover whole conversations, not single prompts.</p>
+<p><strong>ASEval</strong> turns benign multi-turn scenarios into risky test cases, runs them against the agent, and judges the complete trace. Its 2,254 executable cases ran against one agent framework (OpenClaw) with 11 models. Its perturbations raised the average rate at which agents were triggered into risky behaviour from 22.9% with existing injection techniques to 47.4%. The judge is itself a model, which agreed with human annotation at 93.2% binary F1. <a href="https://arxiv.org/abs/2605.22321">Ma et al.</a> What it measures, then, is how often an agent in that framework can be pushed into a risky action, as judged by a model; not how your agent behaves in SAP.</p>
+<p><strong>PIMiner</strong> is an automated red-teaming agent that learns a library of prompt injection strategies and transfers it to models it has not seen, with only about ten queries per test. On the IPIArena benchmark it reports attack success rates of 76.2% against Gemini 2.5 Pro, 61.9% against GPT-5.1 and 42.9% against Claude Sonnet 4.5 <a href="https://arxiv.org/abs/2608.05108">Wang et al.</a> The lesson is the method: attack strategies are reusable, so red-teaming should be repeated whenever the model changes.</p>
+<h2 id="oversight-that-tightens-itself">Oversight that tightens itself</h2>
+<p>Overman and Bayati at Stanford propose a precise mechanism for oversight that becomes more cautious after a mistake. Several weaker overseers score each candidate action; actions that look different from a conservative baseline, such as deferring or doing nothing, are penalised; and the strength of that penalty is tuned online so that the rate of undesirable outcomes stays near a target. The baseline is always among the options. On a modified SWE-bench, overseers using Claude Haiku 4.5 constrained an adversarially misaligned Claude Sonnet 4.6 agent, and empirical violation rates closely matched the specified targets. <a href="https://arxiv.org/abs/2605.28807">Overman and Bayati</a></p>
+<p>They call it <em>calibrating conservatism</em>. It depends on there being a safe default, which in procurement is easy: leave the requisition as a draft.</p>
+<aside class="box maths">
+<p><strong>For the mathematically curious: calibrated collective oversight</strong></p>
+<p>For a state <em>s</em> and candidate action <em>a</em>, each overseer <em>i</em> gives a score <em>q</em><sub>i</sub>(<em>s</em>, <em>a</em>). The penalty measures how far an action departs from the conservative baseline <em>a</em><sub>o</sub>:</p>
+<p class="eq">Δ(<em>s</em>, <em>a</em>) = Σ<sub>i</sub> |<em>q</em><sub>i</sub>(<em>s</em>, <em>a</em>) − <em>q</em><sub>i</sub>(<em>s</em>, <em>a</em><sub>o</sub>)|</p>
+<p>The system picks the action that maximises <em>U</em>(<em>s</em>, <em>a</em>) − λ<sub>t</sub> Δ(<em>s</em>, <em>a</em>), where <em>U</em> is the primary agent's own utility. After observing a loss ℓ<sub>t</sub>, it updates</p>
+<p class="eq">λ<sub>t+1</sub> = λ<sub>t</sub> + η(ℓ<sub>t</sub> − α)</p>
+<p>A loss above the target α raises λ, making the system more conservative; a run of good outcomes lowers it. The target α is the business decision: how often an undesirable outcome is acceptable.</p>
+</aside>
+<h2 id="taking-authority-back">Taking authority back</h2>
+<p>Widening authority needs evidence; narrowing it needs triggers decided in advance: a model or prompt change, falling metrics, a red-team finding, a policy change, any incident. The mechanisms should be ready before they are needed: a central point where the agent's access can be revoked at once, which an enterprise gateway provides <a href="https://arxiv.org/abs/2608.10760">Kumar, Wang and Manoharan</a>, and circuit breakers that stop actions beyond set limits. <a href="https://ceur-ws.org/Vol-4198/paper7.pdf">Piccardo, Italiano and Martino</a> Berkeley's profile lists shutdown mechanisms and continuous post-deployment monitoring among its key levers. <a href="https://cltc.berkeley.edu/agentic-ai-risk-management-standards-profile">CLTC</a></p>
+<p>Chan and colleagues propose three kinds of visibility into agents: agent identifiers, real-time monitoring and activity logging. <a href="https://arxiv.org/abs/2401.13138">Chan et al.</a> For an SAP agent, add a regular reconciliation: every document the agent touched, matched against its log and the delegation trail from Part 3.</p>
+<h2 id="keeping-the-overseers-able-to-oversee">Keeping the overseers able to oversee</h2>
+<p>One risk grows quietly as autonomy grows. The Atlas calls it enfeeblement: human skills erode <em>through countless small decisions to delegate</em>, each rational on its own. <a href="https://ai-safety-atlas.com/chapters/v1/risks/systemic-risks">AI Safety Atlas</a> Buyers who stop negotiating stop being able to judge a negotiation. Rotate people through the work the agent does, and keep a share of cases fully manual.</p>
+<aside class="box risk">
+<p><strong>Averting risk</strong></p>
+<div class="tablewrap"><table><thead><tr><th>Risk</th><th>Strategy</th><th>What it still does not cover</th></tr></thead><tbody><tr><td>Autonomy granted on impressions</td><td>A written case: claim, evidence and monitoring plan</td><td>Evidence from conditions that later change</td></tr><tr><td>Hidden human correction</td><td>Shadow mode, measuring corrections as well as accuracy</td><td>Cases that never occur in the shadow period</td></tr><tr><td>Benchmarks mistaken for assurance</td><td>Know what each test measures; red-team your own workflow, again after every model change</td><td>Attacks nobody has invented yet</td></tr><tr><td>Authority that cannot be withdrawn quickly</td><td>Pre-agreed triggers, central revocation, circuit breakers</td><td>Damage done before the trigger fires</td></tr><tr><td>Overseers lose the skill to oversee</td><td>Rotation and a share of manual work</td><td>Cost pressure to stop doing both</td></tr></tbody></table></div>
+</aside>
+<aside class="box question">
+<p><strong>A question to sit with.</strong> What single number would make you widen your agent's authority, and what single event would make you narrow it? Are both written down?</p>
+</aside>
+<h2 id="sources">Sources</h2>
+<ul class="sources">
+<li>AI Safety Atlas, <a href="https://ai-safety-atlas.com/chapters/v1/governance/implementation">Governance chapter</a> and <a href="https://ai-safety-atlas.com/chapters/v1/risks/systemic-risks">Risks chapter</a>.</li>
+<li>Christopher Koch and Joshua A. Wellbrock, <a href="https://arxiv.org/abs/2606.16649"><em>The Integrator Advantage: Controlled Agentic AI for Small and Medium-Sized Companies</em></a>, arXiv preprint, June 2026.</li>
+<li>Jianan Ma and colleagues, <a href="https://arxiv.org/abs/2605.22321"><em>ASEval</em></a>, arXiv preprint, May 2026.</li>
+<li>Yanting Wang, Chenlong Yin, Runpeng Geng and Jinyuan Jia, <a href="https://arxiv.org/abs/2608.05108"><em>Agent Against Agent: An Agentic System for Automatic Prompt Injection Red Teaming</em></a>, arXiv preprint, August 2026.</li>
+<li>William Overman and Mohsen Bayati, <a href="https://arxiv.org/abs/2605.28807"><em>Calibrating Conservatism for Scalable Oversight</em></a>, arXiv preprint, May 2026.</li>
+<li>Suraj Kumar, Amy Wang and Srinivasan Manoharan, <a href="https://arxiv.org/abs/2608.10760"><em>A Gateway Architecture for Enterprise MCP Authentication</em></a>, arXiv preprint, August 2026.</li>
+<li>Giorgio Piccardo, Giuseppe F. Italiano and Alessio Martino, <a href="https://ceur-ws.org/Vol-4198/paper7.pdf"><em>The Agentic Kill Chain</em></a>, CEUR Workshop Proceedings, Vol. 4198.</li>
+<li>Nada Madkour and colleagues, UC Berkeley CLTC, <a href="https://cltc.berkeley.edu/agentic-ai-risk-management-standards-profile"><em>Agentic AI Risk-Management Standards Profile</em></a>, February 2026.</li>
+<li>Alan Chan and colleagues, <a href="https://arxiv.org/abs/2401.13138"><em>Visibility into AI Agents</em></a>, arXiv preprint, 2024.</li>
+</ul>
+<nav class="series-nav" aria-label="Designing Agency series"><div class="pn"><a class="prev" rel="prev" href="designing-agency-5-inputs-turn-against-it.html"><span class="label">← Part 5</span>When the agent&#x27;s inputs turn against it</a><a class="next" rel="next" href="designing-agency-7-build-the-boundary.html"><span class="label">Part 7 →</span>Build the boundary</a></div><details><summary class="label">All parts of Designing Agency</summary><ol><li><a href="designing-agency-0-permission.html"><span class="label">Prologue</span> What are we giving the agent permission to do?</a></li><li><a href="designing-agency-1-choose-the-action.html"><span class="label">Part 1</span> Choose the action before the agent</a></li><li><a href="designing-agency-2-can-you-undo-it.html"><span class="label">Part 2</span> Can you undo what it just did?</a></li><li><a href="designing-agency-3-whose-authority.html"><span class="label">Part 3</span> Whose authority is it acting on?</a></li><li><a href="designing-agency-4-what-did-the-human-approve.html"><span class="label">Part 4</span> What exactly did the human approve?</a></li><li><a href="designing-agency-5-inputs-turn-against-it.html"><span class="label">Part 5</span> When the agent&#x27;s inputs turn against it</a></li><li class="here"><a href="designing-agency-6-earning-autonomy.html" aria-current="page"><span class="label">Part 6</span> How does an agent earn more autonomy?</a></li><li><a href="designing-agency-7-build-the-boundary.html"><span class="label">Part 7</span> Build the boundary</a></li></ol></details></nav>
+<p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
+</article>
+</main>
+<footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
+<script src="../assets/brand.js?v=7"></script>
+</body>
+</html>

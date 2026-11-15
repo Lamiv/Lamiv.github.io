@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Whose authority is it acting on? · Vimal Vidyadharan</title>
+<meta name="description" content="Requester, agent, SAP identity and approver are four parties, not one">
+<link rel="canonical" href="https://lamiv.github.io/blog/designing-agency-3-whose-authority.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Whose authority is it acting on?">
+<meta property="og:description" content="Requester, agent, SAP identity and approver are four parties, not one">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/brand.css?v=18">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="mark" href="../index.html"><i></i>Vimal Vidyadharan</a>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="sitenav">Menu</button>
+  <nav aria-label="Site" id="sitenav"><div class="navgrp" data-label="On the home page"><a href="../index.html#hats">Capabilities</a><a href="../index.html#work">Selected work</a><a href="../index.html#career">Career</a><a href="../index.html#contact">Contact</a></div><div class="navgrp pages" data-label="Pages"><a href="../enterprise-ai-architecture.html">Architecture</a><a href="../blog.html" aria-current="page">Blog</a><a href="../cv.html">CV</a></div></nav>
+  <button class="theme" type="button" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
+</div></header>
+<main id="main" class="wrap">
+<article class="post">
+<header class="post-head">
+<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#agent-governance">AI agents and governance</a> · Designing Agency, part 3 of 7</p>
+<p class="label">11 October 2026 · 5 min read</p>
+<h1>Whose authority is it acting on?</h1>
+<p class="post-sub">Requester, agent, SAP identity and approver are four parties, not one</p>
+<p class="label byline">Vimal Vidyadharan</p>
+</header>
+<p>When an agent creates a purchase order in SAP S/4HANA, four parties are involved, and it pays to keep them apart. The <strong>requester</strong> is the buyer who asked. The <strong>agent</strong> is the software that did the work. The <strong>executing identity</strong> is the user SAP believes performed the action, and whose roles it checked. The <strong>approver</strong> is the person workflow asks to approve or release it. Most agent designs blur at least two of them.</p>
+<h2 id="how-s-4hana-decides-what-a-user-may-do">How S/4HANA decides what a user may do</h2>
+<p>S/4HANA is role-based. In on-premise and private cloud systems, roles maintained in transaction PFCG carry the authorisations that let a user start an app and read or change data. Business catalogs group apps <em>according to segregation of duty</em>, and business roles collect catalogs for a job. <a href="https://learning.sap.com/courses/exploring-the-authorization-concept-for-sap-fiori-on-sap-s-4hana/explaining-sap-fiori-authorization-model">SAP Learning</a> SAP's training puts one property plainly: users cannot give themselves access; they can only rearrange what their roles already grant. <a href="https://learning.sap.com/courses/implementing-sap-s-4hana-cloud-private-edition/assigning-permissions-to-users_fe48dd0d-6d13-4995-bfea-edccba5dbd7a">SAP Learning</a></p>
+<p>That makes the executing identity the decisive choice. Whatever identity the agent's calls arrive under, its roles become the agent's effective authority.</p>
+<h2 id="three-ways-to-call-sap">Three ways to call SAP</h2>
+<p><strong>A technical user.</strong> In S/4HANA Cloud, public edition, external systems usually call APIs through a <em>communication user</em> defined in a <em>communication arrangement</em>, which fixes which system may call which APIs. SAP's own tutorial notes that a business partner created this way is created by the technical communication user, and no business user is needed for the call to succeed. <a href="https://developers.sap.com/tutorials/abap-environment-business-partner-basic-auth.html">SAP Developers</a> Convenient, but every agent action then appears under one shared identity, with that identity's rights, whoever asked.</p>
+<p><strong>The user's own identity.</strong> SAP calls this <em>principal propagation</em>: forwarding the identity of the logged-on user to the backend so that the backend applies that user's roles. <a href="https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/principal-propagation-e2cbb48.md">SAP BTP documentation</a> It works differently by edition:</p>
+<ul class="list">
+<li><em>To S/4HANA Cloud</em>, a BTP destination of type <code>OAuth2SAMLBearerAssertion</code> has the Destination service wrap the user's identity in a SAML assertion, sign it with the subaccount's key and exchange it for an OAuth access token. <a href="https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/cloud-to-cloud-65b11d4.md">SAP BTP documentation</a> S/4HANA must trust the signing system, and the communication arrangement must allow OAuth 2.0 for inbound calls. <a href="https://developers.sap.com/tutorials/abap-environment-business-partner-oauthsamlbearer.html">SAP Developers</a></li>
+<li><em>To on-premise or private cloud systems</em>, a destination of type <code>PrincipalPropagation</code> goes through the Cloud Connector. It verifies the user's token and issues a short-lived X.509 certificate for that user; the ABAP system maps the certificate to a user with rule-based mapping in transaction CERTRULE. <a href="https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/cloud-to-on-premise-70b8ef3.md">SAP BTP documentation</a> <a href="https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/rule-based-mapping-of-certificates-4f8540f.md">SAP BTP documentation</a></li>
+</ul>
+<p><strong>A technical user, propagated.</strong> SAP also documents <em>technical user propagation</em>, which sends a technical user obtained with OAuth client credentials instead of a business user. <a href="https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/technical-user-propagation-8b6e019.md">SAP BTP documentation</a> It suits background jobs that act for nobody in particular; it is the wrong choice for work done at a person's request.</p>
+<h2 id="where-the-agent-s-identity-lives">Where the agent's identity lives</h2>
+<p>Propagation solves one problem and exposes another. SAP now checks the buyer's roles, but in the flows above the identity that reaches S/4HANA is the user's. The fact that an agent acted is known only to the layers in front of SAP.</p>
+<p>Those layers can record it precisely. An enterprise gateway design from August 2026 uses OAuth 2.0 token exchange (RFC 8693) to issue a single signed token carrying both identities: <code>sub</code> is the user and <code>act.sub</code> is the agent, with each further hop adding a level, <em>a complete, cryptographically bound delegation trail</em>. The authors flag the most common misconfiguration: the exchange must check that the incoming token was issued to the agent, not to the gateway. <a href="https://arxiv.org/abs/2608.10760">Kumar, Wang and Manoharan</a> Kalyanasundaram argues that each agent needs a unique, verifiable identity bound to an accountable owner, governed through four fundamentals: administer, authenticate, authorise and audit. <a href="https://ceur-ws.org/Vol-4257/position1.pdf">Kalyanasundaram</a></p>
+<h2 id="borrowed-authority-is-too-much-authority">Borrowed authority is too much authority</h2>
+<p>Propagation has a second catch. The agent inherits all of the buyer's rights, not only the ones the task needs. If the buyer can also release orders, so can anything acting as the buyer.</p>
+<p>Researchers at EPFL show one way to narrow it. CAPMAS maps a request to a bounded set of privileges and issues tokens that each agent can narrow further, offline, but never widen. Compared with token exchange, they report 30 times faster delegation operations and up to 3 times lower bandwidth, while cutting unnecessary privileges by 99.5% against propagating all of the user's privileges. <a href="https://arxiv.org/abs/2609.06500">Veski, Guerraoui and Froelicher</a> The principle carries over even without their tooling: the agent's tools should expose only the operations the task needs, whatever the user could do.</p>
+<h2 id="segregation-of-duties-survives-if-you-keep-it">Segregation of duties survives, if you keep it</h2>
+<p>S/4HANA's flexible workflow can exclude a purchase order's creator from approving it. <a href="https://learning.sap.com/courses/implementing-sap-s-4hana-cloud-public-edition-sourcing-and-procurement/defining-workflows-in-sourcing-and-procurement_a17030df-33b7-4c0e-a8c6-31ec490618e9">SAP Learning</a> With propagation, the creator is the buyer who asked, so the buyer cannot approve the agent's work on their own request. With a shared technical user, the creator is the technical user, and that protection quietly disappears.</p>
+<h2 id="what-your-team-has-to-build">What your team has to build</h2>
+<p>SAP provides the identity plumbing and the role checks. The application team still has to build these:</p>
+<ul class="list">
+<li>Record the agent's identity alongside the user's, outside SAP, and link it to the SAP document number.</li>
+<li>Limit the agent's tools to the task, below the user's full rights.</li>
+<li>Decide when propagation is required and when a technical user is acceptable, per action.</li>
+<li>Keep the mapping between corporate identities and SAP users accurate, because propagation is only as good as that mapping.</li>
+</ul>
+<aside class="box risk">
+<p><strong>Averting risk</strong></p>
+<div class="tablewrap"><table><thead><tr><th>Risk</th><th>Strategy</th><th>What it still does not cover</th></tr></thead><tbody><tr><td>Every agent action appears under one shared identity</td><td>Principal propagation for actions taken at a person's request</td><td>Background jobs that genuinely act for nobody</td></tr><tr><td>The agent inherits all of the user's rights</td><td>Narrow tools and scopes below the user's rights</td><td>Mistakes within the narrowed scope</td></tr><tr><td>SAP cannot tell agent work from human work</td><td>Delegation trail (<code>sub</code> plus <code>act</code>) recorded at the gateway and linked to SAP documents</td><td>Gaps where the gateway is bypassed</td></tr><tr><td>The requester approves their own agent's order</td><td>Exclude the creator in flexible workflow; use propagation so the creator is the requester</td><td>Approvers who share a desk</td></tr></tbody></table></div>
+</aside>
+<aside class="box question">
+<p><strong>A question to sit with.</strong> If an auditor picked one purchase order your agent created, could you show who asked, which agent acted, which SAP identity executed it, and who approved it?</p>
+</aside>
+<h2 id="sources">Sources</h2>
+<ul class="sources">
+<li>SAP Learning, <a href="https://learning.sap.com/courses/exploring-the-authorization-concept-for-sap-fiori-on-sap-s-4hana/explaining-sap-fiori-authorization-model"><em>Explaining SAP Fiori Authorization Model</em></a> and <a href="https://learning.sap.com/courses/implementing-sap-s-4hana-cloud-private-edition/assigning-permissions-to-users_fe48dd0d-6d13-4995-bfea-edccba5dbd7a"><em>Assigning Permissions to Users</em></a>.</li>
+<li>SAP Developers, <a href="https://developers.sap.com/tutorials/abap-environment-business-partner-basic-auth.html"><em>Integrate SAP BTP, ABAP environment and SAP S/4HANA Cloud, public edition using Basic Authentication</em></a> and <a href="https://developers.sap.com/tutorials/abap-environment-business-partner-oauthsamlbearer.html"><em>… using the OAuth 2.0 SAML Bearer Assertion Flow</em></a>.</li>
+<li>SAP, <a href="https://github.com/SAP-docs/btp-connectivity"><em>SAP BTP Connectivity documentation</em></a>, published source of the SAP Help Portal pages on principal propagation and technical user propagation.</li>
+<li>SAP Learning, <a href="https://learning.sap.com/courses/implementing-sap-s-4hana-cloud-public-edition-sourcing-and-procurement/defining-workflows-in-sourcing-and-procurement_a17030df-33b7-4c0e-a8c6-31ec490618e9"><em>Defining Workflows in Sourcing and Procurement</em></a>.</li>
+<li>Suraj Kumar, Amy Wang and Srinivasan Manoharan, <a href="https://arxiv.org/abs/2608.10760"><em>A Gateway Architecture for Enterprise MCP Authentication</em></a>, arXiv preprint, August 2026.</li>
+<li>Thivaharan Kalyanasundaram, <a href="https://ceur-ws.org/Vol-4257/position1.pdf"><em>Identity and Access Management for AI Agents</em></a>, CEUR Workshop Proceedings, Vol. 4257.</li>
+<li>Rasmus Moorits Veski, Rachid Guerraoui and David Froelicher, <a href="https://arxiv.org/abs/2609.06500"><em>CAPMAS: Capability-Based Delegation of Privileges in Multi-Agent Systems</em></a>, arXiv preprint, September 2026.</li>
+</ul>
+<nav class="series-nav" aria-label="Designing Agency series"><div class="pn"><a class="prev" rel="prev" href="designing-agency-2-can-you-undo-it.html"><span class="label">← Part 2</span>Can you undo what it just did?</a><a class="next" rel="next" href="designing-agency-4-what-did-the-human-approve.html"><span class="label">Part 4 →</span>What exactly did the human approve?</a></div><details><summary class="label">All parts of Designing Agency</summary><ol><li><a href="designing-agency-0-permission.html"><span class="label">Prologue</span> What are we giving the agent permission to do?</a></li><li><a href="designing-agency-1-choose-the-action.html"><span class="label">Part 1</span> Choose the action before the agent</a></li><li><a href="designing-agency-2-can-you-undo-it.html"><span class="label">Part 2</span> Can you undo what it just did?</a></li><li class="here"><a href="designing-agency-3-whose-authority.html" aria-current="page"><span class="label">Part 3</span> Whose authority is it acting on?</a></li><li><a href="designing-agency-4-what-did-the-human-approve.html"><span class="label">Part 4</span> What exactly did the human approve?</a></li><li><a href="designing-agency-5-inputs-turn-against-it.html"><span class="label">Part 5</span> When the agent&#x27;s inputs turn against it</a></li><li><a href="designing-agency-6-earning-autonomy.html"><span class="label">Part 6</span> How does an agent earn more autonomy?</a></li><li><a href="designing-agency-7-build-the-boundary.html"><span class="label">Part 7</span> Build the boundary</a></li></ol></details></nav>
+<p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
+</article>
+</main>
+<footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
+<script src="../assets/brand.js?v=7"></script>
+</body>
+</html>

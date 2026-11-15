@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What are we giving the agent permission to do? · Vimal Vidyadharan</title>
+<meta name="description" content="Agency, autonomy, authorisation and accountability are four different questions">
+<link rel="canonical" href="https://lamiv.github.io/blog/designing-agency-0-permission.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What are we giving the agent permission to do?">
+<meta property="og:description" content="Agency, autonomy, authorisation and accountability are four different questions">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/brand.css?v=18">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="mark" href="../index.html"><i></i>Vimal Vidyadharan</a>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="sitenav">Menu</button>
+  <nav aria-label="Site" id="sitenav"><div class="navgrp" data-label="On the home page"><a href="../index.html#hats">Capabilities</a><a href="../index.html#work">Selected work</a><a href="../index.html#career">Career</a><a href="../index.html#contact">Contact</a></div><div class="navgrp pages" data-label="Pages"><a href="../enterprise-ai-architecture.html">Architecture</a><a href="../blog.html" aria-current="page">Blog</a><a href="../cv.html">CV</a></div></nav>
+  <button class="theme" type="button" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
+</div></header>
+<main id="main" class="wrap">
+<article class="post">
+<header class="post-head">
+<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#agent-governance">AI agents and governance</a> · Designing Agency, prologue</p>
+<p class="label">4 October 2026 · 5 min read</p>
+<h1>What are we giving the agent permission to do?</h1>
+<p class="post-sub">Agency, autonomy, authorisation and accountability are four different questions</p>
+<p class="label byline">Vimal Vidyadharan</p>
+</header>
+<p>A buyer types six words into an assistant: “Take care of this order, please.” It sounds like one instruction. It is really five or six separate grants of authority, and most of the trouble with AI agents in the enterprise comes from treating them as one.</p>
+<h2 id="one-request-six-steps">One request, six steps</h2>
+<p>Follow the order through. The agent reads three supplier quotes and the contract history. It compares prices and terms. It drafts a purchase order in SAP S/4HANA. Someone approves it. The order is released. SAP sends it to the supplier, who starts planning production around it.</p>
+<p>Each step asks for something different. Reading quotes needs access to information. Drafting needs permission to create a record that anyone can still change. Approving needs a person with the right to commit the company's money. Sending needs nothing more than a released order, and once it has happened, a supplier outside the company is acting on it.</p>
+<p>“Take care of this” does not say which of these the buyer meant to hand over. The system has to.</p>
+<h2 id="four-words-that-are-often-blurred">Four words that are often blurred</h2>
+<p><strong>Agency</strong> is what the agent can perceive and affect: the data it can read and the tools it can use. Damir Safin and Dian Balta of fortiss grade it in five levels, from reasoning over text it is given (L1), through read-only access to outside systems (L3), to writes that are cheap to undo, such as drafts (L4), and writes that are costly to undo, such as final submissions and payments (L5). <a href="https://arxiv.org/abs/2605.12105">Safin and Balta</a></p>
+<p><strong>Autonomy</strong> is how much happens without a person. Their five levels run from an <em>operator</em>, where a human commands each sub-task, to an <em>approver</em>, where the agent executes but pauses for explicit sign-off before consequential actions, to an <em>observer</em>, where it runs on its own and people monitor and can intervene. <a href="https://arxiv.org/abs/2605.12105">Safin and Balta</a></p>
+<p><strong>Authorisation</strong> is what the agent is permitted to do, and on whose behalf. In S/4HANA that is ultimately a question of roles and the identity the system executes under, which Part 3 takes apart. UC Berkeley's agentic AI risk profile puts it simply: apply the principle of least privilege when granting agents access. <a href="https://cltc.berkeley.edu/agentic-ai-risk-management-standards-profile">CLTC</a></p>
+<p><strong>Accountability</strong> is who answers for the outcome. The same profile lists clear role definitions, intervention points, escalation pathways and shutdown mechanisms as levers of human control and accountability. <a href="https://cltc.berkeley.edu/agentic-ai-risk-management-standards-profile">CLTC</a></p>
+<p>Safin and Balta make one distinction sharper than any other: <em>whether a human must approve an action is determined by the autonomy design; whether the action can be undone is a property of the action itself.</em> <a href="https://arxiv.org/abs/2605.12105">Safin and Balta</a> You choose the first. You inherit the second.</p>
+<h2 id="think-freely-act-narrowly">Think freely, act narrowly</h2>
+<p>The useful consequence is that the four can be set independently. An agent can have wide freedom to read, compare and propose while its authority to commit is narrow. Safin and Balta describe an <em>autonomous monitor</em>: high autonomy, but read-only agency, so it cannot alter any system of record and the risk of a consequential wrong action is minimised. They also describe the opposite, a <em>supertool</em>: powerful, often irreversible capabilities, deliberately kept at low autonomy so a person orchestrates every use. <a href="https://arxiv.org/abs/2605.12105">Safin and Balta</a></p>
+<p>For the buyer's order, that suggests a shape. Let the agent roam through quotes, history and contract terms. Let it draft. Keep approval, release and sending where accountability already lives.</p>
+<h2 id="three-ways-it-goes-wrong">Three ways it goes wrong</h2>
+<p>The AI Safety Atlas sorts AI risks by cause: <em>misuse</em>, where people use a system to cause harm; <em>misalignment</em>, where a system pursues goals other than the ones intended; and <em>systemic</em> risks that emerge from many interactions, with overlap between all three. <a href="https://ai-safety-atlas.com/chapters/v1/risks/risk-decomposition">AI Safety Atlas</a></p>
+<p>In procurement they look ordinary. Misuse is a supplier's email that steers the agent. Misalignment is an agent that optimises the price and ignores the cap on supplier concentration. Systemic risk is an organisation that slowly stops checking what its agents propose. This series is about designing the boundary so that each of these is caught by something other than luck.</p>
+<h2 id="the-series">The series</h2>
+<ol class="list">
+<li><strong>Choose the action before the agent</strong>: which steps can be automatic, which bounded, which human.</li>
+<li><strong>Can you undo what it just did?</strong> Restoring, compensating and living with it.</li>
+<li><strong>Whose authority is it acting on?</strong> Requester, agent, SAP identity and approver.</li>
+<li><strong>What exactly did the human approve?</strong> Binding approval to the terms that were seen.</li>
+<li><strong>When the agent's inputs turn against it</strong>: injected instructions and poisoned memory.</li>
+<li><strong>How does an agent earn more autonomy?</strong> Evidence for widening authority, and triggers for narrowing it.</li>
+<li><strong>Build the boundary</strong>: a small working example.</li>
+</ol>
+<aside class="box risk">
+<p><strong>Averting risk</strong></p>
+<div class="tablewrap"><table><thead><tr><th>Risk</th><th>Strategy</th><th>What it still does not cover</th></tr></thead><tbody><tr><td>One vague request is read as a grant of every step</td><td>Name each step and grant authority per step</td><td>Steps nobody listed</td></tr><tr><td>The agent can do more than the task needs</td><td>Least privilege: tools and data matched to the task</td><td>Broad rights held by the person it acts for</td></tr><tr><td>Nobody owns the outcome</td><td>Named roles, intervention points, escalation and shutdown</td><td>Owners who never look</td></tr></tbody></table></div>
+</aside>
+<aside class="box question">
+<p><strong>A question to sit with.</strong> Pick one process your teams want an agent for. Can you list its steps and say, for each, whether the agent may read, draft, decide or commit?</p>
+</aside>
+<h2 id="sources">Sources</h2>
+<ul class="sources">
+<li>Damir Safin and Dian Balta, <a href="https://arxiv.org/abs/2605.12105"><em>Autonomy and Agency in Agentic AI: Architectural Tactics for Regulated Contexts</em></a>, arXiv preprint, May 2026.</li>
+<li>Nada Madkour and colleagues, UC Berkeley Center for Long-Term Cybersecurity, <a href="https://cltc.berkeley.edu/agentic-ai-risk-management-standards-profile"><em>Agentic AI Risk-Management Standards Profile</em></a>, version 1.0, February 2026.</li>
+<li>Markov Grey and Charbel-Raphaël Segerie, <a href="https://ai-safety-atlas.com/chapters/v1/risks/risk-decomposition"><em>AI Safety Atlas</em>, Risks chapter</a>.</li>
+</ul>
+<nav class="series-nav" aria-label="Designing Agency series"><div class="pn"><a class="next" rel="next" href="designing-agency-1-choose-the-action.html"><span class="label">Part 1 →</span>Choose the action before the agent</a></div><details><summary class="label">All parts of Designing Agency</summary><ol><li class="here"><a href="designing-agency-0-permission.html" aria-current="page"><span class="label">Prologue</span> What are we giving the agent permission to do?</a></li><li><a href="designing-agency-1-choose-the-action.html"><span class="label">Part 1</span> Choose the action before the agent</a></li><li><a href="designing-agency-2-can-you-undo-it.html"><span class="label">Part 2</span> Can you undo what it just did?</a></li><li><a href="designing-agency-3-whose-authority.html"><span class="label">Part 3</span> Whose authority is it acting on?</a></li><li><a href="designing-agency-4-what-did-the-human-approve.html"><span class="label">Part 4</span> What exactly did the human approve?</a></li><li><a href="designing-agency-5-inputs-turn-against-it.html"><span class="label">Part 5</span> When the agent&#x27;s inputs turn against it</a></li><li><a href="designing-agency-6-earning-autonomy.html"><span class="label">Part 6</span> How does an agent earn more autonomy?</a></li><li><a href="designing-agency-7-build-the-boundary.html"><span class="label">Part 7</span> Build the boundary</a></li></ol></details></nav>
+<p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
+</article>
+</main>
+<footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
+<script src="../assets/brand.js?v=7"></script>
+</body>
+</html>
