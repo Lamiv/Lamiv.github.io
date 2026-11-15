@@ -377,3 +377,29 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
 .posts.parts{counter-reset:none}
 .posts .postcard h3{font-size:clamp(1.35rem,2.4vw,1.8rem)}
 .crumbs a{color:var(--sodium)}
+
+/* Series parts: boxes, code, and part-to-part navigation */
+.post .box{margin:30px 0;padding:18px clamp(16px,3vw,24px) 4px;border:1px solid var(--line);background:var(--panel)}
+.post .box.maths{border-left:3px solid var(--sodium)}
+.post .box.question{border-left:3px solid var(--run)}
+[data-theme=light] .post .box.question{border-left-color:var(--crystal)}
+.post .box p{font-size:1rem;line-height:1.65}
+[data-theme=light] .post .box p{font-size:1.05rem}
+.post .box p.eq{text-align:center;font-size:1.06rem;margin:6px 0 16px;max-width:none;overflow-x:auto}
+.post code{font:400 .88em var(--mono);color:var(--crystal)}
+.post pre.code{margin:6px 0 24px;padding:14px 16px;overflow-x:auto;background:var(--panel);border:1px solid var(--line);font:400 .8rem/1.55 var(--mono);color:var(--crystal)}
+.post pre.code code{font:inherit}
+.series-nav{margin-top:40px;border-top:1px solid var(--line);padding-top:20px;display:grid;gap:16px}
+.series-nav .pn{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.series-nav .pn a{display:grid;gap:6px;padding:14px 16px;border:1px solid var(--line);text-decoration:none;font-weight:600;line-height:1.3}
+.series-nav .pn a:hover{border-color:var(--sodium)}
+.series-nav .pn .label{color:var(--sodium)}
+.series-nav .next{grid-column:2;text-align:right}
+.series-nav summary{cursor:pointer;color:var(--sodium)}
+.series-nav ol{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:2px}
+.series-nav ol a{display:block;padding:6px 0;text-decoration:none;color:var(--mist)}
+.series-nav ol a:hover{color:var(--sodium)}
+.series-nav ol .here a{color:var(--crystal);font-weight:600}
+.series-nav ol .label{display:inline-block;min-width:6.5em}
+@media (max-width:560px){.series-nav .pn{grid-template-columns:1fr}.series-nav .next{grid-column:auto}}
+.post .post-head p.label{font-size:.76rem;line-height:1.6;margin:0}

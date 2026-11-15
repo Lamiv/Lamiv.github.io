@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Building the loop · Vimal Vidyadharan</title>
+<meta name="description" content="An ontology and SHACL rules inside a LangGraph agent, in Python">
+<link rel="canonical" href="https://lamiv.github.io/blog/closing-the-loop-7-building-the-loop.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Building the loop">
+<meta property="og:description" content="An ontology and SHACL rules inside a LangGraph agent, in Python">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/brand.css?v=15">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="mark" href="../index.html"><i></i>Vimal Vidyadharan</a>
+  <button class="menu" type="button" aria-expanded="false" aria-controls="sitenav">Menu</button>
+  <nav aria-label="Site" id="sitenav"><div class="navgrp" data-label="On the home page"><a href="../index.html#hats">Capabilities</a><a href="../index.html#work">Selected work</a><a href="../index.html#career">Career</a><a href="../index.html#contact">Contact</a></div><div class="navgrp pages" data-label="Pages"><a href="../enterprise-ai-architecture.html">Architecture</a><a href="../blog.html" aria-current="page">Blog</a><a href="../cv.html">CV</a></div></nav>
+  <button class="theme" type="button" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
+</div></header>
+<main id="main" class="wrap">
+<article class="post">
+<header class="post-head">
+<p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#neuro-symbolic">Neuro-symbolic AI</a> · Closing the Loop, part 7 of 7</p>
+<p class="label">15 November 2026 · 4 min read</p>
+<h1>Building the loop</h1>
+<p class="post-sub">An ontology and SHACL rules inside a LangGraph agent, in Python</p>
+<p class="label byline">Vimal Vidyadharan</p>
+</header>
+<p>Six parts of argument deserve one of practice. This part builds the procurement loop from the prologue as a small LangGraph workflow: a proposer suggests how to split an order, an ontology and SHACL rules check the proposal, and the reasons go back until the proposal passes, the attempts run out or the order reaches the approval gate.</p>
+<p>The full sample is three files and runs offline. <a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/closing-the-loop">Sample code</a></p>
+<pre class="code"><code>pip install -r requirements.txt
+python nesy_loop.py          # scripted proposer, no API key needed
+python nesy_loop.py --live   # Claude as the proposer, needs ANTHROPIC_API_KEY</code></pre>
+<h2 id="step-1-write-the-facts-down">Step 1: write the facts down</h2>
+<p>The ontology file declares what a supplier, a corporate group, an order and an allocation line are, then records the facts as SAP would hold them. All names and numbers are made up.</p>
+<pre class="code"><code>ex:S100100 a ex:Supplier ; ex:sapId &quot;100100&quot; ; ex:memberOf ex:GroupNorth .
+ex:S100200 a ex:Supplier ; ex:sapId &quot;100200&quot; ; ex:memberOf ex:GroupNorth .
+ex:S200300 a ex:Supplier ; ex:sapId &quot;200300&quot; ; ex:memberOf ex:GroupEast .
+ex:PurchasingPolicy ex:groupCap &quot;0.60&quot;^^xsd:decimal .
+ex:PO4500 a ex:PurchaseOrder ; ex:approvalStatus &quot;pending&quot; .</code></pre>
+<h2 id="step-2-write-the-rule-down">Step 2: write the rule down</h2>
+<p>As Part 3 noted, OWL cannot add numbers across suppliers, so the cap is a SHACL rule with an embedded SPARQL query. It sums shares <em>per group</em>, which is the whole point:</p>
+<pre class="code"><code>SELECT $this ?group ?total ?cap WHERE {
+  { SELECT $this ?group (SUM(?s) AS ?total) WHERE {
+      $this ex:hasLine ?line .
+      ?line ex:share ?s ; ex:supplier/ex:memberOf ?group .
+    } GROUP BY $this ?group }
+  ex:PurchasingPolicy ex:groupCap ?cap .
+  FILTER (?total &gt; ?cap)
+}</code></pre>
+<p>Other shapes require every line to name one known supplier, a share between 0 and 1 and a quote reference, require every supplier to have a parent group, and require the shares to add up to the whole order.</p>
+<h2 id="step-3-a-typed-hand-off">Step 3: a typed hand-off</h2>
+<p>The proposer must return data, not prose. A Pydantic model defines the contract (shown here without its field descriptions), and the same model works as Claude's structured-output schema in live mode.</p>
+<pre class="code"><code>class Line(BaseModel):
+    supplier_id: str   # SAP supplier ID
+    share: float       # fraction of the order
+    quote_ref: str     # where the figures came from
+
+class Proposal(BaseModel):
+    lines: list[Line]
+    rationale: str</code></pre>
+<h2 id="step-4-ground-then-check">Step 4: ground, then check</h2>
+<p>Grounding turns each SAP ID into an entity in the ontology; an unknown ID becomes a reason rather than a crash. Checking runs pySHACL over the facts plus the proposal and returns the violation messages as plain sentences the model can act on.</p>
+<pre class="code"><code>def check(proposal: Proposal) -&gt; list[str]:
+    statements, problems = ground(proposal)
+    conforms, report, _ = validate(KNOWLEDGE + statements, shacl_graph=SHAPES,
+                                   inference=&quot;rdfs&quot;, advanced=True)
+    ...  # collect sh:resultMessage from the report
+    return sorted(set(problems))</code></pre>
+<h2 id="step-5-the-loop-as-a-graph">Step 5: the loop as a graph</h2>
+<p>LangGraph makes the loop explicit. After every check, a router decides where to go next.</p>
+<pre class="code"><code>def route(state: State) -&gt; str:
+    if not state[&quot;violations&quot;]:
+        return &quot;release_gate&quot;
+    return &quot;escalate&quot; if state[&quot;attempts&quot;] &gt;= MAX_ATTEMPTS else &quot;propose&quot;</code></pre>
+<figure class="diagram"><svg role="img" aria-labelledby="closingtheloop7buildingtheloopf1-t" aria-roledescription="flowchart-v2" role="graphics-document document" viewBox="0 0 435.03125 475" class="flowchart" xmlns="http://www.w3.org/2000/svg" width="100%" id="closingtheloop7buildingtheloopf1"><title id="closingtheloop7buildingtheloopf1-t">Start leads to propose, then verify with the ontology and SHACL. Violations with attempts left go back to propose; violations with no attempts left go to escalate to a buyer; a passing proposal goes to the release gate, which checks SAP approval.</title><g><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="5" viewBox="0 0 10 10" class="marker flowchart-v2" id="closingtheloop7buildingtheloopf1_flowchart-v2-pointEnd"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 0 L 10 5 L 0 10 z"></path></marker><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="4.5" viewBox="0 0 10 10" class="marker flowchart-v2" id="closingtheloop7buildingtheloopf1_flowchart-v2-pointStart"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 5 L 10 10 L 10 0 z"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="11" viewBox="0 0 10 10" class="marker flowchart-v2" id="closingtheloop7buildingtheloopf1_flowchart-v2-circleEnd"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="-1" viewBox="0 0 10 10" class="marker flowchart-v2" id="closingtheloop7buildingtheloopf1_flowchart-v2-circleStart"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="12" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="closingtheloop7buildingtheloopf1_flowchart-v2-crossEnd"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="-1" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="closingtheloop7buildingtheloopf1_flowchart-v2-crossStart"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path marker-end="url(#closingtheloop7buildingtheloopf1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_S_P_0" d="M214.242,54L214.242,58.583C214.242,63.167,214.242,72.333,214.242,80.833C214.242,89.333,214.242,97.167,214.242,101.083L214.242,105"></path><path marker-end="url(#closingtheloop7buildingtheloopf1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_P_V_1" d="M203.347,155L199.656,162.792C195.965,170.583,188.582,186.167,187.932,201.136C187.282,216.106,193.363,230.461,196.403,237.639L199.444,244.817"></path><path marker-end="url(#closingtheloop7buildingtheloopf1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_V_P_2" d="M227.48,248.5L230.781,240.708C234.081,232.917,240.683,217.333,240.578,202.352C240.473,187.372,233.661,172.993,230.256,165.804L226.85,158.615"></path><path marker-end="url(#closingtheloop7buildingtheloopf1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_V_X_3" d="M168.265,311L156.802,318.792C145.338,326.583,122.411,342.167,110.948,358.458C99.484,374.75,99.484,391.75,99.484,400.25L99.484,408.75"></path><path marker-end="url(#closingtheloop7buildingtheloopf1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_V_G_4" d="M260.219,311L271.682,318.792C283.146,326.583,306.073,342.167,317.536,357.083C329,372,329,386.25,329,393.375L329,400.5"></path></g><g class="edgeLabels"><g><rect style="stroke: none" class="background"></rect></g><g><rect style="stroke: none" class="background"></rect></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><text y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"></tspan></text></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><text y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"></tspan></text></g></g><g transform="translate(247.28409957885742, 201.75)" class="edgeLabel"><g transform="translate(-46.083824157714844, -19.25)" class="label"><g><rect height="38.5" width="92.16764831542969" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">violations,</tspan></tspan><tspan dy="1.1em" y="1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">attempts</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> left</tspan></tspan></text></g></g></g><g transform="translate(99.484375, 357.75)" class="edgeLabel"><g transform="translate(-56.474449157714844, -19.25)" class="label"><g><rect height="38.5" width="112.94889831542969" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">violations,</tspan></tspan><tspan dy="1.1em" y="1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">no</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> attempts</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> left</tspan></tspan></text></g></g></g><g transform="translate(329, 357.75)" class="edgeLabel"><g transform="translate(-24.84014129638672, -11)" class="label"><g><rect height="22" width="49.68028259277344" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">passes</tspan></tspan></text></g></g></g></g><g class="nodes"><g transform="translate(214.2421875, 31)" id="flowchart-S-32" class="node default"><rect height="46" width="89.56269836425781" y="-23" x="-44.781349182128906" style="" class="basic label-container"></rect><g transform="translate(0, -9)" style="" class="label"><rect></rect><g><rect style="stroke: none" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">Start</tspan></tspan></text></g></g></g><g transform="translate(214.2421875, 132)" id="flowchart-P-33" class="node default"><rect height="46" width="111.390625" y="-23" x="-55.6953125" style="" class="basic label-container"></rect><g transform="translate(0, -9)" style="" class="label"><rect></rect><g><rect style="stroke: none" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">propose</tspan></tspan></text></g></g></g><g transform="translate(214.2421875, 279.75)" id="flowchart-V-35" class="node default"><rect height="62.5" width="181.9971923828125" y="-31.25" x="-90.99859619140625" style="" class="basic label-container"></rect><g transform="translate(0, -17.25)" style="" class="label"><rect></rect><g><rect style="stroke: none" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">verify</tspan></tspan><tspan dy="1.1em" y="1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">ontology</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> +</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> SHACL</tspan></tspan></text></g></g></g><g transform="translate(99.484375, 435.75)" id="flowchart-X-39" class="node default"><rect height="46" width="182.96875" y="-23" x="-91.484375" style="" class="basic label-container"></rect><g transform="translate(0, -9)" style="" class="label"><rect></rect><g><rect style="stroke: none" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">escalate</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> to</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> a</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> buyer</tspan></tspan></text></g></g></g><g transform="translate(329, 435.75)" id="flowchart-G-41" class="node default"><rect height="62.5" width="196.0625" y="-31.25" x="-98.03125" style="" class="basic label-container"></rect><g transform="translate(0, -17.25)" style="" class="label"><rect></rect><g><rect style="stroke: none" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">release</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> gate</tspan></tspan><tspan dy="1.1em" y="1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">checks</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> SAP</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> approval</tspan></tspan></text></g></g></g></g></g></g></svg><figcaption>Figure 1. The workflow: proposals loop through verification until they pass, run out of attempts or reach the release gate.</figcaption><details class="mmd"><summary>Diagram source (Mermaid)</summary><pre>flowchart TD
+    S[&quot;Start&quot;] --&gt; P[&quot;propose&quot;]
+    P --&gt; V[&quot;verify&lt;br/&gt;ontology + SHACL&quot;]
+    V --&gt;|&quot;violations,&lt;br/&gt;attempts left&quot;| P
+    V --&gt;|&quot;violations,&lt;br/&gt;no attempts left&quot;| X[&quot;escalate to a buyer&quot;]
+    V --&gt;|&quot;passes&quot;| G[&quot;release gate&lt;br/&gt;checks SAP approval&quot;]</pre></details></figure>
+<p>The release gate is deliberately separate from the policy check. A compliant proposal for an order still awaiting approval is routed for approval, not released.</p>
+<h2 id="what-it-prints">What it prints</h2>
+<pre class="code"><code>[attempt 1] proposes 100100: 80%, 200300: 20%
+  check: fails
+    - Group North Holdings would receive 0.8 of the order; the cap is 0.60.
+[attempt 2] proposes 100100: 50%, 100200: 50%
+  check: fails
+    - Group North Holdings would receive 1.0 of the order; the cap is 0.60.
+[attempt 3] proposes 100100: 60%, 200300: 40%
+  check: passes
+
+Compliant draft routed for approval (status: pending); nothing released.</code></pre>
+<p>Attempt 2 is the prologue's trap: two supplier IDs, one parent, the whole order. A per-supplier check would have passed it. The ontology does not.</p>
+<p>The offline proposer replays three scripted attempts so that anyone can run the sample. With <code>--live</code>, Claude proposes instead, and each retry carries the violation messages from the previous attempt.</p>
+<h2 id="what-production-would-add">What production would add</h2>
+<p>This is teaching code. A real deployment would read suppliers and groups from SAP master data rather than a file, pause for a human approver (LangGraph supports interrupting a graph and resuming it), record every proposal, reason and decision for audit, keep provenance on every fact as Part 4 described, and be evaluated the way the prologue suggested: by inspecting the first proposal, the check's response and the next proposal, not only the final outcome.</p>
+<aside class="box maths">
+<p><strong>For the mathematically curious: why the loop needs a bound</strong></p>
+<p>If each attempt succeeded independently with probability <em>p</em>, the chance of success within <em>k</em> attempts would be 1 − (1 − <em>p</em>)ᵏ, and more attempts would always help. Feedback breaks the independence, for better or worse. Good reasons raise <em>p</em> on each retry. A model that keeps making the same mistake has <em>p</em> close to zero on every retry, and more attempts only add cost.</p>
+<p>That is why the graph has <code>MAX_ATTEMPTS</code> and an escalation path. The bound guarantees the loop ends; the escalation, carrying the reasons collected so far, guarantees it ends somewhere useful.</p>
+</aside>
+<aside class="box question">
+<p><strong>A question to sit with.</strong> What would your <code>MAX_ATTEMPTS</code> be, and who would receive the escalation? If the honest answer is “nobody”, the loop is not closed yet.</p>
+</aside>
+<p>That closes the series. The loop is not a model and not a rulebook, but the conversation between them: what travels each way, who defines the words, and who approves the changes.</p>
+<h2 id="sources">Sources</h2>
+<ul class="sources">
+<li><a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/closing-the-loop">Sample code for this part</a>: <code>procurement.ttl</code>, <code>shapes.ttl</code>, <code>nesy_loop.py</code>.</li>
+<li><a href="https://github.com/langchain-ai/langgraph">LangGraph</a>, <a href="https://github.com/RDFLib/rdflib">rdflib</a> and <a href="https://github.com/RDFLib/pySHACL">pySHACL</a>, the open-source libraries the sample uses.</li>
+</ul>
+<nav class="series-nav" aria-label="Closing the Loop series"><div class="pn"><a class="prev" rel="prev" href="closing-the-loop-6-in-the-wild.html"><span class="label">← Part 6</span>In the wild, and the road ahead</a></div><details><summary class="label">All parts of Closing the Loop</summary><ol><li><a href="neural-symbolic-loop.html"><span class="label">Prologue</span> The neural–symbolic loop</a></li><li><a href="closing-the-loop-1-two-ways-of-knowing.html"><span class="label">Part 1</span> Two ways of knowing</a></li><li><a href="closing-the-loop-2-words-into-logic.html"><span class="label">Part 2</span> Turning words into logic</a></li><li><a href="closing-the-loop-3-ontology-as-rulebook.html"><span class="label">Part 3</span> The ontology as rulebook</a></li><li><a href="closing-the-loop-4-when-the-rulebook-changes.html"><span class="label">Part 4</span> When the rulebook has to change</a></li><li><a href="closing-the-loop-5-teaching-a-network-the-rules.html"><span class="label">Part 5</span> Teaching a network the rules</a></li><li><a href="closing-the-loop-6-in-the-wild.html"><span class="label">Part 6</span> In the wild, and the road ahead</a></li><li class="here"><a href="closing-the-loop-7-building-the-loop.html" aria-current="page"><span class="label">Part 7</span> Building the loop</a></li></ol></details></nav>
+<p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>
+</article>
+</main>
+<footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
+<script src="../assets/brand.js?v=7"></script>
+</body>
+</html>
