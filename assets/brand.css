@@ -43,7 +43,11 @@ section{padding-block:clamp(56px,8vw,112px);border-top:1px solid var(--line);dis
 [data-theme=light] .mark{text-transform:uppercase;font-size:1.25rem}
 .mark i{width:9px;height:9px;border-radius:50%;background:var(--run);box-shadow:0 0 10px var(--run)}
 [data-theme=light] .mark i{border-radius:0;box-shadow:none;background:var(--sodium)}
-.nav nav{display:flex;flex-wrap:wrap;gap:4px 20px}
+.nav nav{display:flex;flex-wrap:wrap;gap:4px 20px;align-items:center}
+/* two groups: sections of the home page, then separate pages after a rule */
+.navgrp{display:flex;flex-wrap:wrap;gap:4px 20px}
+.navgrp.pages{padding-left:20px;border-left:1px solid var(--line)}
+.navgrp.pages a{color:var(--crystal)}
 .nav nav a{font:500 .76rem var(--mono);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:var(--mist);padding-block:4px}
 .nav nav a:hover{color:var(--sodium)}
 .nav nav a[aria-current=page]{color:var(--sodium);box-shadow:inset 0 -2px var(--sodium)}
@@ -273,6 +277,10 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
   .js .nav nav{display:none;position:absolute;left:0;right:0;top:100%;background:var(--ink);border-bottom:1px solid var(--line);padding:8px var(--gutter) 14px;flex-direction:column;gap:0}
   .js .nav nav.open{display:flex}
   .js .nav nav a{padding:10px 0;border-top:1px solid var(--line);font-size:.82rem}
+  .js .nav nav{align-items:stretch}
+  .js .navgrp{flex-direction:column;gap:0}
+  .js .navgrp::before{content:attr(data-label);font:500 .66rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding:14px 0 6px}
+  .js .navgrp.pages{border-left:0;padding-left:0}
   .nav .wrap{position:relative}
   .nav{position:sticky}
   .mark{font-size:1.25rem}
@@ -318,3 +326,54 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
   .cv-skills li,.cv-inline li{display:inline;margin:0}
   .cv-skills li+li::before,.cv-inline li+li::before{content:" | "}
 }
+
+/* Blog: post cards and the article page */
+.posts{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:1px solid var(--line)}
+.postcard{display:grid;gap:8px;padding:22px 0;border-bottom:1px solid var(--line);max-width:80ch}
+.postcard h3{font:800 clamp(1.6rem,3vw,2.3rem)/1.05 var(--display);font-stretch:var(--stretch);text-transform:uppercase}
+.postcard h3 a{text-decoration:none}.postcard h3 a:hover{color:var(--sodium)}
+.postcard p:not(.label){color:var(--mist)}
+.postcard .tags{color:var(--sodium)}
+.blog-hero h1{font-size:clamp(2.6rem,6vw,4.8rem)}
+.post{max-width:720px;margin:0 auto;padding:clamp(32px,6vw,72px) 0 72px}
+.post-head{display:grid;gap:14px;margin-bottom:36px}
+.post-head a{color:var(--sodium)}
+.post h1{font-size:clamp(2.6rem,7vw,5.2rem);line-height:.92}
+.post-sub{font-size:1.25rem;line-height:1.45;color:var(--mist)}
+.post h2{font:800 clamp(1.5rem,3vw,2rem)/1.1 var(--display);font-stretch:var(--stretch);text-transform:uppercase;margin:40px 0 12px}
+.post p{font-size:1.08rem;line-height:1.7;margin:0 0 18px;max-width:68ch}
+[data-theme=light] .post p{font-size:1.12rem}
+.post p a,.sources a{color:var(--sodium);text-underline-offset:3px}
+.post strong{color:var(--crystal)}
+.sources{padding-left:18px;display:grid;gap:8px;color:var(--mist);font-size:.95rem}
+.post-end{display:flex;flex-wrap:wrap;gap:10px;margin-top:36px}
+.diagram{margin:30px 0 34px;padding:18px;border:1px solid var(--line);background:var(--panel)}
+.diagram svg{display:block;width:100%;height:auto;max-height:640px;font-family:"Figtree",Arial,sans-serif;font-size:15px}
+/* Mermaid names its label groups "label"; keep the site's label style out of the drawing */
+.diagram svg .label{font:inherit;letter-spacing:normal;text-transform:none;color:inherit}
+.diagram .node .label text{text-anchor:middle}
+.diagram figcaption{margin-top:12px;font-size:.92rem;color:var(--mist);font-style:italic}
+.diagram .node rect,.diagram .node polygon{fill:var(--ink);stroke:var(--sodium);stroke-width:1.2px}
+.diagram .node text,.diagram .label text{fill:var(--crystal)}
+.diagram .flowchart-link{stroke:var(--mist);stroke-width:1.3px;fill:none}
+.diagram .arrowMarkerPath{fill:var(--mist);stroke:var(--mist)}
+.diagram .edgeLabel rect,.diagram .edgeLabel .background{fill:var(--panel);opacity:1}
+.diagram .edgeLabel text{fill:var(--mist);font-size:13px}
+.mmd{margin-top:10px}
+.mmd summary{cursor:pointer;font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium)}
+.mmd pre{margin:10px 0 0;padding:12px;overflow-x:auto;background:var(--ink);border:1px solid var(--line);font:400 .78rem/1.5 var(--mono);color:var(--crystal)}
+
+/* Blog index: topics, then series and posts within each topic */
+.topics{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.topics .label{margin-right:6px}
+.topics a{font:500 .74rem var(--mono);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:var(--crystal);border:1px solid var(--line);padding:6px 12px}
+.topics a:hover{border-color:var(--sodium);color:var(--sodium)}
+.topics a span{color:var(--dim);margin-left:6px}
+.topic{display:grid;gap:22px;scroll-margin-top:90px}
+.topic-head{display:grid;gap:10px;max-width:70ch}
+.topic-head h2{font-size:clamp(1.8rem,4vw,2.8rem)}
+.series{display:grid;gap:10px;border-left:2px solid var(--sodium);padding-left:clamp(14px,3vw,24px)}
+.series>p:not(.label){color:var(--mist);max-width:70ch}
+.posts.parts{counter-reset:none}
+.posts .postcard h3{font-size:clamp(1.35rem,2.4vw,1.8rem)}
+.crumbs a{color:var(--sodium)}

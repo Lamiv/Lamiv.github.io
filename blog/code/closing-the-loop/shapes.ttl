@@ -1,0 +1,47 @@
+# SHACL rules the proposal must satisfy.
+@prefix ex:  <https://example.org/proc#> .
+@prefix sh:  <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex: sh:declare [ sh:prefix "ex" ; sh:namespace "https://example.org/proc#"^^xsd:anyURI ] .
+
+# Every line names exactly one known supplier, a share between 0 and 1, and its source quote.
+ex:LineShape a sh:NodeShape ;
+  sh:targetClass ex:AllocationLine ;
+  sh:property [ sh:path ex:supplier ; sh:class ex:Supplier ; sh:minCount 1 ; sh:maxCount 1 ;
+                sh:message "Each line must name exactly one known supplier." ] ;
+  sh:property [ sh:path ex:share ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 1 ;
+                sh:minCount 1 ; sh:maxCount 1 ; sh:message "Each line needs one share between 0 and 1." ] ;
+  sh:property [ sh:path ex:quoteRef ; sh:minCount 1 ; sh:minLength 1 ;
+                sh:message "Each line must cite the quote its figures came from." ] .
+
+# Every supplier must belong to a corporate group, or the cap cannot be checked.
+ex:SupplierShape a sh:NodeShape ;
+  sh:targetClass ex:Supplier ;
+  sh:property [ sh:path ex:memberOf ; sh:minCount 1 ;
+                sh:message "Supplier has no parent group, so concentration cannot be checked." ] .
+
+ex:OrderShape a sh:NodeShape ;
+  sh:targetClass ex:PurchaseOrder ;
+  # The shares on an order must add up to the whole order.
+  sh:sparql [
+    sh:prefixes ex: ;
+    sh:message "Shares add up to {?total}, not 1." ;
+    sh:select """
+      SELECT $this ?total WHERE {
+        { SELECT $this (SUM(?s) AS ?total) WHERE { $this ex:hasLine/ex:share ?s } GROUP BY $this }
+        FILTER (ABS(?total - 1.0) > 0.001)
+      }""" ] ;
+  # The cap applies to the corporate group, not to the supplier record.
+  sh:sparql [
+    sh:prefixes ex: ;
+    sh:message "Group {?group} would receive {?total} of the order; the cap is {?cap}." ;
+    sh:select """
+      SELECT $this ?group ?total ?cap WHERE {
+        { SELECT $this ?group (SUM(?s) AS ?total) WHERE {
+            $this ex:hasLine ?line .
+            ?line ex:share ?s ; ex:supplier/ex:memberOf ?group .
+          } GROUP BY $this ?group }
+        ex:PurchasingPolicy ex:groupCap ?cap .
+        FILTER (?total > ?cap)
+      }""" ] .
