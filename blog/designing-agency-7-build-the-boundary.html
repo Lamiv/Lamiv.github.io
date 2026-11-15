@@ -13,7 +13,7 @@
 <script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="../assets/brand.css?v=18">
+<link rel="stylesheet" href="../assets/brand.css?v=19">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -32,7 +32,7 @@
 <p class="post-sub">A small, runnable boundary around an agent that works with SAP</p>
 <p class="label byline">Vimal Vidyadharan</p>
 </header>
-<p>Six parts of argument come down to a few rules that can be written as code. This part builds them as a small Python program, around a mock of SAP S/4HANA, and runs one purchase order through every failure case the series has named. It uses only the standard library. <a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency">Sample code</a></p>
+<p>Six parts of argument come down to a few rules that can be written as code. This part builds them as a small Python program, around a mock of SAP S/4HANA, and runs one purchase order through every failure case the series has named. It uses only the standard library.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
 <pre class="code"><code>python boundary.py</code></pre>
 <h2 id="who-does-what">Who does what</h2>
 <div class="tablewrap"><table><thead><tr><th>Party</th><th>In the sample</th><th>What it may do</th></tr></thead><tbody><tr><td>Requester</td><td><code>buyer</code></td><td>Ask for the order; its identity is the one SAP executes under</td></tr><tr><td>Agent</td><td><code>agent-proc</code></td><td>Stage and change draft orders, nothing else</td></tr><tr><td>Approver</td><td><code>manager</code>, from configuration</td><td>Approve a specific version of the order</td></tr><tr><td>The boundary</td><td>A gate in front of SAP</td><td>Check every action before it reaches SAP, and log it</td></tr></tbody></table></div>
@@ -51,8 +51,8 @@
     material = {k: po.terms[k] for k in MATERIAL_TERMS} | {&quot;version&quot;: po.version}
     return hashlib.sha256(json.dumps(material, sort_keys=True).encode()).hexdigest()[:12]</code></pre>
 <h2 id="rule-4-a-retry-must-not-create-a-second-order">Rule 4: a retry must not create a second order</h2>
-<p>The IETF's draft standard for an <code>Idempotency-Key</code> HTTP header describes the mechanism: the client sends a unique key with a request, so that the server can recognise a retry of the same request. If a key is reused with a different payload, the server should reject it; if a retry arrives while the original is still being processed, it should answer with a conflict. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header">IETF</a></p>
-<p>The sample derives the key from the order and its version. When a call times out, the outcome is unknown: the order may or may not have gone. Instead of sending again, the boundary first asks SAP whether that key was already processed. Microsoft's guidance makes the same point about recovery in general: a step may run more than once when retried, so design each step as an idempotent command. <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction">Microsoft</a></p>
+<p>The IETF's draft standard for an <code>Idempotency-Key</code> HTTP header describes the mechanism: the client sends a unique key with a request, so that the server can recognise a retry of the same request. If a key is reused with a different payload, the server should reject it; if a retry arrives while the original is still being processed, it should answer with a conflict.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
+<p>The sample derives the key from the order and its version. When a call times out, the outcome is unknown: the order may or may not have gone. Instead of sending again, the boundary first asks SAP whether that key was already processed. Microsoft's guidance makes the same point about recovery in general: a step may run more than once when retried, so design each step as an idempotent command.<sup class="cite"><a href="#src-3" aria-label="Source 3">3</a></sup></p>
 <h2 id="running-it">Running it</h2>
 <pre class="code"><code>1. The agent stages a proposal for the buyer
   ok      agent stages a draft order
@@ -99,10 +99,8 @@
 <p><strong>A question to sit with.</strong> Which of the four rules does your current agent design already enforce outside the model, and which ones depend on the model behaving well?</p>
 </aside>
 <h2 id="sources">Sources</h2>
+<ol class="sources numbered"><li id="src-1"><a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency">Sample code for this part</a>: <code>boundary.py</code>.</li><li id="src-2">Jayadeba Jena and Sanjay Dalal, <a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header"><em>The Idempotency-Key HTTP Header Field</em></a>, IETF Internet-Draft, version 08, October 2026.</li><li id="src-3">Microsoft, <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction"><em>Compensating Transaction pattern</em></a>, Azure Architecture Center.</li></ol>
 <ul class="sources">
-<li><a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency">Sample code for this part</a>: <code>boundary.py</code>.</li>
-<li>Jayadeba Jena and Sanjay Dalal, <a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header"><em>The Idempotency-Key HTTP Header Field</em></a>, IETF Internet-Draft, version 08, October 2026.</li>
-<li>Microsoft, <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction"><em>Compensating Transaction pattern</em></a>, Azure Architecture Center.</li>
 </ul>
 <nav class="series-nav" aria-label="Designing Agency series"><div class="pn"><a class="prev" rel="prev" href="designing-agency-6-earning-autonomy.html"><span class="label">← Part 6</span>How does an agent earn more autonomy?</a><a class="next" href="neural-symbolic-loop.html"><span class="label">Next series: Closing the Loop →</span>The neural–symbolic loop</a></div><details><summary class="label">All parts of Designing Agency</summary><ol><li><a href="designing-agency-0-permission.html"><span class="label">Prologue</span> What are we giving the agent permission to do?</a></li><li><a href="designing-agency-1-choose-the-action.html"><span class="label">Part 1</span> Choose the action before the agent</a></li><li><a href="designing-agency-2-can-you-undo-it.html"><span class="label">Part 2</span> Can you undo what it just did?</a></li><li><a href="designing-agency-3-whose-authority.html"><span class="label">Part 3</span> Whose authority is it acting on?</a></li><li><a href="designing-agency-4-what-did-the-human-approve.html"><span class="label">Part 4</span> What exactly did the human approve?</a></li><li><a href="designing-agency-5-inputs-turn-against-it.html"><span class="label">Part 5</span> When the agent&#x27;s inputs turn against it</a></li><li><a href="designing-agency-6-earning-autonomy.html"><span class="label">Part 6</span> How does an agent earn more autonomy?</a></li><li class="here"><a href="designing-agency-7-build-the-boundary.html" aria-current="page"><span class="label">Part 7</span> Build the boundary</a></li></ol></details></nav>
 <p class="post-end"><a class="btn" href="../blog.html">All posts</a> <a class="btn" href="../index.html#contact">Get in touch</a></p>

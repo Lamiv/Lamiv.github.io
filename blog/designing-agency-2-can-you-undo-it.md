@@ -9,7 +9,7 @@ date: 11 October 2026
 
 ## Restore: as if it never happened
 
-Some actions can be undone completely. A purchase requisition the agent created can be changed or deleted, and SAP treats requisitions as internal planning elements that can be changed, rescheduled or deleted at almost any time. [SAP Learning](https://learning.sap.com/courses/business-processes-in-sap-s-4hana-sourcing-procurement/running-materials-requirements-planning) A draft purchase order that nobody has approved is the same: discard it, and the world is as it was.
+Some actions can be undone completely. A purchase requisition the agent created can be changed, rescheduled or deleted at almost any time. A draft purchase order that nobody has approved is the same: discard it, and the world is as it was.
 
 Safin and Balta make restorability a design tactic. *Write staging* puts a draft or pending layer between an agent's action and its authoritative commit, turning an otherwise irreversible write into a reversible one until the staged output is explicitly promoted. They add a condition that matters for SAP: it applies only where the system of record supports a two-phase approach of draft first, commit later. [Safin and Balta](https://arxiv.org/abs/2605.12105)
 
@@ -58,7 +58,6 @@ Part 3 turns from what an action does to whose authority it uses.
 
 ## Sources
 
-- SAP Learning, [*Running Materials Requirements Planning*](https://learning.sap.com/courses/business-processes-in-sap-s-4hana-sourcing-procurement/running-materials-requirements-planning).
 - Damir Safin and Dian Balta, [*Autonomy and Agency in Agentic AI: Architectural Tactics for Regulated Contexts*](https://arxiv.org/abs/2605.12105), arXiv preprint, May 2026.
 - Microsoft, [*Compensating Transaction pattern*](https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction), Azure Architecture Center.
 - Markov Grey and Charbel-Raphaël Segerie, [*AI Safety Atlas*, Risks chapter](https://ai-safety-atlas.com/chapters/v1/risks/risk-decomposition).
