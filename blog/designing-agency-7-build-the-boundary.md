@@ -2,10 +2,11 @@
 title: Build the boundary
 subtitle: A small, runnable boundary around an agent that works with SAP
 part: 7
+code: designing-agency
 date: 25 October 2026
 ---
 
-Six parts of argument come down to a few rules that can be written as code. This part builds them as a small Python program, around a mock of SAP S/4HANA, and runs one purchase order through every failure case the series has named. It uses only the standard library. [Sample code](https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency)
+Six parts of argument come down to a few rules that can be written as code. This part builds them as a small Python program, around a mock of SAP S/4HANA, and runs one purchase order through every failure case the series has named. It uses only the standard library. Every file is in the *Code for this part* panel above, to read or download.
 
 ```text
 python boundary.py
@@ -29,7 +30,8 @@ Every call passes a deterministic check outside the model. Agents may stage and 
 ```python
 def check(self, actor, action):
     if actor.startswith("agent") and action not in self.agent_may:
-        raise Denied(f"{actor} may not {action}: that step belongs to a person")
+        self.alerts.append(f"{actor} attempted {action}")   # detect, not only prevent
+        raise Denied(f"boundary policy: {actor} may not {action}")
 ```
 
 The draft is created under the buyer's identity, as principal propagation would do (Part 3), and the audit line records both: `sub=buyer act=agent-proc`.
@@ -60,8 +62,9 @@ The sample derives the key from the order and its version. When a call times out
 1. The agent stages a proposal for the buyer
   ok      agent stages a draft order
 2. The agent tries to go further
-  blocked agent releases the order
-          reason: agent-proc may not release: that step belongs to a person
+  (SAP itself would allow the buyer to release: True)
+  blocked agent releases the order as the buyer
+          reason: boundary policy: agent-proc may not release
 3. Approval
   blocked buyer approves own order
           reason: buyer created 4500000001 and cannot approve it
@@ -69,7 +72,7 @@ The sample derives the key from the order and its version. When a call times out
 4. The supplier revises the price and the agent updates the draft
   ok      agent changes price to 2.35
   blocked manager releases
-          reason: approval covers an earlier version of 4500000001; changed: {'price': '2.10 -> 2.35'}
+          reason: approval covers an earlier version; changed: price 2.10 -> 2.35
 5. Reapproval of the changed order
   ok      manager approves again
   blocked manager releases, ten days later
@@ -79,50 +82,46 @@ The sample derives the key from the order and its version. When a call times out
   ok      output to supplier
   ok      output to supplier, retried
   the supplier received 1 order(s): [('4500000001', 2)]
+7. Control test: forbidden actions must be refused
+  passed
+
+Alerts for review: ['agent-proc attempted release']
 ```
 
 Reading it step by step:
 
 1. The agent stages a draft under the buyer's identity.
-2. It tries to release the order and is stopped by the boundary, not by its own judgement.
+2. It tries to release the order. Note the line above the refusal: SAP *would* have allowed it, because the buyer may release small orders and the agent acts as the buyer. The refusal comes from the boundary's policy, the one layer that knows an agent is asking. Part 8 is about exactly this.
 3. The buyer cannot approve their own order; the configured manager can.
-4. The supplier revises the price and the agent updates the draft. The old approval no longer covers it, and the block says exactly what changed.
-5. A fresh approval covers the new version. A release attempted after the approval has expired is refused; a timely one goes through.
+4. The supplier revises the price and the agent updates the draft. The old approval no longer covers it, and the block says what changed.
+5. A fresh approval covers the new version. A release after the approval has expired is refused; a timely one goes through.
 6. The first send takes effect but its response is lost. The boundary reconciles with SAP before retrying, and the retry does nothing. The supplier receives one order, not two.
+7. A control test tries every forbidden action as the agent and passes only if each is refused. Run on every change to roles or policy, it catches a widened permission before production.
 
-The audit trail that follows the output records every step with `sub`, the SAP identity, and `act`, the agent where one acted: enough to answer the auditor's question from Part 3.
+The refused attempt also raises an alert, and the audit trail records every step with `sub`, the SAP identity, and `act`, the agent where one acted: enough to answer the auditor's question from Part 3.
 
 ## What production would add
 
 This is teaching code. A real boundary would use SAP's own workflow for approver choice and release, principal propagation for the executing identity, durable storage for approvals and keys, signed audit records, and monitoring with the triggers from Part 6. The rules would stay the same.
 
 :::risk
-**Averting risk: the whole series**
+**Averting risk**
 
-| Risk | Strategy | Part |
+| Risk | Strategy | What it still does not cover |
 |---|---|---|
-| One vague request is read as a grant of every step | Grant authority per step | Prologue |
-| The agent drifts into irreversible steps | Agents stage; people release and send | 1, 2 |
-| Undo is assumed but impossible | Label actions restore, compensate or live with it | 2 |
-| The agent acts with too much, or someone else's, authority | Propagate the requester's identity; narrow the agent's tools; log `sub` and `act` | 3 |
-| An approval covers something nobody saw | Fingerprint material terms; check at release and before sending; expire approvals | 4 |
-| Inputs and memory steer the agent | Untrusted data, tiered memory, a deterministic gate | 5 |
-| Autonomy outruns evidence | Shadow runs, workflow red-teaming, triggers for narrowing | 6 |
-| Retries duplicate orders | Idempotency keys and reconciliation after timeouts | 7 |
+| The agent releases or sends | A policy check in front of SAP that knows an agent is asking | A policy that is itself wrong (Part 8) |
+| A changed order goes out on an old approval | Fingerprint the material terms; check at release and before sending; expire approvals | Terms outside the fingerprint |
+| A retry duplicates an order | Idempotency keys; reconcile after a timeout before retrying | Systems with no way to look a request up |
+| A permission is widened by mistake | A control test on every change to roles or policy | Actions the test does not list |
 :::
-
-## The question this leaves open
-
-Everything above checks *who* may act, *when*, and *on which version*. None of it checks whether the proposal itself makes sense. Suppose the agent splits an order 50–50 between two supplier records that belong to the same parent company, under a policy that caps any supplier group at 60%. The boundary would stage it, route it, bind the approval and send it exactly once. How would the system know the proposal broke purchasing policy?
-
-That question needs a different kind of machinery, explicit knowledge of what a supplier, a group and a policy mean, and it is where the next series, [*Closing the Loop*](neural-symbolic-loop.html), begins.
 
 :::question
-**A question to sit with.** Which of the four rules does your current agent design already enforce outside the model, and which ones depend on the model behaving well?
+**A question to sit with.** Which of the four rules does your current agent design enforce outside the model, and which depend on the model behaving well?
 :::
+
+The sample's step 2 deserves a closer look. If the boundary's policy were missing, or SAP's role were wrong, what else would stop the agent? Part 8 takes that question on.
 
 ## Sources
 
-- [Sample code for this part](https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency): `boundary.py`.
 - Jayadeba Jena and Sanjay Dalal, [*The Idempotency-Key HTTP Header Field*](https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header), IETF Internet-Draft, version 08, October 2026.
 - Microsoft, [*Compensating Transaction pattern*](https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction), Azure Architecture Center.

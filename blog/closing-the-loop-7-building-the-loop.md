@@ -2,12 +2,13 @@
 title: Building the loop
 subtitle: An ontology and SHACL rules inside a LangGraph agent, in Python
 part: 7
+code: closing-the-loop
 date: 15 November 2026
 ---
 
 Six parts of argument deserve one of practice. This part builds the procurement loop from the prologue as a small agent in Python. Claude is the agent's brain: it reads supplier quotes and proposes how to split an order. An ontology and SHACL rules check each proposal, and the reasons go back to Claude until the proposal passes, the attempts run out or the order reaches the approval gate.
 
-The full sample is three files and runs offline. [Sample code](https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/closing-the-loop)
+The full sample is three files and runs offline. Every file is in the *Code for this part* panel above, to read or download.
 
 ```text
 pip install -r requirements.txt
@@ -165,7 +166,7 @@ In plain words, here is what happened:
 
 The release gate then checked SAP. Approval was still pending, so the compliant draft was routed for approval and nothing was released.
 
-In live mode, Claude writes the proposals and rationales, so the attempts will differ from run to run. A proposal may pass at the first attempt, or the loop may run out of attempts and escalate to a buyer. The loop, the reasons and the gate stay the same.
+In live mode, Claude writes the proposals, so attempts differ from run to run. A proposal may pass at the first attempt, or the loop may run out of attempts and escalate to a buyer. The loop, the reasons and the gate stay the same.
 
 ## What production would add
 
@@ -187,5 +188,4 @@ That closes the series. The loop is not a model and not a rulebook, but the conv
 
 ## Sources
 
-- [Sample code for this part](https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/closing-the-loop): `procurement.ttl`, `shapes.ttl`, `nesy_loop.py`.
 - [LangGraph](https://github.com/langchain-ai/langgraph), [rdflib](https://github.com/RDFLib/rdflib) and [pySHACL](https://github.com/RDFLib/pySHACL), the open-source libraries the sample uses.

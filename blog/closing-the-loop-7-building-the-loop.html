@@ -13,7 +13,7 @@
 <script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="../assets/brand.css?v=19">
+<link rel="stylesheet" href="../assets/brand.css?v=23">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -32,8 +32,9 @@
 <p class="post-sub">An ontology and SHACL rules inside a LangGraph agent, in Python</p>
 <p class="label byline">Vimal Vidyadharan</p>
 </header>
+<aside class="codepanel" aria-label="Code for this part"><p class="label">Code for this part</p><ul><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/README.md"><code>README.md</code></a></li><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/nesy_loop.py"><code>nesy_loop.py</code></a></li><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/procurement.ttl"><code>procurement.ttl</code></a></li><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/requirements.txt"><code>requirements.txt</code></a></li><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/shapes.ttl"><code>shapes.ttl</code></a></li></ul><p class="codepanel-actions"><a class="btn go" href="code/closing-the-loop.zip" download>Download all (.zip)</a> <a class="btn" href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/closing-the-loop">View on GitHub</a></p></aside>
 <p>Six parts of argument deserve one of practice. This part builds the procurement loop from the prologue as a small agent in Python. Claude is the agent's brain: it reads supplier quotes and proposes how to split an order. An ontology and SHACL rules check each proposal, and the reasons go back to Claude until the proposal passes, the attempts run out or the order reaches the approval gate.</p>
-<p>The full sample is three files and runs offline.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
+<p>The full sample is three files and runs offline. Every file is in the <em>Code for this part</em> panel above, to read or download.</p>
 <pre class="code"><code>pip install -r requirements.txt
 python nesy_loop.py          # scripted proposer, no API key needed
 python nesy_loop.py --live   # Claude as the proposer, needs ANTHROPIC_API_KEY</code></pre>
@@ -133,7 +134,7 @@ Compliant draft routed for approval (status: pending); nothing released.</code><
 <li>It kept North at exactly 60%, still inside the 15% tier, and gave 40% to East. Passed.</li>
 </ol>
 <p>The release gate then checked SAP. Approval was still pending, so the compliant draft was routed for approval and nothing was released.</p>
-<p>In live mode, Claude writes the proposals and rationales, so the attempts will differ from run to run. A proposal may pass at the first attempt, or the loop may run out of attempts and escalate to a buyer. The loop, the reasons and the gate stay the same.</p>
+<p>In live mode, Claude writes the proposals, so attempts differ from run to run. A proposal may pass at the first attempt, or the loop may run out of attempts and escalate to a buyer. The loop, the reasons and the gate stay the same.</p>
 <h2 id="what-production-would-add">What production would add</h2>
 <p>This is teaching code. A real deployment would read suppliers and groups from SAP master data rather than a file, pause for a human approver (LangGraph supports interrupting a graph and resuming it), record every proposal, reason and decision for audit, keep provenance on every fact as Part 4 described, and be evaluated the way the prologue suggested: by inspecting the first proposal, the check's response and the next proposal, not only the final outcome.</p>
 <aside class="box maths">
@@ -146,7 +147,7 @@ Compliant draft routed for approval (status: pending); nothing released.</code><
 </aside>
 <p>That closes the series. The loop is not a model and not a rulebook, but the conversation between them: what travels each way, who defines the words, and who approves the changes.</p>
 <h2 id="sources">Sources</h2>
-<ol class="sources numbered"><li id="src-1"><a href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/closing-the-loop">Sample code for this part</a>: <code>procurement.ttl</code>, <code>shapes.ttl</code>, <code>nesy_loop.py</code>.</li><li id="src-2"><a href="https://github.com/langchain-ai/langgraph">LangGraph</a>, <a href="https://github.com/RDFLib/rdflib">rdflib</a> and <a href="https://github.com/RDFLib/pySHACL">pySHACL</a>, the open-source libraries the sample uses.</li></ol>
+<ol class="sources numbered"><li id="src-1"><a href="https://github.com/langchain-ai/langgraph">LangGraph</a>, <a href="https://github.com/RDFLib/rdflib">rdflib</a> and <a href="https://github.com/RDFLib/pySHACL">pySHACL</a>, the open-source libraries the sample uses.</li></ol>
 <ul class="sources">
 </ul>
 <nav class="series-nav" aria-label="Closing the Loop series"><div class="pn"><a class="prev" rel="prev" href="closing-the-loop-6-in-the-wild.html"><span class="label">← Part 6</span>In the wild, and the road ahead</a></div><details><summary class="label">All parts of Closing the Loop</summary><ol><li><a href="neural-symbolic-loop.html"><span class="label">Prologue</span> The neural–symbolic loop</a></li><li><a href="closing-the-loop-1-two-ways-of-knowing.html"><span class="label">Part 1</span> Two ways of knowing</a></li><li><a href="closing-the-loop-2-words-into-logic.html"><span class="label">Part 2</span> Turning words into logic</a></li><li><a href="closing-the-loop-3-ontology-as-rulebook.html"><span class="label">Part 3</span> The ontology as rulebook</a></li><li><a href="closing-the-loop-4-when-the-rulebook-changes.html"><span class="label">Part 4</span> When the rulebook has to change</a></li><li><a href="closing-the-loop-5-teaching-a-network-the-rules.html"><span class="label">Part 5</span> When the rules cannot choose</a></li><li><a href="closing-the-loop-6-in-the-wild.html"><span class="label">Part 6</span> In the wild, and the road ahead</a></li><li class="here"><a href="closing-the-loop-7-building-the-loop.html" aria-current="page"><span class="label">Part 7</span> Building the loop</a></li></ol></details></nav>
@@ -154,6 +155,6 @@ Compliant draft routed for approval (status: pending); nothing released.</code><
 </article>
 </main>
 <footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
-<script src="../assets/brand.js?v=7"></script>
+<script src="../assets/brand.js?v=8"></script>
 </body>
 </html>

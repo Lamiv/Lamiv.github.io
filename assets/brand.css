@@ -423,3 +423,30 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
 .post ol.sources.numbered{padding-left:26px}
 .post ol.sources.numbered li{scroll-margin-top:90px}
 .post ol.sources.numbered li:target{color:var(--crystal);background:var(--panel)}
+/* Blog index: collapsible topic cards */
+.topic+.topic{margin-top:18px}
+.topic-card{display:grid;gap:10px;border:1px solid var(--line);background:var(--panel);padding:clamp(18px,3vw,28px)}
+.topic-card h2{font-size:clamp(1.6rem,3.4vw,2.4rem)}
+.topic-card .lede{max-width:70ch}
+.topic-meta{color:var(--mist)}
+.topic-actions{margin:4px 0 0}
+.parts-toggle{border-top:1px solid var(--line);padding-top:12px;margin-top:6px}
+.parts-toggle>summary{cursor:pointer;list-style:none;font:500 .76rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium);padding:6px 0;display:flex;align-items:center;gap:8px}
+.parts-toggle>summary::-webkit-details-marker{display:none}
+.parts-toggle>summary::before{content:"+";font-size:1rem;line-height:1;width:1em}
+.parts-toggle[open]>summary::before{content:"−"}
+.parts-toggle .less,.parts-toggle[open] .more{display:none}
+.parts-toggle[open] .less{display:inline}
+.parts-toggle .posts{margin-top:8px}
+section.topic{padding:0;border:0;display:block}
+.topics{margin-bottom:clamp(20px,3vw,32px)}
+section.topic+section.topic{margin-top:16px}
+main:has(.topic-card){padding-bottom:clamp(48px,8vw,96px)}
+/* Code panel on posts that ship runnable code */
+.post .codepanel{margin:0 0 30px;padding:16px clamp(16px,3vw,22px);border:1px solid var(--line);border-left:3px solid var(--sodium);background:var(--panel);display:grid;gap:10px}
+.post .codepanel ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px}
+.post .codepanel ul a{text-decoration:none}
+.post .codepanel ul a:hover code{color:var(--sodium)}
+.post .codepanel-actions{display:flex;flex-wrap:wrap;gap:10px;margin:2px 0 0;max-width:none}
+.post .codepanel p.label{font-size:.76rem;line-height:1.5;margin:0;color:var(--sodium)}
+.post .codepanel ul a code{border-bottom:1px dotted var(--mist);padding-bottom:1px}
