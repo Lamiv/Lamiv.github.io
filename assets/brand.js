@@ -139,7 +139,7 @@
 
 // Selected work: a link to an item opens it.
 (function(){
-  function open(){var d=location.hash&&document.querySelector('details'+location.hash);if(d)d.open=true}
+  function open(){var t;try{t=location.hash&&document.querySelector(location.hash)}catch(e){return}if(!t)return;var d=t.matches('details')?t:t.querySelector('details');if(d)d.open=true}
   window.addEventListener('hashchange',open);open();
 })();
 
