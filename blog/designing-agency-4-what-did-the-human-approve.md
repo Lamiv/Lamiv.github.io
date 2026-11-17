@@ -3,6 +3,7 @@ title: What exactly did the human approve?
 subtitle: An approval is only meaningful if it is tied to the terms that were seen
 part: 4
 date: 18 October 2026
+summary: Designing Agency Part 4 on one page: create, approve, release and send are separate steps; flexible workflow chooses approvers, can exclude the creator and may approve automatically if no workflow matches; bind approval to a fingerprint of the terms; an approval covers exact terms for a limited time.
 ---
 
 The agent drafts an order for 4,000 cartons at 2.10 each from North Packaging. The buyer's manager approves it in the morning. By the afternoon the supplier has revised the price to 2.35, and the agent, trying to be helpful, updates the draft. Is the order still approved?

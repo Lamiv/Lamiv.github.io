@@ -3,6 +3,7 @@ title: Can you undo what it just did?
 subtitle: Restoring, compensating and living with it are three different promises
 part: 2
 date: 11 October 2026
+summary: Designing Agency Part 2 on one page: three kinds of undo (restore, compensate, live with it); design moves including write staging, compensation that can fail, and idempotent steps; label every action and show the label to the approver.
 ---
 
 “Can we undo it?” is the question every approval process quietly depends on. People sign off more easily when they believe a mistake can be reversed. With agents acting at machine speed, it is worth being precise about what reversing means, because there are three quite different answers.
