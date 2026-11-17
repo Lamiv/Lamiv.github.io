@@ -12,7 +12,7 @@ summary: Designing Agency Part 2 on one page: three kinds of undo (restore, comp
 
 Some actions can be undone completely. A purchase requisition the agent created can be changed, rescheduled or deleted at almost any time. A draft purchase order that nobody has approved is the same: discard it, and the world is as it was.
 
-Safin and Balta make restorability a design tactic. *Write staging* puts a draft or pending layer between an agent's action and its authoritative commit, turning an otherwise irreversible write into a reversible one until the staged output is explicitly promoted. They add a condition that matters for SAP: it applies only where the system of record supports a two-phase approach of draft first, commit later. [Safin and Balta](https://arxiv.org/abs/2605.12105)
+Safin and Balta make restorability a design tactic. *Write staging* puts a draft or pending layer between an agent's action and its authoritative commit, turning an otherwise irreversible write into a reversible one until the staged output is explicitly promoted. They add a condition that matters for any system of record: it applies only where the system of record supports a two-phase approach of draft first, commit later. [Safin and Balta](https://arxiv.org/abs/2605.12105)
 
 ## Compensate: a new action that offsets the old one
 
@@ -24,7 +24,7 @@ Two further points from the same guidance belong in any agent design. Compensati
 
 ## Live with it: effects outside your systems
 
-When SAP sends a released order to the supplier, the most important effects leave the company. The supplier may buy raw material, reserve capacity or turn down another customer's order. You can cancel, but you cannot unsend. What you have then is a commercial conversation, not a database operation, and its cost depends on the contract and the relationship.
+When the purchasing system sends a released order to the supplier, the most important effects leave the company. The supplier may buy raw material, reserve capacity or turn down another customer's order. You can cancel, but you cannot unsend. What you have then is a commercial conversation, not a database operation, and its cost depends on the contract and the relationship.
 
 Sales has the same edge. A quotation still in draft can be deleted. One sent to a customer can be withdrawn or revised, but the customer has seen the price, and that shapes the next negotiation whatever the system says.
 
@@ -39,16 +39,19 @@ Safin and Balta's distinction from the prologue does the work here: *whether a h
 | Requisition, unapproved draft order | Restore | Change or delete; nobody outside has seen it |
 | Released order, not yet sent | Compensate | Reset or cancel; tell people who planned around it |
 | Order sent to the supplier | Live with it | Cancel or renegotiate; costs set by contract and goodwill |
+| Infrastructure change with a tested rollback | Restore | Roll back; check nothing downstream read the new state |
+| Data migration that rewrote records in place | Compensate | Repair from backups or logs; reconcile what others changed since |
+| Payment already sent to a bank | Live with it | Request a recall; recovery depends on the counterparty |
 
 :::risk
 **Averting risk**
 
-| Risk | Strategy | What it still does not cover |
-|---|---|---|
-| Approvers assume everything can be undone | Label each action restore, compensate or live with it, and show the label in the approval | Labels that drift from reality |
-| An irreversible step happens by accident | Keep agent writes staged; reserve release and output for people | Systems with no draft state |
-| A cancellation leaves others acting on old information | Compensation as a designed process: notify, record progress, resume | People outside the system who already acted |
-| Undo steps are retried and double up | Make every step and every compensation idempotent | Side effects nobody modelled |
+| Risk | Required property | Possible mechanisms | Still not covered |
+|---|---|---|---|
+| Approvers assume everything can be undone | Each action's reversibility is known before it is approved | Label actions restore, compensate or live with it, and show the label to the approver | Labels that drift from reality |
+| An irreversible step happens by accident | Consequential writes stay reversible until explicitly promoted | Draft states, pending records, change requests; release and output reserved for people | Systems with no draft state |
+| A cancellation leaves others acting on old information | Compensation reaches everyone who acted on the original | A designed compensation process: notify, record progress, resume | People outside the system who already acted |
+| Undo steps are retried and double up | Repeating a step has the same effect as running it once | Idempotent operations, request keys, status checks before retrying | Side effects nobody modelled |
 :::
 
 :::question

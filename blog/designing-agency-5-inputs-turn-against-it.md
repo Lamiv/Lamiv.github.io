@@ -26,14 +26,14 @@ Attacks also spread across turns. ASEval tested 11 models in one agent framework
 
 No single defence covers all of this. The point of layering is that each one covers a different part of the path from email to action.
 
-| Defence | What it controls | What can still go wrong |
+| Required property | Possible mechanisms | What can still go wrong |
 |---|---|---|
-| Treat external content as data, with its source attached | Supplier emails and documents are labelled untrusted when they enter | The model can still be influenced by what it reads |
-| Tiered memory | Facts from SAP master data, notes from emails and the agent's own conclusions are stored separately, with source and expiry, and only validated paths write to the trusted tier | Untrusted notes are still read, and can still sway a proposal |
-| Grounding in the system of record | Preferred suppliers, contracts and prices come from SAP, not from memory; an agent cannot create a supplier | Poisoned data that reaches SAP itself |
-| Narrow tools and isolated execution | Tools fenced to the task; code that the agent runs stays sandboxed, with no access to outside systems | Harm possible within the allowed tools |
-| A deterministic gate before every action | Policy checked outside the model: allow, deny or escalate, failing closed | Actions that are within policy but unwise |
-| Write staging and approval | Even a compromised proposal is only a draft until a person releases it (Parts 2 and 4) | Approvers who trust the agent's summary |
+| External content is treated as data, with its source known | Labelling supplier emails and documents as untrusted when they enter; keeping their origin attached | The model can still be influenced by what it reads |
+| What the agent remembers is separated by trust | Tiered memory: facts from the system of record, notes from emails and the agent's own conclusions kept apart, with source and expiry, and only validated paths writing to the trusted tier | Untrusted notes are still read, and can still sway a proposal |
+| Business facts come from the system of record, not from memory | Looking up preferred suppliers, contracts and prices at decision time; no ability for the agent to create suppliers | Poisoned data that reaches the system of record itself |
+| The agent's reach is limited to the task | Narrowed tools; sandboxed execution for any code the agent runs, with no access to outside systems | Harm possible within the allowed tools |
+| Consequential actions are checked by something that cannot be persuaded | A policy check in the application, the agent's runtime or a separate service: allow, deny or escalate, failing closed | Actions that are within policy but unwise |
+| A compromised proposal cannot become a commitment on its own | Staged writes and human release (Parts 2 and 4) | Approvers who trust the agent's summary |
 
 Safin and Balta describe the isolated case as a level of agency in its own right: safe local tools, such as validators and sandboxed code, with no access to external systems. [Safin and Balta](https://arxiv.org/abs/2605.12105) Piccardo and colleagues map their own three defence paradigms onto the kill chain: context auditing at the perceptual boundary, intent verification for reasoning and coordination, and circuit breakers that place mechanical limits on impact. [Piccardo, Italiano and Martino](https://ceur-ws.org/Vol-4198/paper7.pdf)
 
@@ -46,12 +46,12 @@ That is the strongest reason to include at least one layer that does not involve
 :::risk
 **Averting risk**
 
-| Risk | Strategy | What it still does not cover |
-|---|---|---|
-| Text in an email acts as an instruction | Label external content as untrusted data; audit context at entry | Subtle influence on the model's judgement |
-| A poisoned note persists into later sessions | Tiered memory with source, expiry and validated writes | Poison that passes validation |
-| An attack spreads over many turns | Test whole conversations, not single messages (Part 6) | Patterns no test anticipated |
-| All defences fail together | At least one deterministic layer: master data, policy gate, approval fingerprint | Errors in the deterministic rules themselves |
+| Risk | Required property | Possible mechanisms | Still not covered |
+|---|---|---|---|
+| Text in an email acts as an instruction | External content is data, never instruction | Untrusted labels at entry; context auditing | Subtle influence on the model's judgement |
+| A poisoned note persists into later sessions | Remembered facts carry source and trust level | Tiered memory with source, expiry and validated writes | Poison that passes validation |
+| An attack spreads over many turns | Testing covers whole conversations | Trajectory-level tests, repeated after every change (Part 6) | Patterns no test anticipated |
+| All defences fail together | At least one layer no text can persuade | Lookups in the system of record; policy checks; approvals bound to terms | Errors in the deterministic rules themselves |
 :::
 
 :::question
