@@ -1,4 +1,4 @@
-"""Build the boundary: a small, runnable sketch of an agent boundary around SAP.
+"""Build the boundary: a small, runnable sketch of an agent boundary around a system of record.
 
 The agent may stage a purchase order. Release and sending need a human approval
 that is bound to the exact terms that were approved. Retries use an idempotency
@@ -7,7 +7,7 @@ sent again. Every step is written to an audit trail with both identities.
 
     python boundary.py
 
-Illustrative sample for the "Designing Agency" blog series. The SAP system is a
+Illustrative sample for the "Designing Agency" blog series. The system of record is a
 mock; names, prices and rules are made up. Python 3.10+, standard library only.
 """
 
@@ -30,18 +30,18 @@ class Timeout(Exception):
     """The call may or may not have taken effect."""
 
 
-# --- A mock SAP S/4HANA ----------------------------------------------------
+# --- A mock system of record (an ERP, for example) --------------------------
 
 @dataclass
 class PurchaseOrder:
     number: str
-    created_by: str          # the SAP identity that created it (propagated user)
+    created_by: str          # the identity that created it (the requester, when delegated)
     terms: dict
     version: int = 1
     status: str = "draft"    # draft -> released -> sent
 
 
-class MockSAP:
+class MockSystemOfRecord:
     """Just enough behaviour to show the boundary: versions, release, output."""
 
     def __init__(self) -> None:
@@ -49,7 +49,7 @@ class MockSAP:
         self.outputs: list[tuple[str, int]] = []   # what suppliers received
         self.processed_keys: dict[str, str] = {}   # idempotency key -> result
         self.lose_next_response = False
-        # Authorisations as an SAP administrator configured them. The buyer can
+        # Authorisations as an administrator configured them. The buyer can
         # release small orders, a common setting, so anything acting as the
         # buyer can release too: the role check cannot tell person from agent.
         self.authorised = {"buyer": {"create", "change", "release"},
@@ -71,7 +71,7 @@ class MockSAP:
 
     def release(self, user: str, number: str) -> None:
         if not self.allows(user, "release"):
-            raise Denied(f"SAP: {user} has no release authorisation")
+            raise Denied(f"system of record: {user} has no release authorisation")
         self.orders[number].status = "released"
 
     def send(self, number: str, key: str) -> str:
@@ -108,7 +108,7 @@ class Approval:
 
 @dataclass
 class Boundary:
-    sap: MockSAP
+    system: MockSystemOfRecord
     approvers: dict[str, str]                     # requester -> approver, from configuration
     agent_may: set[str] = field(default_factory=lambda: {"stage", "change"})
     approvals: dict[str, Approval] = field(default_factory=dict)
@@ -128,19 +128,19 @@ class Boundary:
     # The agent's tools
     def stage(self, user: str, agent: str, terms: dict) -> PurchaseOrder:
         self.check(agent, "stage")
-        po = self.sap.create(user, terms)           # executes under the user's identity
+        po = self.system.create(user, terms)           # executes under the user's identity
         self.log(user, agent, "stage", f"{po.number} v1 draft, price {terms['price']}")
         return po
 
     def change(self, user: str, agent: str, number: str, **changes) -> PurchaseOrder:
         self.check(agent, "change")
-        po = self.sap.change(number, **changes)
+        po = self.system.change(number, **changes)
         self.log(user, agent, "change", f"{number} v{po.version} {changes}")
         return po
 
     # Human steps
     def approve(self, approver: str, number: str, valid_for=timedelta(days=2)) -> None:
-        po = self.sap.orders[number]
+        po = self.system.orders[number]
         if approver == po.created_by:
             raise Denied(f"{approver} created {number} and cannot approve it")
         if self.approvers.get(po.created_by) != approver:
@@ -149,7 +149,7 @@ class Boundary:
         self.log(approver, "-", "approve", f"{number} v{po.version} fingerprint {fingerprint(po)}")
 
     def _still_approved(self, number: str, when: datetime) -> None:
-        po, appr = self.sap.orders[number], self.approvals.get(number)
+        po, appr = self.system.orders[number], self.approvals.get(number)
         if appr is None:
             raise Denied(f"{number} has no approval")
         if when > appr.expires:
@@ -162,26 +162,26 @@ class Boundary:
     def release(self, user: str, number: str, when: datetime = NOW, agent: str | None = None) -> None:
         self.check(agent or user, "release")         # the boundary knows if an agent asks
         self._still_approved(number, when)
-        self.sap.release(user, number)               # SAP only sees the user
-        self.log(user, agent or "-", "release", f"{number} v{self.sap.orders[number].version}")
+        self.system.release(user, number)               # the system of record only sees the user
+        self.log(user, agent or "-", "release", f"{number} v{self.system.orders[number].version}")
 
     def send(self, actor: str, number: str, when: datetime = NOW) -> str:
         self.check(actor, "send")
         self._still_approved(number, when)
-        po = self.sap.orders[number]
+        po = self.system.orders[number]
         key = f"send:{number}:v{po.version}"         # same order, same version, same key
-        if self.sap.lookup_key(key):                 # a retry of something already done
+        if self.system.lookup_key(key):                 # a retry of something already done
             self.log(actor, "-", "no-op", f"{number} v{po.version} already sent; not sending twice")
-            return self.sap.lookup_key(key)
+            return self.system.lookup_key(key)
         try:
-            result = self.sap.send(number, key)
+            result = self.system.send(number, key)
         except Timeout:
             self.log(actor, "-", "timeout", f"{number}: outcome unknown, reconciling before retry")
-            found = self.sap.lookup_key(key)
+            found = self.system.lookup_key(key)
             if found:
-                self.log(actor, "-", "reconcile", f"{number}: SAP confirms it was {found.split()[0]}; not resending")
+                self.log(actor, "-", "reconcile", f"{number}: the system confirms it was {found.split()[0]}; not resending")
                 return found
-            result = self.sap.send(number, key)   # never happened: safe to send
+            result = self.system.send(number, key)   # never happened: safe to send
         self.log(actor, "-", "send", result)
         return result
 
@@ -199,7 +199,7 @@ def attempt(label: str, fn, *args, **kwargs):
 
 def control_test(gate: Boundary, number: str) -> bool:
     """A negative test to run on every change of roles or policy: it passes only
-    if the agent is refused each forbidden action, whatever SAP would allow."""
+    if the agent is refused each forbidden action, whatever the system of record would allow."""
     for action in ("release", "send"):
         try:
             gate.check("agent-proc", action, record=False)
@@ -210,8 +210,8 @@ def control_test(gate: Boundary, number: str) -> bool:
 
 
 def main() -> None:
-    sap = MockSAP()
-    gate = Boundary(sap, approvers={"buyer": "manager"})
+    system = MockSystemOfRecord()
+    gate = Boundary(system, approvers={"buyer": "manager"})
     terms = dict(supplier="200300", material="CARTON-A", quantity=4000, price="2.10",
                  currency="AED", delivery_date="2026-11-20")
 
@@ -219,7 +219,7 @@ def main() -> None:
     po = attempt("agent stages a draft order", gate.stage, "buyer", "agent-proc", terms)
 
     print("2. The agent tries to go further")
-    print(f"  (SAP itself would allow the buyer to release: {sap.allows('buyer', 'release')})")
+    print(f"  (the system of record would allow the buyer to release: {system.allows('buyer', 'release')})")
     attempt("agent releases the order as the buyer", gate.release, "buyer", po.number, agent="agent-proc")
 
     print("3. Approval")
@@ -237,16 +237,16 @@ def main() -> None:
     attempt("manager releases", gate.release, "manager", po.number)
 
     print("6. Sending, with a lost response")
-    sap.lose_next_response = True
+    system.lose_next_response = True
     attempt("output to supplier", gate.send, "manager", po.number)
     attempt("output to supplier, retried", gate.send, "manager", po.number)
-    print(f"  the supplier received {len(sap.outputs)} order(s): {sap.outputs}")
+    print(f"  the supplier received {len(system.outputs)} order(s): {system.outputs}")
 
     print("7. Control test: forbidden actions must be refused")
     print("  passed" if control_test(gate, po.number) else "  FAILED: the agent could act beyond its policy")
     print(f"\nAlerts for review: {gate.alerts}")
 
-    print("\nAudit trail (sub = SAP identity, act = agent)")
+    print("\nAudit trail (sub = executing identity, act = agent)")
     for line in gate.audit:
         print("  " + line)
 
