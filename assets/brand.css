@@ -270,8 +270,8 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
   .work summary span{text-align:left;padding-left:1.4em}
   .case,.case.big{grid-column:1/-1}
 }
-@media (max-width:760px){
-  /* one-row header: name, theme, menu; the links drop down */
+@media (max-width:980px){
+  /* one-row header: name, theme, menu; the links drop down (below the width the full link row needs) */
   .js .menu{display:block}
   .nav .wrap{flex-wrap:nowrap;gap:8px}
   .js .nav nav{display:none;position:absolute;left:0;right:0;top:100%;background:var(--ink);border-bottom:1px solid var(--line);padding:8px var(--gutter) 14px;flex-direction:column;gap:0}
@@ -283,9 +283,9 @@ footer{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-wra
   .js .navgrp.pages{border-left:0;padding-left:0}
   .nav .wrap{position:relative}
   .nav{position:sticky}
-  .mark{font-size:1.25rem}
   html:not(.js) .nav .wrap{flex-wrap:wrap}
 }
+@media (max-width:760px){.mark{font-size:1.25rem}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 
 /* CV: a plain document for people and applicant tracking systems.
