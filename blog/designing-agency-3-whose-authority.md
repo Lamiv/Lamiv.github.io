@@ -1,91 +1,90 @@
 ---
 title: Whose authority is it acting on?
-subtitle: Requester, agent, SAP identity and approver are four parties, not one
+subtitle: Requester, agent, executing identity and approver are four parties, not one
 part: 3
 date: 11 October 2026
-summary: Designing Agency Part 3 on one page: requester, agent, SAP identity and approver are four parties; two ways to call SAP, as the agent or as the buyer; the agent inherits the user's rights and SAP sees the user, not the agent; propagate identity, narrow the tools, record both identities.
+summary: Designing Agency Part 3 on one page: requester, agent, executing identity and approver are four parties; an agent can act as itself or as the requester; authority is the intersection of requester, agent scope and task; the system may see the user, not the agent; establish the authority behind every consequential action.
 ---
 
-When an agent creates a purchase order in SAP S/4HANA, four parties are involved, and it pays to keep them apart. The **requester** is the buyer who asked. The **agent** is the software that did the work. The **executing identity** is the user SAP believes performed the action, and whose roles it checked. The **approver** is the person workflow asks to approve or release it. Most agent designs blur at least two of them.
+When an agent creates a purchase order, four parties are involved, and it pays to keep them apart. The **requester** is the buyer who asked. The **agent** is the software that did the work. The **executing identity** is the identity the system of record believes performed the action, and whose rights it checked. The **approver** is the person who approves or releases it. Most agent designs blur at least two of them.
 
-## How S/4HANA decides what a user may do
+The property this part defends is simple to state: *when an agent performs a consequential action, the system must be able to establish the authority under which that action was permitted.* Whether the application, the agent's runtime, an identity service or a separate policy layer provides that is an implementation decision. Different platforms answer it differently, and more than one answer can be right.
 
-S/4HANA is role-based. In on-premise and private cloud systems, roles maintained in transaction PFCG carry the authorisations that let a user start an app and read or change data. Business catalogs group apps *according to segregation of duty*, and business roles collect catalogs for a job. [SAP Learning](https://learning.sap.com/courses/exploring-the-authorization-concept-for-sap-fiori-on-sap-s-4hana/explaining-sap-fiori-authorization-model) Users cannot give themselves access; they can only rearrange what their roles already grant. [SAP Learning](https://learning.sap.com/courses/implementing-sap-s-4hana-cloud-private-edition/assigning-permissions-to-users_fe48dd0d-6d13-4995-bfea-edccba5dbd7a)
+## How enterprise systems decide what a user may do
 
-That makes the executing identity the decisive choice. Whatever identity the agent's calls arrive under, its roles become the agent's effective authority.
+Most enterprise systems are role-based. A user's roles determine which functions they can start and which data they can read or change, and segregation of duties is designed into how those roles are cut, so that one person cannot, for example, both create a supplier and pay it. Users cannot give themselves access; they can only use what their roles grant.
 
-## Two ways to call SAP
+That makes the executing identity the decisive choice. Whatever identity the agent's actions arrive under, its rights become the agent's effective authority as far as the system of record is concerned.
 
-The agent always authenticates as itself to whatever sits in front of SAP. The real design question is a different one: *whose identity does SAP execute the call under, and so whose roles does it check?* There are two answers.
+## Two ways an agent can act
+
+The agent always authenticates as itself to whatever it talks to first. The real design question is a different one: *whose identity does the system of record execute the action under, and so whose rights does it check?* There are two answers.
 
 ```mermaid
 flowchart TD
-    B["Buyer asks the agent"] --> A["AI agent"]
-    A -->|"Option 1: the agent's own identity"| T["Technical user<br/>communication user, or<br/>OAuth client credentials"]
-    A -->|"Option 2: the buyer's identity"| P["Principal propagation<br/>SAML bearer to the cloud, or<br/>Cloud Connector to on-premise"]
-    T --> S1["S/4HANA checks the<br/>technical user's roles"]
-    P --> S2["S/4HANA checks the<br/>buyer's own roles"]
+    B["Requester asks the agent"] --> A["AI agent"]
+    A -->|"Option 1: the agent's own identity"| T["Agent identity<br/>a service account or<br/>workload credential"]
+    A -->|"Option 2: the requester's identity"| P["Delegated identity<br/>acting on behalf of<br/>the requester"]
+    T --> S1["System checks the<br/>agent identity's rights"]
+    P --> S2["System checks the<br/>requester's own rights"]
 ```
 
-*Figure 1. Two ways an agent can call SAP: as itself, or as the person who asked. The transport differs by edition; the choice of identity is what matters.*
+*Figure 1. An agent can act under its own identity or under the requester's. Each choice makes the system of record see only one side of the delegation.*
 
-*Alt text: A buyer asks an AI agent. Option 1: the agent calls SAP as a technical user, a communication user or OAuth client credentials, and S/4HANA checks the technical user's roles. Option 2: the agent calls SAP with the buyer's identity through principal propagation, SAML bearer to the cloud or the Cloud Connector to on-premise, and S/4HANA checks the buyer's own roles.*
+*Alt text: A requester asks an AI agent. Option 1: the agent acts under its own identity, a service account or workload credential, and the system checks that identity's rights. Option 2: the agent acts under a delegated identity on behalf of the requester, and the system checks the requester's own rights.*
 
-**Option 1: the agent's own identity.** In S/4HANA Cloud, public edition, external systems usually call APIs through a *communication user* defined in a *communication arrangement*, which fixes which system may call which APIs. A business partner created this way is created by the technical communication user; no business user is involved at all. [SAP Developers](https://developers.sap.com/tutorials/abap-environment-business-partner-basic-auth.html) The same identity can also travel through BTP's connectivity services, for example to an on-premise system, which SAP calls *technical user propagation*: a technical user obtained with OAuth client credentials, sent instead of a business user. [SAP BTP documentation](https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/technical-user-propagation-8b6e019.md) Every agent action then appears under one technical identity, with its rights, whoever asked. That suits background jobs that act for nobody in particular.
+**Option 1: the agent's own identity.** The agent uses a service account or workload credential of its own. This is simple and suits background work that acts for nobody in particular. But every action then appears under one identity, with that identity's rights, whoever asked. The requester's own limits are invisible unless something else checks them.
 
-**Option 2: the requester's identity.** SAP calls this *principal propagation*: forwarding the identity of the logged-on user to the backend so that the backend applies that user's roles. [SAP BTP documentation](https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/principal-propagation-e2cbb48.md) The transport differs by edition:
+**Option 2: the requester's identity.** The agent acts on behalf of the person who asked, through some form of delegated or propagated identity, so the system of record applies that person's rights and records them as the one who acted. For work done at a person's request, this keeps the person's limits in force. But now the system of record may not know that an agent was involved at all.
 
-- *To S/4HANA Cloud*, a BTP destination of type `OAuth2SAMLBearerAssertion` has the Destination service wrap the user's identity in a SAML assertion, sign it with the subaccount's key and exchange it for an OAuth access token. [SAP BTP documentation](https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/cloud-to-cloud-65b11d4.md) S/4HANA must trust the signing system, and the communication arrangement must allow OAuth 2.0 for inbound calls. [SAP Developers](https://developers.sap.com/tutorials/abap-environment-business-partner-oauthsamlbearer.html)
-- *To on-premise or private cloud systems*, a destination of type `PrincipalPropagation` goes through the Cloud Connector. It verifies the user's token and issues a short-lived X.509 certificate for that user; the ABAP system maps the certificate to a user with rule-based mapping in transaction CERTRULE. [SAP BTP documentation](https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/cloud-to-on-premise-70b8ef3.md) [SAP BTP documentation](https://github.com/SAP-docs/btp-connectivity/blob/main/docs/1-connectivity-documentation/rule-based-mapping-of-certificates-4f8540f.md)
+## Authority is an intersection
 
-For work done at a person's request, option 2 is usually right: SAP applies the requester's own permissions and records the requester as the one who acted.
+Neither option, on its own, captures what the authority actually is. The action should be permitted only if it falls inside all three of these at once:
 
-## Where the agent's identity lives
+- what the **requester** is allowed to do;
+- what the **agent** has been delegated to do;
+- what the **task** in hand requires.
 
-Propagation solves one problem and exposes another. SAP now checks the buyer's roles, but the identity that reaches S/4HANA is the buyer's, not the agent's. The fact that an agent acted is known only to the layers in front of SAP.
+Option 1 sees only the agent's side of that intersection. Option 2 sees only the requester's. The property is that *something* can see both, at the moment the action is taken, and record which ones were checked.
 
-Those layers can record it precisely. An enterprise gateway design from August 2026 uses OAuth 2.0 token exchange (RFC 8693) to issue a single signed token carrying both identities: `sub` is the user and `act.sub` is the agent, with each further hop adding a level, *a complete, cryptographically bound delegation trail*. The authors flag the most common misconfiguration: the exchange must check that the incoming token was issued to the agent, not to the gateway. [Kumar, Wang and Manoharan](https://arxiv.org/abs/2608.10760) Kalyanasundaram argues that each agent needs a unique, verifiable identity bound to an accountable owner, governed through four fundamentals: administer, authenticate, authorise and audit. [Kalyanasundaram](https://ceur-ws.org/Vol-4257/position1.pdf)
+There are several ways to provide it. An enterprise gateway design from August 2026 uses OAuth 2.0 token exchange to issue a single signed token carrying both identities: `sub` is the user and `act.sub` is the agent, with each further hop adding a level, *a complete, cryptographically bound delegation trail*. The authors flag the most common misconfiguration: the exchange must check that the incoming token was issued to the agent, not to the gateway. [Kumar, Wang and Manoharan](https://arxiv.org/abs/2608.10760) Kalyanasundaram argues that each agent needs a unique, verifiable identity bound to an accountable owner, governed through four fundamentals: administer, authenticate, authorise and audit, built by extending established standards rather than inventing new ones. [Kalyanasundaram](https://ceur-ws.org/Vol-4257/position1.pdf) An application can equally check both identities itself, if it is told about both.
 
 ## Borrowed authority is too much authority
 
-Propagation has a second catch. The agent inherits all of the buyer's rights, not only the ones the task needs. If the buyer can also release orders, so can anything acting as the buyer.
+Delegation has a further catch. Acting as the requester, the agent inherits all of the requester's rights, not only those the task needs. If the buyer can also release orders, so can anything acting as the buyer, unless the task scope narrows it.
 
-Researchers at EPFL show one way to narrow it. CAPMAS maps a request to a bounded set of privileges and issues tokens that each agent can narrow further, offline, but never widen. Compared with OAuth token exchange, they report 30 times faster delegation operations and up to 3 times lower bandwidth, while cutting unnecessary privileges by 99.5% against propagating all of the user's privileges. [Veski, Guerraoui and Froelicher](https://arxiv.org/abs/2609.06500) The principle carries over even without their tooling: the agent's tools should expose only the operations the task needs, whatever the user could do.
+Researchers at EPFL show one way to narrow it. CAPMAS maps a request to a bounded set of privileges and issues tokens that each agent can narrow further, offline, but never widen. Compared with OAuth token exchange, they report 30 times faster delegation operations and up to 3 times lower bandwidth, while cutting unnecessary privileges by 99.5% against propagating all of the user's privileges. [Veski, Guerraoui and Froelicher](https://arxiv.org/abs/2609.06500) The principle holds without their tooling: the agent's reach should match the task, whatever the requester could do.
 
 ## Segregation of duties survives, if you keep it
 
-S/4HANA's flexible workflow can exclude a purchase order's creator from approving it. [SAP Learning](https://learning.sap.com/courses/implementing-sap-s-4hana-cloud-public-edition-sourcing-and-procurement/defining-workflows-in-sourcing-and-procurement_a17030df-33b7-4c0e-a8c6-31ec490618e9) With propagation, the creator is the buyer who asked, so the buyer cannot approve the agent's work on their own request. With a shared technical user, the creator is the technical user, and that protection quietly disappears.
+Many approval processes can stop a document's creator from approving it. Which identity counts as the creator then matters. If the agent acts under the requester's identity, the requester created the order and cannot approve the agent's work on their own request. If it acts under a shared agent identity, the "creator" is the agent's account, and that protection can quietly disappear unless the approval rules know who actually asked.
 
-## What your team has to build
+## What has to be true
 
-SAP provides the identity plumbing and the role checks. The application team still has to build these:
+Whatever the platform, these should hold:
 
-- Record the agent's identity alongside the user's, outside SAP, and link it to the SAP document number.
-- Limit the agent's tools to the task, below the user's full rights.
-- Decide when propagation is required and when a technical user is acceptable, per action.
-- Keep the mapping between corporate identities and SAP users accurate, because propagation is only as good as that mapping.
+- For every consequential action, the requester, the agent and the executing identity can all be established afterwards, and linked to the business document.
+- The agent's reach is narrower than the requester's full rights whenever the task is narrower.
+- The choice between the agent's identity and the requester's is made per action, deliberately.
+- The mapping between people's identities and their accounts in each system is accurate, because delegation is only as good as that mapping.
 
 :::risk
 **Averting risk**
 
-| Risk | Strategy | What it still does not cover |
-|---|---|---|
-| Every agent action appears under one shared identity | Principal propagation for actions taken at a person's request | Background jobs that genuinely act for nobody |
-| The agent inherits all of the user's rights | Narrow tools and scopes below the user's rights | Mistakes within the narrowed scope |
-| SAP cannot tell agent work from human work | Delegation trail (`sub` plus `act`) recorded at the gateway and linked to SAP documents | Gaps where the gateway is bypassed |
-| The requester approves their own agent's order | Exclude the creator in flexible workflow; use propagation so the creator is the requester | Approvers who share a desk |
+| Risk | Required property | Possible mechanisms | Still not covered |
+|---|---|---|---|
+| Every agent action appears under one shared identity | Actions taken at a person's request carry that person's authority | Delegated or propagated identity; on-behalf-of flows; checks in the application | Work that genuinely acts for nobody |
+| The agent inherits all of the requester's rights | Effective authority is the intersection of requester, agent and task | Narrowed tools; scoped or attenuated tokens; policy checks on each action | Mistakes within the narrowed scope |
+| Nobody can tell agent work from human work | Both identities can be established for every action | Tokens carrying both identities; linked logs; application-level records | Paths that bypass the recording point |
+| The requester approves their own agent's work | The person who asked cannot approve the result | Creator exclusion in approval rules, with the creator set to the requester | Approvers who share a desk |
 :::
 
 :::question
-**A question to sit with.** If an auditor picked one purchase order your agent created, could you show who asked, which agent acted, which SAP identity executed it, and who approved it?
+**A question to sit with.** If an auditor picked one purchase order your agent created, could you show who asked, which agent acted, which identity executed it, and who approved it?
 :::
 
 ## Sources
 
-- SAP Learning, [*Explaining SAP Fiori Authorization Model*](https://learning.sap.com/courses/exploring-the-authorization-concept-for-sap-fiori-on-sap-s-4hana/explaining-sap-fiori-authorization-model) and [*Assigning Permissions to Users*](https://learning.sap.com/courses/implementing-sap-s-4hana-cloud-private-edition/assigning-permissions-to-users_fe48dd0d-6d13-4995-bfea-edccba5dbd7a).
-- SAP Developers, [*Integrate SAP BTP, ABAP environment and SAP S/4HANA Cloud, public edition using Basic Authentication*](https://developers.sap.com/tutorials/abap-environment-business-partner-basic-auth.html) and [*… using the OAuth 2.0 SAML Bearer Assertion Flow*](https://developers.sap.com/tutorials/abap-environment-business-partner-oauthsamlbearer.html).
-- SAP, [*SAP BTP Connectivity documentation*](https://github.com/SAP-docs/btp-connectivity), published source of the SAP Help Portal pages on principal propagation and technical user propagation.
-- SAP Learning, [*Defining Workflows in Sourcing and Procurement*](https://learning.sap.com/courses/implementing-sap-s-4hana-cloud-public-edition-sourcing-and-procurement/defining-workflows-in-sourcing-and-procurement_a17030df-33b7-4c0e-a8c6-31ec490618e9).
 - Suraj Kumar, Amy Wang and Srinivasan Manoharan, [*A Gateway Architecture for Enterprise MCP Authentication*](https://arxiv.org/abs/2608.10760), arXiv preprint, August 2026.
 - Thivaharan Kalyanasundaram, [*Identity and Access Management for AI Agents*](https://ceur-ws.org/Vol-4257/position1.pdf), CEUR Workshop Proceedings, Vol. 4257.
 - Rasmus Moorits Veski, Rachid Guerraoui and David Froelicher, [*CAPMAS: Capability-Based Delegation of Privileges in Multi-Agent Systems*](https://arxiv.org/abs/2609.06500), arXiv preprint, September 2026.

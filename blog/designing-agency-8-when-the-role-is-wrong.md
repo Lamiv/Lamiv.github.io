@@ -3,12 +3,12 @@ title: When the role is wrong
 subtitle: Defence in depth for agent authority, and what a risk framework is actually for
 part: 8
 date: 1 November 2026
-summary: Designing Agency Part 8 on one page: with principal propagation SAP cannot tell the buyer from the agent; independent layers owned by different people, with instructions not a control; control tests, access reviews, two-person changes and a risk owner; assume the role will be wrong one day and test for it.
+summary: Designing Agency Part 8 on one page: acting as the buyer, the system cannot tell the buyer from the agent; independent layers owned by different people, with instructions not a control; control tests, access reviews, two-person changes and a risk owner; assume the role will be wrong one day and test for it.
 ---
 
-In Part 7's sample, the agent tried to release a purchase order and was refused. Look closely at which layer refused it. SAP would have allowed the release: the buyer may release small orders, and the agent was acting as the buyer. The refusal came from the boundary's policy, the only layer that knew an agent was asking.
+In Part 7's trace, the agent tried to release a purchase order and was refused. Look closely at what refused it. The system of record would have allowed the release: the buyer may release small orders, and the agent was acting as the buyer. The refusal came from a check that knew an agent was asking.
 
-That is not an accident of the sample. With principal propagation (Part 3), SAP checks the user's roles and cannot tell the person from the agent acting for them. So the question every design has to answer is: if one control is missing or misconfigured, what else stops the agent?
+That is not an accident of the example. When an agent acts under a person's identity (Part 3), a system that checks only that person's roles cannot tell the person from the agent acting for them. So the question every design has to answer is: if one control is missing or misconfigured, what else stops the agent?
 
 ## Instructions are not a control
 
@@ -16,35 +16,35 @@ The first instinct is to tell the agent: never release orders. Do it, but do not
 
 ## Layers that fail independently
 
-The aim is several layers, owned by different people and checked in different ways, so that one person's mistake does not open them all.
+The property is that no single misconfiguration lets the agent commit. The usual way to get it is several layers, owned by different people and checked in different ways, so that one person's mistake does not open them all. Which layers exist, and where each runs, differs from one architecture to the next; this table describes them by what they do, not by product.
 
 | Layer | Owner | What it stops | If it is misconfigured |
 |---|---|---|---|
-| SAP role of the executing identity | Security administration | SAP refuses the release | The layers below still apply |
-| Boundary policy, checked before every call | Platform team, under version control | The call never reaches SAP | Review and control tests catch it |
-| Approval workflow | Business configuration | Release needs an approval bound to the terms (Part 4) | An automatic default, unless simulated and tested |
+| Role of the executing identity | Security administration | The system of record refuses the release | The layers below still apply |
+| A policy check that knows an agent is acting, wherever it runs | Platform or application team, under version control | The action never reaches the system of record | Review and control tests catch it |
+| Approval rules | Business owners | Release needs an approval bound to the terms (Part 4) | A permissive default, unless tested |
 | Detection: alerts and reconciliation | Operations or internal control | Any agent attempt at a forbidden step is flagged, allowed or not | Alerts nobody reads |
 | Agent instructions | Prompt author | Most accidental attempts | Not a control |
 
 The AI Safety Atlas explains why ownership matters. Defence in depth works when layers are genuinely independent; it weakens when they share a cause, for example when several defences *use the same underlying model with different prompts*. [AI Safety Atlas](https://ai-safety-atlas.com/chapters/v1/strategies/socio-technical-strategies) The same is true of people: three layers configured by one administrator in one afternoon are closer to one layer than three.
 
-There is also a design choice in the first row. A dedicated technical identity for the agent lets SAP's roles restrict the agent directly, even where the buyer could release, but loses the requester's own permissions. Principal propagation keeps the requester's permissions but leaves the agent distinction to the boundary. Either way, some layer must know an agent is acting.
+There is also a design choice in the first row. A dedicated identity for the agent lets the system's own roles restrict the agent directly, even where the buyer could release, but loses the requester's own limits. Acting under the requester's identity keeps those limits but leaves the agent distinction to another layer. Some platforms combine the two. Either way, some part of the system must know an agent is acting.
 
 ## Catching the administrator's mistake
 
 Assume the role will be wrong one day, and arrange to find out first.
 
-- **Control tests.** Every change to roles or policy runs a negative test: the agent tries each forbidden action, and the test passes only if all are refused. Part 7's sample includes one.
-- **Access reviews.** List what each agent identity can effectively do, with the same SAP tools used for people: user information reports and segregation-of-duties analysis.
-- **Two people for every change.** Treat agent roles and boundary policy as code. Netflix's advice for its ontology applies directly: version it, review it, test it, and let changes arrive as pull requests. [Netflix](https://netflixtechblog.com/ontology-driven-observability-building-an-end-to-end-knowledge-graph-at-netflix-scale-421392cf5adf)
-- **Fail closed.** If the boundary cannot evaluate its policy, the action is denied. [Uchibeke](https://arxiv.org/abs/2603.20953)
+- **Control tests.** Every change to roles or policy runs a negative test: the agent tries each forbidden action, and the test passes only if all are refused. Part 7's trace ends with one.
+- **Access reviews.** List what each agent identity can effectively do, with the same access-review and segregation-of-duties analysis used for people.
+- **Two people for every change.** Treat agent roles and policy as code. Netflix's advice for its ontology applies directly: version it, review it, test it, and let changes arrive as pull requests. [Netflix](https://netflixtechblog.com/ontology-driven-observability-building-an-end-to-end-knowledge-graph-at-netflix-scale-421392cf5adf)
+- **Fail closed.** If a policy cannot be evaluated, the action is denied. [Uchibeke](https://arxiv.org/abs/2603.20953)
 
 ## What the risk framework is for
 
 Controls do the stopping. A risk framework makes sure the controls exist, stay correct and have an owner. Berkeley's agentic AI profile is organised around the four functions of the NIST AI Risk Management Framework: govern, map, measure and manage. [CLTC](https://cltc.berkeley.edu/agentic-ai-risk-management-standards-profile) Applied to this one risk:
 
 1. **Map.** Record “agent releases an order without approval” in the risk register, with its causes, including “role misconfigured” and “policy missing”.
-2. **Govern.** Name the risk owner, and decide who may change agent roles and boundary policy.
+2. **Govern.** Name the risk owner, and decide who may change agent roles and policy.
 3. **Measure.** Test the controls, not only the agent. Control tests, access reviews and alert counts are the evidence.
 4. **Manage.** Set the triggers that narrow the agent's authority (Part 6), and have the owner accept the remaining risk in writing.
 
@@ -53,17 +53,17 @@ The framework's real job is to turn “the administrator might get it wrong” f
 :::risk
 **Averting risk: the whole series**
 
-| Risk | Strategy | Part |
+| Risk | Required property | Part |
 |---|---|---|
-| One vague request is read as a grant of every step | Grant authority per step | Prologue |
-| The agent drifts into irreversible steps | Agents stage; people release and send | 1, 2 |
-| Undo is assumed but impossible | Label actions restore, compensate or live with it | 2 |
-| The agent acts with too much, or someone else's, authority | Propagate identity; narrow tools; log `sub` and `act` | 3 |
-| An approval covers something nobody saw | Fingerprint the terms; check at release and sending; expire approvals | 4 |
-| Inputs and memory steer the agent | Untrusted data, tiered memory, a deterministic gate | 5 |
-| Autonomy outruns evidence | Shadow runs, red-teaming, triggers for narrowing | 6 |
-| Retries duplicate orders | Idempotency keys and reconciliation | 7 |
-| One control is wrong | Independent layers, control tests, access reviews, a risk owner | 8 |
+| One vague request is read as a grant of every step | Authority is granted per action | Prologue |
+| The agent drifts into irreversible steps | The agent cannot cross from proposal to commitment | 1, 2 |
+| Undo is assumed but impossible | Reversibility is known before approval; compensation reaches everyone affected | 2 |
+| The agent acts with too much, or someone else's, authority | Authority is the intersection of requester, agent and task, and can be established afterwards | 3 |
+| An approval covers something nobody saw | What is executed is what was approved, within its expiry | 4 |
+| Inputs and memory steer the agent | At least one layer no text can persuade | 5 |
+| Autonomy outruns evidence | Wider authority rests on evidence; narrowing is pre-agreed | 6 |
+| Retries duplicate orders | Repeating an action equals running it once | 7 |
+| One control is wrong | No single misconfiguration lets the agent commit | 8 |
 :::
 
 ## The question this leaves open

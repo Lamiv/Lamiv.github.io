@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Build the boundary · Vimal Vidyadharan</title>
-<meta name="description" content="A small, runnable boundary around an agent that works with SAP">
+<meta name="description" content="One purchase order, traced through every property the series has argued for">
 <link rel="canonical" href="https://lamiv.github.io/blog/designing-agency-7-build-the-boundary.html">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Build the boundary">
-<meta property="og:description" content="A small, runnable boundary around an agent that works with SAP">
+<meta property="og:description" content="One purchase order, traced through every property the series has argued for">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
@@ -27,83 +27,33 @@
 <article class="post">
 <header class="post-head">
 <p class="label crumbs"><a href="../blog.html">Blog</a> / <a href="../blog.html#agent-governance">AI agents and governance</a> / <span>Designing Agency</span></p>
-<p class="label post-meta"><span>Part 7 of 8</span> · <span>25 October 2026</span> · <span>5 min read</span></p>
+<p class="label post-meta"><span>Part 7 of 8</span> · <span>25 October 2026</span> · <span>6 min read</span></p>
 <h1>Build the boundary</h1>
-<p class="post-sub">A small, runnable boundary around an agent that works with SAP</p>
+<p class="post-sub">One purchase order, traced through every property the series has argued for</p>
 <p class="label byline">Vimal Vidyadharan</p>
 </header>
-<aside class="codepanel" aria-label="Code for this part"><p class="label">Code for this part</p><ul><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/designing-agency/README.md"><code>README.md</code></a></li><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/designing-agency/boundary.py"><code>boundary.py</code></a></li></ul><p class="codepanel-actions"><a class="btn go" href="code/designing-agency.zip" download>Download all (.zip)</a> <a class="btn" href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/designing-agency">View on GitHub</a></p></aside>
-<p>Six parts of argument come down to a few rules that can be written as code. This part builds them as a small Python program, around a mock of SAP S/4HANA, and runs one purchase order through every failure case the series has named. It uses only the standard library. Every file is in the <em>Code for this part</em> panel above, to read or download.</p>
-<pre class="code"><code>python boundary.py</code></pre>
-<h2 id="who-does-what">Who does what</h2>
-<div class="tablewrap"><table><thead><tr><th>Party</th><th>In the sample</th><th>What it may do</th></tr></thead><tbody><tr><td>Requester</td><td><code>buyer</code></td><td>Ask for the order; its identity is the one SAP executes under</td></tr><tr><td>Agent</td><td><code>agent-proc</code></td><td>Stage and change draft orders, nothing else</td></tr><tr><td>Approver</td><td><code>manager</code>, from configuration</td><td>Approve a specific version of the order</td></tr><tr><td>The boundary</td><td>A gate in front of SAP</td><td>Check every action before it reaches SAP, and log it</td></tr></tbody></table></div>
-<p>The mock SAP keeps a version number on each order, records what was sent to suppliers, and can lose a response after the action has taken effect, which is the case that causes duplicates in real systems.</p>
-<h2 id="rule-1-the-agent-stages-people-commit">Rule 1: the agent stages, people commit</h2>
-<p>Every call passes a deterministic check outside the model. Agents may stage and change; release and sending belong to people (Parts 1 and 2).</p>
-<pre class="code"><code>def check(self, actor, action):
-    if actor.startswith(&quot;agent&quot;) and action not in self.agent_may:
-        self.alerts.append(f&quot;{actor} attempted {action}&quot;)   # detect, not only prevent
-        raise Denied(f&quot;boundary policy: {actor} may not {action}&quot;)</code></pre>
-<p>The draft is created under the buyer's identity, as principal propagation would do (Part 3), and the audit line records both: <code>sub=buyer act=agent-proc</code>.</p>
-<h2 id="rule-2-the-approver-is-configured-and-is-not-the-creator">Rule 2: the approver is configured, and is not the creator</h2>
-<p>The approver comes from configuration, not from anything the agent says, and the creator cannot approve their own order, as SAP's flexible workflow can enforce by excluding restricted agents (Part 4).</p>
-<h2 id="rule-3-an-approval-covers-exact-terms-for-a-limited-time">Rule 3: an approval covers exact terms, for a limited time</h2>
-<p>When the manager approves, the boundary stores a fingerprint of the material terms (supplier, material, quantity, price, currency, delivery date) and the version. At release and again before sending, it recomputes the fingerprint. Any difference, or an expired approval, blocks the step and says what changed.</p>
-<pre class="code"><code>def fingerprint(po):
-    material = {k: po.terms[k] for k in MATERIAL_TERMS} | {&quot;version&quot;: po.version}
-    return hashlib.sha256(json.dumps(material, sort_keys=True).encode()).hexdigest()[:12]</code></pre>
-<h2 id="rule-4-a-retry-must-not-create-a-second-order">Rule 4: a retry must not create a second order</h2>
-<p>The IETF's draft standard for an <code>Idempotency-Key</code> HTTP header describes the mechanism: the client sends a unique key with a request, so that the server can recognise a retry of the same request. If a key is reused with a different payload, the server should reject it; if a retry arrives while the original is still being processed, it should answer with a conflict.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
-<p>The sample derives the key from the order and its version. When a call times out, the outcome is unknown: the order may or may not have gone. Instead of sending again, the boundary first asks SAP whether that key was already processed. Microsoft's guidance makes the same point about recovery in general: a step may run more than once when retried, so design each step as an idempotent command.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
-<h2 id="running-it">Running it</h2>
-<pre class="code"><code>1. The agent stages a proposal for the buyer
-  ok      agent stages a draft order
-2. The agent tries to go further
-  (SAP itself would allow the buyer to release: True)
-  blocked agent releases the order as the buyer
-          reason: boundary policy: agent-proc may not release
-3. Approval
-  blocked buyer approves own order
-          reason: buyer created 4500000001 and cannot approve it
-  ok      manager approves
-4. The supplier revises the price and the agent updates the draft
-  ok      agent changes price to 2.35
-  blocked manager releases
-          reason: approval covers an earlier version; changed: price 2.10 -&gt; 2.35
-5. Reapproval of the changed order
-  ok      manager approves again
-  blocked manager releases, ten days later
-          reason: approval for 4500000001 expired on 27 Oct
-  ok      manager releases
-6. Sending, with a lost response
-  ok      output to supplier
-  ok      output to supplier, retried
-  the supplier received 1 order(s): [(&#x27;4500000001&#x27;, 2)]
-7. Control test: forbidden actions must be refused
-  passed
-
-Alerts for review: [&#x27;agent-proc attempted release&#x27;]</code></pre>
-<p>Reading it step by step:</p>
-<ol class="list">
-<li>The agent stages a draft under the buyer's identity.</li>
-<li>It tries to release the order. Note the line above the refusal: SAP <em>would</em> have allowed it, because the buyer may release small orders and the agent acts as the buyer. The refusal comes from the boundary's policy, the one layer that knows an agent is asking. Part 8 is about exactly this.</li>
-<li>The buyer cannot approve their own order; the configured manager can.</li>
-<li>The supplier revises the price and the agent updates the draft. The old approval no longer covers it, and the block says what changed.</li>
-<li>A fresh approval covers the new version. A release after the approval has expired is refused; a timely one goes through.</li>
-<li>The first send takes effect but its response is lost. The boundary reconciles with SAP before retrying, and the retry does nothing. The supplier receives one order, not two.</li>
-<li>A control test tries every forbidden action as the agent and passes only if each is refused. Run on every change to roles or policy, it catches a widened permission before production.</li>
-</ol>
-<p>The refused attempt also raises an alert, and the audit trail records every step with <code>sub</code>, the SAP identity, and <code>act</code>, the agent where one acted: enough to answer the auditor's question from Part 3.</p>
-<h2 id="what-production-would-add">What production would add</h2>
-<p>This is teaching code. A real boundary would use SAP's own workflow for approver choice and release, principal propagation for the executing identity, durable storage for approvals and keys, signed audit records, and monitoring with the triggers from Part 6. The rules would stay the same.</p>
+<p>Six parts of argument come down to a handful of properties. This part puts them to work on one hypothetical purchase order and follows it through every failure the series has named. It describes what each step must guarantee, not how a particular product or framework would implement it; a runnable version, built and tested in code, belongs to the next series, <em>Agent Harness Engineering</em>.</p>
+<h2 id="the-cast">The cast</h2>
+<div class="tablewrap"><table><thead><tr><th>Party</th><th>In this trace</th><th>What it may do</th></tr></thead><tbody><tr><td>Requester</td><td>The buyer</td><td>Ask for the order; the system of record treats actions as theirs</td></tr><tr><td>Agent</td><td>A procurement agent</td><td>Stage and change draft orders, nothing else</td></tr><tr><td>Approver</td><td>The buyer's manager, chosen by rules the business owns</td><td>Approve a specific version of the order</td></tr><tr><td>The boundary</td><td>Wherever the checks below are enforced: application, runtime or a separate service</td><td>Decide whether each action is legitimate, and record it</td></tr></tbody></table></div>
+<p>Notice that the buyer, in this company, is allowed to release small orders. That detail matters in step 2.</p>
+<h2 id="the-trace">The trace</h2>
+<div class="tablewrap"><table><thead><tr><th>Step</th><th>What happens</th><th>Property being tested</th><th>Outcome</th></tr></thead><tbody><tr><td>1</td><td>The agent stages a draft for 4,000 cartons at 2.10</td><td>The agent works on the proposal side of the line (Part 1)</td><td>Allowed: a draft anyone can change</td></tr><tr><td>2</td><td>The agent tries to release the order, acting as the buyer</td><td>Ability to invoke an action is not authority to perform it (Part 3)</td><td><strong>Refused.</strong> The system of record would have allowed it, because the buyer may release. Only a check that knows an agent is asking can refuse it</td></tr><tr><td>3</td><td>The buyer tries to approve their own order</td><td>The person who asked cannot approve the result (Parts 3 and 4)</td><td><strong>Refused</strong>; the manager approves instead</td></tr><tr><td>4</td><td>The supplier revises the price to 2.35 and the agent updates the draft</td><td>Approval covers exact terms and version (Part 4)</td><td><strong>Release refused</strong>: the approval covered an earlier version; the refusal says what changed</td></tr><tr><td>5</td><td>The manager approves the new version, but release is attempted ten days later</td><td>Approvals expire (Part 4)</td><td><strong>Refused</strong>; a timely release then succeeds</td></tr><tr><td>6</td><td>The order is sent; the response is lost in a timeout</td><td>Repeating an action has the same effect as running it once (Part 2)</td><td>The retry checks first, finds the order already sent, and does nothing: <strong>one order, not two</strong></td></tr><tr><td>7</td><td>After any change to roles or policy, a test tries every forbidden action as the agent</td><td>Controls are tested, not assumed (Parts 6 and 8)</td><td>Passes only if every forbidden action is refused</td></tr></tbody></table></div>
+<p>Every refusal in that table raises an alert, and every step is recorded with the requester, the agent and the identity that executed it: enough to answer the auditor's question from Part 3.</p>
+<h2 id="four-properties-many-mechanisms">Four properties, many mechanisms</h2>
+<p><strong>The agent stages, people commit.</strong> The property is that an agent cannot cross from proposal to commitment on its own. Mechanisms include permissions without release or send rights, a draft status that only people can promote, or a policy check that refuses commitment actions from agent identities. Step 2 shows why the check must know an agent is involved: if the agent acts with the buyer's full rights, the system of record alone has no reason to refuse.</p>
+<p><strong>The approver is decided by rules, and is not the requester.</strong> The property is that approval comes from someone with authority who did not ask. Mechanisms include approval rules based on organisation, budget or value, with the creator excluded and the creator set to the person who asked.</p>
+<p><strong>An approval covers exact terms, for a limited time.</strong> The property is that what is executed is what was approved. Mechanisms include fingerprints of the material terms, version checks at execution, signed approval records or reapproval rules, all checked at release and again before sending.</p>
+<p><strong>A retry must not create a second order.</strong> The property is that repeating an action has the same effect as running it once. One mechanism is described in the IETF's draft standard for an <code>Idempotency-Key</code> HTTP header: the client sends a unique key with a request, so the server can recognise a retry; a reused key with a different payload should be rejected, and a retry that arrives while the original is still being processed should get a conflict.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup> After a timeout the outcome is unknown, so the safe sequence is to ask whether the first attempt took effect before trying again. Microsoft's architecture guidance makes the same point about recovery in general: a step may run more than once when retried, so design each step as an idempotent command.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
+<h2 id="what-this-trace-does-not-claim">What this trace does not claim</h2>
+<p>It does not say where the boundary must live. In one organisation the application enforces all four properties itself. In another, the agent's runtime does, or an identity service, or a separate policy layer, or a mixture. Some platforms provide several of these properties built in. The trace is a test any design can be held to: walk the same seven steps and see which ones your system refuses, and why.</p>
 <aside class="box risk">
 <p><strong>Averting risk</strong></p>
-<div class="tablewrap"><table><thead><tr><th>Risk</th><th>Strategy</th><th>What it still does not cover</th></tr></thead><tbody><tr><td>The agent releases or sends</td><td>A policy check in front of SAP that knows an agent is asking</td><td>A policy that is itself wrong (Part 8)</td></tr><tr><td>A changed order goes out on an old approval</td><td>Fingerprint the material terms; check at release and before sending; expire approvals</td><td>Terms outside the fingerprint</td></tr><tr><td>A retry duplicates an order</td><td>Idempotency keys; reconcile after a timeout before retrying</td><td>Systems with no way to look a request up</td></tr><tr><td>A permission is widened by mistake</td><td>A control test on every change to roles or policy</td><td>Actions the test does not list</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Risk</th><th>Required property</th><th>Possible mechanisms</th><th>Still not covered</th></tr></thead><tbody><tr><td>The agent releases or sends</td><td>Agents cannot commit, even with a person's rights</td><td>Commitment actions refused for agent identities; staged writes</td><td>A policy that is itself wrong (Part 8)</td></tr><tr><td>A changed order goes out on an old approval</td><td>What is executed is what was approved</td><td>Fingerprints, version checks or signed approvals, checked at release and sending</td><td>Terms outside what is bound</td></tr><tr><td>A retry duplicates an order</td><td>Repeating an action equals running it once</td><td>Idempotency keys; checking status after a timeout before retrying</td><td>Systems with no way to look a request up</td></tr><tr><td>A permission is widened by mistake</td><td>Controls are tested on every change</td><td>Negative tests of forbidden actions</td><td>Actions the test does not list</td></tr></tbody></table></div>
 </aside>
 <aside class="box question">
-<p><strong>A question to sit with.</strong> Which of the four rules does your current agent design enforce outside the model, and which depend on the model behaving well?</p>
+<p><strong>A question to sit with.</strong> Walk your own agent through the seven steps. Which refusals does something outside the model enforce, and which depend on the model behaving well?</p>
 </aside>
-<p>The sample's step 2 deserves a closer look. If the boundary's policy were missing, or SAP's role were wrong, what else would stop the agent? Part 8 takes that question on.</p>
+<p>Step 2 deserves a closer look. If the check that knows an agent is asking were missing, or the buyer's role were wrong, what else would stop the agent? Part 8 takes that question on.</p>
 <h2 id="sources">Sources</h2>
 <ol class="sources numbered"><li id="src-1">Jayadeba Jena and Sanjay Dalal, <a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header"><em>The Idempotency-Key HTTP Header Field</em></a>, IETF Internet-Draft, version 08, October 2026.</li><li id="src-2">Microsoft, <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction"><em>Compensating Transaction pattern</em></a>, Azure Architecture Center.</li></ol>
 <ul class="sources">

@@ -1,14 +1,14 @@
 ---
 title: Choose the action before the agent
-subtitle: SAP has automated procurement steps for decades. The question is which steps to hand to an agent, not whether to automate
+subtitle: Enterprise systems have automated some steps for decades. The question is which steps to hand to an agent, not whether to automate
 part: 1
 date: 4 October 2026
-summary: Designing Agency Part 1 on one page: SAP already automates requisitions; the ladder of a purchase from requisition to sending the order, with a line between proposals and commitments; five questions per action, with cumulative exposure circled as systemic risk; agents propose, people commit.
+summary: Designing Agency Part 1 on one page: planning systems already automate requisitions; the ladder of a purchase from requisition to sending the order, with a line between proposals and commitments; five questions per action, with cumulative exposure circled as systemic risk; agents propose, people commit.
 ---
 
-Long before anyone spoke of AI agents, SAP was creating purchase requisitions without asking anyone. In reorder point planning, when the stock of a material falls below a predefined level, a replenishment is triggered. [SAP Learning](https://learning.sap.com/courses/exploring-production-planning-in-sap-s-4hana/understanding-mrp-in-sap-s-4hana) A material requirements planning run can create purchase requisitions automatically instead of anyone entering them, given the right configuration and material master data. [SAP Learning](https://learning.sap.com/courses/business-processes-in-sap-s-4hana-sourcing-procurement/running-materials-requirements-planning)
+Long before anyone spoke of AI agents, planning systems were creating purchase requisitions without asking anyone. When the stock of a material falls below its reorder point, or a planning run finds a future shortage, the system proposes a replenishment on its own.
 
-Nobody loses sleep over this. Planned orders and purchase requisitions are internal planning elements: they can be changed, rescheduled or deleted at almost any time. A purchase order is different. Once it is approved, released and sent, the supplier plans around it and the company is committed.
+Nobody loses sleep over this. A requisition is an internal proposal: it can be changed, rescheduled or deleted at almost any time. A purchase order is different. Once it is approved, released and sent, the supplier plans around it and the company is committed.
 
 That distinction, between proposals that can still change and commitments that bind, is the right place to start with agents. The question is not whether an agent should act. It is which actions it should take, and which stay with people.
 
@@ -16,14 +16,27 @@ That distinction, between proposals that can still change and commitments that b
 
 | Step | Who acts | What it changes | Can it be undone? | Sensible autonomy |
 |---|---|---|---|---|
-| 1. Requisition from reorder point or planning run | SAP, by configuration | An internal proposal | Yes: change or delete | Already automatic |
+| 1. Requisition from reorder point or planning run | The planning system, by configuration | An internal proposal | Yes: change or delete | Already automatic |
 | 2. Collect quotes, compare suppliers, check contract terms and price history | Agent | Nothing; information only | Nothing to undo | Autonomous |
 | 3. Negotiate within a written brief | Agent | Messages to outsiders | Words cannot be unsent, but nothing binds | Bounded |
 | 4. Draft the purchase order with sources and reasons | Agent | A draft that anyone can change | Yes: discard | Autonomous, draft only |
-| 5. Approve and release | A person chosen by workflow | The order becomes valid | Partly | Human |
-| 6. Send to the supplier | SAP output, after release | A commitment outside the company | No: only compensate | Never the agent's decision |
+| 5. Approve and release | A person, chosen by rules the business owns | The order becomes valid | Partly | Human |
+| 6. Send to the supplier | The purchasing system, after release | A commitment outside the company | No: only compensate | Never the agent's decision |
 
-Steps 1, 2 and 4 are on the safe side of SAP's own line: they create information or proposals that can be changed. Steps 5 and 6 are on the other side. Step 3 is the one that needs the most thought.
+Steps 1, 2 and 4 are on the safe side of the line: they create information or proposals that can be changed. Steps 5 and 6 are on the other side. Step 3 is the one that needs the most thought.
+
+## The same line elsewhere
+
+The ladder is not special to purchasing. Every domain has a point where a proposal becomes a commitment.
+
+| Domain | Proposal: can still change | Commitment: binds or changes the world |
+|---|---|---|
+| Finance | A prepared payment run | Payments released to the bank |
+| Customer service | A drafted reply and a suggested goodwill credit | The credit issued to the customer's account |
+| Infrastructure operations | A change plan with a rollback step | The change applied to production |
+| Industrial systems | A recommended setpoint | The setpoint written to a controller |
+
+The design question is the same each time: where exactly is that line, and on which side is the agent allowed to work?
 
 ## Five questions for each action
 
@@ -37,15 +50,17 @@ To place any action on the ladder, ask five questions.
 
 ## Negotiation: the step in the middle
 
-An agent negotiating with suppliers creates nothing in SAP, yet it changes things that matter: relationships, expectations and what a supplier believes was agreed. That is why it needs a written brief: target price, walk-away point, what it may disclose, and a plain rule that it cannot accept, commit or sign. Every message should be logged against the requisition it relates to. The brief turns negotiation from open-ended agency into bounded agency.
+An agent negotiating with suppliers creates no records, yet it changes things that matter: relationships, expectations and what a supplier believes was agreed. That is why it needs a written brief: target price, walk-away point, what it may disclose, and a plain rule that it cannot accept, commit or sign. Every message should be logged against the requisition it relates to. The brief turns negotiation from open-ended agency into bounded agency.
 
-Safin and Balta call these moves *tool fencing*, which limits a required tool to the operations and targets the task warrants, and *write staging*, which puts a draft or pending layer between an agent's action and its authoritative commit, until the staged output is explicitly promoted. [Safin and Balta](https://arxiv.org/abs/2605.12105)
+Safin and Balta call these moves *tool fencing*, which limits a required tool to the operations and targets the task warrants, and *write staging*, which puts a draft or pending layer between an agent's action and its authoritative commit, until the staged output is explicitly promoted. [Safin and Balta](https://arxiv.org/abs/2605.12105) Both are properties first. A fence might be a narrowly scoped credential, a restricted tool interface or a rule in the application itself; staging might be a draft status, a separate pending table or a change request.
 
 ## Sales: when waiting has a price
 
 Sales looks different at first. If a customer asks for a quotation and the reply takes two days, the customer may go elsewhere. Waiting has a cost of its own, and that is an argument for speed.
 
 It is not an argument for removing the decision. The agent can assemble the quotation in minutes: prices, availability, delivery dates and the margin effect of any discount. Committing a discount, a delivery date or credit terms is the same kind of step as sending a purchase order: a promise to someone outside the company. The cost of waiting justifies a faster approval path, with the right approver, a deadline and an escalation route. It does not justify skipping one.
+
+Infrastructure and industrial operations sharpen the point. There, waiting can itself cause harm, and the safe default may be a protective action, such as stopping a process, rather than doing nothing. That does not remove the line; it moves the question to which protective actions an agent may take on its own and which recoveries still need a person.
 
 ## Proportional checks
 
@@ -54,23 +69,21 @@ Researchers at Luiss University propose classifying agent actions into risk tier
 :::risk
 **Averting risk**
 
-| Risk | Strategy | What it still does not cover |
-|---|---|---|
-| The agent overcommits while negotiating | A written brief; no ability to accept or commit; every message logged | A supplier who treats the agent's words as binding |
-| Many small actions add up to a large one | Limits across actions, per supplier and per period | Limits set too high |
-| A proposal never reaches a decision | Workflow deadlines and escalation | A rubber-stamp approver (Part 4) |
-| The agent drifts into irreversible steps | No release or output authorisation in the agent's role | Approvers who hold very broad rights |
+| Risk | Required property | Possible mechanisms | Still not covered |
+|---|---|---|---|
+| The agent overcommits while negotiating | The agent can communicate but cannot commit | A written brief; no accept or sign capability; every message logged | A counterparty who treats the agent's words as binding |
+| Many small actions add up to a large one | Limits apply to cumulative exposure, not only single actions | Running totals per supplier and period; aggregate thresholds | Limits set too high |
+| A proposal never reaches a decision | Every proposal reaches a decision or an owner | Deadlines and escalation in whatever approval process is used | A rubber-stamp approver (Part 4) |
+| The agent drifts into irreversible steps | The agent cannot cross from proposal to commitment | Permissions without release or send rights; staged writes | Approvers who hold very broad rights |
 :::
 
 :::question
-**A question to sit with.** Which step in your purchasing or sales process would you be comfortable automating tomorrow, and which one would you never automate? Is the line between them where SAP already draws it, between proposals and commitments?
+**A question to sit with.** Which step in your purchasing or sales process would you be comfortable automating tomorrow, and which one would you never automate? Does the line between them fall where proposals become commitments?
 :::
 
 Part 2 takes the “can it be undone?” column and asks what undoing actually means.
 
 ## Sources
 
-- SAP Learning, [*Understanding MRP in SAP S/4HANA*](https://learning.sap.com/courses/exploring-production-planning-in-sap-s-4hana/understanding-mrp-in-sap-s-4hana), Exploring Production Planning in SAP S/4HANA.
-- SAP Learning, [*Running Materials Requirements Planning*](https://learning.sap.com/courses/business-processes-in-sap-s-4hana-sourcing-procurement/running-materials-requirements-planning), Business Processes in SAP S/4HANA Sourcing and Procurement.
 - Damir Safin and Dian Balta, [*Autonomy and Agency in Agentic AI: Architectural Tactics for Regulated Contexts*](https://arxiv.org/abs/2605.12105), arXiv preprint, May 2026.
 - Giorgio Piccardo, Giuseppe F. Italiano and Alessio Martino, [*The Agentic Kill Chain: A Cognitive Threat Framework for Autonomous Agent Ecosystems*](https://ceur-ws.org/Vol-4198/paper7.pdf), CEUR Workshop Proceedings, Vol. 4198.
