@@ -3,6 +3,7 @@ title: How does an agent earn more autonomy?
 subtitle: Evidence for widening authority, and triggers for narrowing it again
 part: 6
 date: 25 October 2026
+summary: Designing Agency Part 6 on one page: an evidence ladder from shadow mode to wider autonomy; reading benchmarks carefully; triggers, revocation and circuit breakers to take authority back, and keeping people skilled; widen authority on evidence, narrow it on triggers.
 ---
 
 No agent should start with the authority it might eventually deserve. The question is what evidence justifies more, and what takes it back.

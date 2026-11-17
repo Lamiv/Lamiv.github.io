@@ -3,6 +3,7 @@ title: When the role is wrong
 subtitle: Defence in depth for agent authority, and what a risk framework is actually for
 part: 8
 date: 1 November 2026
+summary: Designing Agency Part 8 on one page: with principal propagation SAP cannot tell the buyer from the agent; independent layers owned by different people, with instructions not a control; control tests, access reviews, two-person changes and a risk owner; assume the role will be wrong one day and test for it.
 ---
 
 In Part 7's sample, the agent tried to release a purchase order and was refused. Look closely at which layer refused it. SAP would have allowed the release: the buyer may release small orders, and the agent was acting as the buyer. The refusal came from the boundary's policy, the only layer that knew an agent was asking.

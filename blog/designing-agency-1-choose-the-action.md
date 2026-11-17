@@ -3,6 +3,7 @@ title: Choose the action before the agent
 subtitle: SAP has automated procurement steps for decades. The question is which steps to hand to an agent, not whether to automate
 part: 1
 date: 4 October 2026
+summary: Designing Agency Part 1 on one page: SAP already automates requisitions; the ladder of a purchase from requisition to sending the order, with a line between proposals and commitments; five questions per action, with cumulative exposure circled as systemic risk; agents propose, people commit.
 ---
 
 Long before anyone spoke of AI agents, SAP was creating purchase requisitions without asking anyone. In reorder point planning, when the stock of a material falls below a predefined level, a replenishment is triggered. [SAP Learning](https://learning.sap.com/courses/exploring-production-planning-in-sap-s-4hana/understanding-mrp-in-sap-s-4hana) A material requirements planning run can create purchase requisitions automatically instead of anyone entering them, given the right configuration and material master data. [SAP Learning](https://learning.sap.com/courses/business-processes-in-sap-s-4hana-sourcing-procurement/running-materials-requirements-planning)

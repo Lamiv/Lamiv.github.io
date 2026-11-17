@@ -3,6 +3,7 @@ title: Whose authority is it acting on?
 subtitle: Requester, agent, SAP identity and approver are four parties, not one
 part: 3
 date: 11 October 2026
+summary: Designing Agency Part 3 on one page: requester, agent, SAP identity and approver are four parties; three ways to call SAP; the agent inherits the user's rights and SAP sees the user, not the agent; propagate identity, narrow the tools, record both identities.
 ---
 
 When an agent creates a purchase order in SAP S/4HANA, four parties are involved, and it pays to keep them apart. The **requester** is the buyer who asked. The **agent** is the software that did the work. The **executing identity** is the user SAP believes performed the action, and whose roles it checked. The **approver** is the person workflow asks to approve or release it. Most agent designs blur at least two of them.
