@@ -13,7 +13,7 @@
 <script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="../assets/brand.css?v=28">
+<link rel="stylesheet" href="../assets/brand.css?v=29">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -48,11 +48,11 @@
 <h2 id="four-words-that-are-often-blurred">Four words that are often blurred</h2>
 <p><strong>Agency</strong> is what the agent can perceive and affect: the data it can read and the tools it can use. Damir Safin and Dian Balta of fortiss grade it in five levels, from reasoning over text it is given (L1), through read-only access to outside systems (L3), to writes that are cheap to undo, such as drafts (L4), and writes that are costly to undo, such as final submissions and payments (L5).<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
 <p><strong>Autonomy</strong> is how much happens without a person. Their five levels run from an <em>operator</em>, where a human commands each sub-task, to an <em>approver</em>, where the agent executes but pauses for explicit sign-off before consequential actions, to an <em>observer</em>, where it runs on its own and people monitor and can intervene.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
-<p><strong>Authorisation</strong> is what the agent is permitted to do, and on whose behalf. In most enterprise systems that comes down to roles and the identity an action executes under, which Part 3 takes apart. UC Berkeley's agentic AI risk profile puts the principle simply: apply least privilege when granting agents access.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
+<p><strong>Authorisation</strong> is what the agent is permitted to do, and on whose behalf. In most enterprise systems that comes down to roles and the identity an action executes under, which Part 3 takes apart. UC Berkeley's agentic AI risk profile puts the principle simply: apply <a class="term" href="https://en.wikipedia.org/wiki/Principle_of_least_privilege" target="_blank" rel="noopener" data-note="Give each person or system only the access its task needs, and nothing more." data-src="Wikipedia">least privilege</a> when granting agents access.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
 <p><strong>Accountability</strong> is who answers for the outcome. The same profile lists clear role definitions, intervention points, escalation pathways and shutdown mechanisms as levers of human control and accountability.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
 <p>Safin and Balta make one distinction sharper than any other: <em>whether a human must approve an action is determined by the autonomy design; whether the action can be undone is a property of the action itself.</em><sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup> You choose the first. You inherit the second.</p>
 <h2 id="think-freely-act-narrowly">Think freely, act narrowly</h2>
-<p>The useful consequence is that the four can be set independently. An agent can have wide freedom to read, compare and propose while its authority to commit is narrow. Safin and Balta describe an <em>autonomous monitor</em>: high autonomy, but read-only agency, so it cannot alter any system of record and the risk of a consequential wrong action is minimised. They also describe the opposite, a <em>supertool</em>: powerful, often irreversible capabilities, deliberately kept at low autonomy so a person orchestrates every use.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
+<p>The useful consequence is that the four can be set independently. An agent can have wide freedom to read, compare and propose while its authority to commit is narrow. Safin and Balta describe an <em>autonomous monitor</em>: high autonomy, but read-only agency, so it cannot alter any <a class="term" href="https://en.wikipedia.org/wiki/System_of_record" target="_blank" rel="noopener" data-note="The system that holds the authoritative version of a piece of business data, such as the ERP for purchase orders." data-src="Wikipedia">system of record</a> and the risk of a consequential wrong action is minimised. They also describe the opposite, a <em>supertool</em>: powerful, often irreversible capabilities, deliberately kept at low autonomy so a person orchestrates every use.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
 <p>For the buyer's order, that suggests a shape. Let the agent roam through quotes, history and contract terms. Let it draft. Keep approval, release and sending where accountability already lives.</p>
 <h2 id="three-ways-it-goes-wrong">Three ways it goes wrong</h2>
 <p>The AI Safety Atlas sorts AI risks by cause: <em>misuse</em>, where people use a system to cause harm; <em>misalignment</em>, where a system pursues goals other than the ones intended; and <em>systemic</em> risks that emerge from many interactions, with overlap between all three.<sup class="cite"><a href="#src-3" aria-label="Source 3">3</a></sup></p>
@@ -70,13 +70,13 @@
 <h2 id="the-series">The series</h2>
 <ol class="list">
 <li><strong>Choose the action before the agent</strong>: which steps can be automatic, which bounded, which human.</li>
-<li><strong>Can you undo what it just did?</strong> Restoring, compensating and living with it.</li>
+<li><strong>Can you undo what it just did?</strong> Restoring, <a class="term" href="https://en.wikipedia.org/wiki/Compensating_transaction" target="_blank" rel="noopener" data-note="Undoing an action&#x27;s effect with a new, opposite action, such as a cancellation or credit note, because the original cannot simply be erased." data-src="Wikipedia">compensating</a> and living with it.</li>
 <li><strong>Whose authority is it acting on?</strong> Requester, agent, executing identity and approver.</li>
 <li><strong>What exactly did the human approve?</strong> Binding approval to the terms that were seen.</li>
 <li><strong>When the agent's inputs turn against it</strong>: injected instructions and poisoned memory.</li>
 <li><strong>How does an agent earn more autonomy?</strong> Evidence for widening authority, and triggers for narrowing it.</li>
 <li><strong>Build the boundary</strong>: one order traced through every property.</li>
-<li><strong>When the role is wrong</strong>: defence in depth, and what a risk framework is for.</li>
+<li><strong>When the role is wrong</strong>: <a class="term" href="https://en.wikipedia.org/wiki/Defense_in_depth_(computing)" target="_blank" rel="noopener" data-note="Several independent layers of protection, so that a failure in one is caught by another." data-src="Wikipedia">defence in depth</a>, and what a risk framework is for.</li>
 </ol>
 <aside class="box risk">
 <p><strong>Averting risk</strong></p>
@@ -95,6 +95,6 @@
 </article>
 </main>
 <footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
-<script src="../assets/brand.js?v=8"></script>
+<script src="../assets/brand.js?v=9"></script>
 </body>
 </html>

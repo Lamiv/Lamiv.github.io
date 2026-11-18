@@ -13,7 +13,7 @@
 <script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="../assets/brand.css?v=28">
+<link rel="stylesheet" href="../assets/brand.css?v=29">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -33,13 +33,13 @@
 <p class="label byline">Vimal Vidyadharan</p>
 </header>
 <aside class="codepanel" aria-label="Code for this part"><p class="label">Code for this part</p><ul><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/README.md"><code>README.md</code></a></li><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/nesy_loop.py"><code>nesy_loop.py</code></a></li><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/procurement.ttl"><code>procurement.ttl</code></a></li><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/requirements.txt"><code>requirements.txt</code></a></li><li><a href="https://github.com/Lamiv/Lamiv.github.io/blob/main/blog/code/closing-the-loop/shapes.ttl"><code>shapes.ttl</code></a></li></ul><p class="codepanel-actions"><a class="btn go" href="code/closing-the-loop.zip" download>Download all (.zip)</a> <a class="btn" href="https://github.com/Lamiv/Lamiv.github.io/tree/main/blog/code/closing-the-loop">View on GitHub</a></p></aside>
-<p>Six parts of argument deserve one of practice. This part builds the procurement loop from the prologue as a small agent in Python. Claude is the agent's brain: it reads supplier quotes and proposes how to split an order. An ontology and SHACL rules check each proposal, and the reasons go back to Claude until the proposal passes, the attempts run out or the order reaches the approval gate.</p>
+<p>Six parts of argument deserve one of practice. This part builds the procurement loop from the prologue as a small agent in Python. Claude is the agent's brain: it reads supplier quotes and proposes how to split an order. An <a class="term" href="https://en.wikipedia.org/wiki/Ontology_(information_science)" target="_blank" rel="noopener" data-note="A formal, shared definition of the things in a domain (such as supplier or corporate group), their properties and how they relate, written so that software can reason with it." data-src="Wikipedia">ontology</a> and <a class="term" href="https://www.w3.org/TR/shacl/" target="_blank" rel="noopener" data-note="Shapes Constraint Language: the W3C standard for checking that data meets stated rules, and reporting exactly which rule each record breaks." data-src="W3C">SHACL</a> rules check each proposal, and the reasons go back to Claude until the proposal passes, the attempts run out or the order reaches the approval gate.</p>
 <p>The full sample is three files and runs offline. Every file is in the <em>Code for this part</em> panel above, to read or download.</p>
 <pre class="code"><code>pip install -r requirements.txt
 python nesy_loop.py          # scripted proposer, no API key needed
 python nesy_loop.py --live   # Claude as the proposer, needs ANTHROPIC_API_KEY</code></pre>
 <h2 id="who-does-what">Who does what</h2>
-<div class="tablewrap"><table><thead><tr><th>Role</th><th>In this sample</th><th>What it decides</th></tr></thead><tbody><tr><td>Neural: the agent's brain</td><td>Claude, called through the Anthropic Python SDK</td><td>How to split the order, given the quotes and any reasons for rejection</td></tr><tr><td>Symbolic: the rulebook</td><td>An ontology in RDF, checked with SHACL rules (rdflib and pySHACL)</td><td>Whether a proposal is allowed, and if not, why</td></tr><tr><td>Workflow</td><td>A LangGraph graph</td><td>What happens next: retry, escalate or go to the release gate</td></tr><tr><td>Release gate</td><td>A check of the order's SAP approval status</td><td>Whether anything is actually released</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Role</th><th>In this sample</th><th>What it decides</th></tr></thead><tbody><tr><td>Neural: the agent's brain</td><td>Claude, called through the Anthropic Python SDK</td><td>How to split the order, given the quotes and any reasons for rejection</td></tr><tr><td>Symbolic: the rulebook</td><td>An ontology in <a class="term" href="https://www.w3.org/TR/rdf11-primer/" target="_blank" rel="noopener" data-note="Resource Description Framework: the W3C standard for writing data as triples, so that data from different systems can be linked." data-src="W3C">RDF</a>, checked with SHACL rules (rdflib and pySHACL)</td><td>Whether a proposal is allowed, and if not, why</td></tr><tr><td>Workflow</td><td>A <a class="term" href="https://github.com/langchain-ai/langgraph" target="_blank" rel="noopener" data-note="An open-source Python library for building AI agents as a graph of steps, with state passed from step to step." data-src="GitHub">LangGraph</a> graph</td><td>What happens next: retry, escalate or go to the release gate</td></tr><tr><td>Release gate</td><td>A check of the order's SAP approval status</td><td>Whether anything is actually released</td></tr></tbody></table></div>
 <p>Claude never decides compliance and never releases anything. It proposes; the rules and the gate decide.</p>
 <p>So that anyone can run the sample without an API key, the default mode swaps Claude for a scripted stand-in that replays three plausible proposals. The <code>--live</code> flag puts Claude back in its seat.</p>
 <h2 id="step-1-write-the-facts-down">Step 1: write the facts down</h2>
@@ -50,7 +50,7 @@ ex:S200300 a ex:Supplier ; ex:sapId &quot;200300&quot; ; ex:memberOf ex:GroupEas
 ex:PurchasingPolicy ex:groupCap &quot;0.60&quot;^^xsd:decimal .
 ex:PO4500 a ex:PurchaseOrder ; ex:approvalStatus &quot;pending&quot; .</code></pre>
 <h2 id="step-2-write-the-rule-down">Step 2: write the rule down</h2>
-<p>As Part 3 noted, OWL cannot add numbers across suppliers, so the cap is a SHACL rule with an embedded SPARQL query. It sums shares <em>per group</em>, which is the whole point:</p>
+<p>As Part 3 noted, <a class="term" href="https://www.w3.org/TR/owl2-overview/" target="_blank" rel="noopener" data-note="Web Ontology Language: the W3C standard for writing an ontology so that a reasoner can draw conclusions from it and detect contradictions." data-src="W3C">OWL</a> cannot add numbers across suppliers, so the cap is a SHACL rule with an embedded <a class="term" href="https://www.w3.org/TR/sparql11-overview/" target="_blank" rel="noopener" data-note="The W3C query language for RDF data: roughly what SQL is to tables." data-src="W3C">SPARQL</a> query. It sums shares <em>per group</em>, which is the whole point:</p>
 <pre class="code"><code>SELECT $this ?group ?total ?cap WHERE {
   { SELECT $this ?group (SUM(?s) AS ?total) WHERE {
       $this ex:hasLine ?line .
@@ -155,6 +155,6 @@ Compliant draft routed for approval (status: pending); nothing released.</code><
 </article>
 </main>
 <footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
-<script src="../assets/brand.js?v=8"></script>
+<script src="../assets/brand.js?v=9"></script>
 </body>
 </html>

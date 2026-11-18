@@ -13,7 +13,7 @@
 <script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="../assets/brand.css?v=28">
+<link rel="stylesheet" href="../assets/brand.css?v=29">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -33,12 +33,12 @@
 <p class="label byline">Vimal Vidyadharan</p>
 </header>
 <p>The prologue ended with an awkward question. An agent proposed a 50–50 split between two supplier IDs, comfortably under a 60% cap, and both IDs belonged to the same parent company. What counts as one supplier?</p>
-<p>Before answering it, it is worth asking why an AI system needs two kinds of machinery at all. If a language model can read a contract, why can it not also apply the purchasing policy?</p>
+<p>Before answering it, it is worth asking why an AI system needs two kinds of machinery at all. If a <a class="term" href="https://en.wikipedia.org/wiki/Large_language_model" target="_blank" rel="noopener" data-note="An AI system trained on very large amounts of text to predict and generate language. It reads and writes fluently, but does not check its output against rules on its own." data-src="Wikipedia">language model</a> can read a contract, why can it not also apply the purchasing policy?</p>
 <h2 id="fast-and-slow">Fast and slow</h2>
 <p>Daniel Kahneman popularised a split between two modes of human thinking. System 1 is fast and intuitive: you recognise a face, finish a sentence, sense that a number looks wrong. System 2 is slow and deliberate: you add up a column, check a clause against a rule, follow a proof step by step.</p>
-<p>The analogy is borrowed constantly in AI, and it is useful as long as you treat it as an analogy rather than anatomy. A language model behaves more like System 1. It is fluent, quick and good with messy input: quotes in five formats, a discount buried in a footnote, an email that says “same terms as last year”. A rules engine or a reasoner behaves more like System 2. It is explicit, it needs its facts written down, and it gives the same answer every time.</p>
+<p>The analogy is borrowed constantly in AI, and it is useful as long as you treat it as an analogy rather than anatomy. A language model behaves more like System 1. It is fluent, quick and good with messy input: quotes in five formats, a discount buried in a footnote, an email that says “same terms as last year”. A rules engine or a <a class="term" href="https://en.wikipedia.org/wiki/Semantic_reasoner" target="_blank" rel="noopener" data-note="Software that derives what logically follows from stated facts and rules, and finds where they contradict each other." data-src="Wikipedia">reasoner</a> behaves more like System 2. It is explicit, it needs its facts written down, and it gives the same answer every time.</p>
 <h2 id="what-each-side-gets-wrong">What each side gets wrong</h2>
-<p>Graphwise, a knowledge-graph vendor, lists the weaknesses on each side plainly. Purely statistical models hallucinate, are hard to explain and need ever more data to improve. Traditional symbolic systems are rigid, need people to write a rule for every case, and break on the messy, noisy input that real organisations produce. Each side fixes the other: the neural part turns real-world chaos into clean entities, and the symbolic part provides a framework in which the system behaves predictably.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
+<p>Graphwise, a <a class="term" href="https://en.wikipedia.org/wiki/Knowledge_graph" target="_blank" rel="noopener" data-note="Facts stored as a network of things and the named relationships between them, rather than as rows in tables." data-src="Wikipedia">knowledge-graph</a> vendor, lists the weaknesses on each side plainly. Purely statistical models <a class="term" href="https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)" target="_blank" rel="noopener" data-note="When an AI model states something false or invented as if it were fact." data-src="Wikipedia">hallucinate</a>, are hard to explain and need ever more data to improve. Traditional symbolic systems are rigid, need people to write a rule for every case, and break on the messy, noisy input that real organisations produce. Each side fixes the other: the neural part turns real-world chaos into clean entities, and the symbolic part provides a framework in which the system behaves predictably.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
 <p>A research group at Wright State University makes the neural weakness more specific. In their review, language models produced confabulations or unstable responses when they worked without external knowledge, and they struggled with schema, structural and symbolic constraints, especially explicitly typed rules and relationships of the kind found in knowledge graphs.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
 <p>That is our procurement problem exactly. “Supplier 100200 belongs to North Holdings” is a typed relationship. “No group may receive more than 60%” is an explicit rule. These are the things a model is least reliable at holding in its head, and the things a symbolic layer is built for.</p>
 <h2 id="change-a-fact-not-a-model">Change a fact, not a model</h2>
@@ -46,7 +46,7 @@
 <p>Suppose the board lowers the cap from 60% to 50%. In a symbolic layer, that is one edited value, reviewed and dated. In a model that learned the policy from past approvals, it is a hope that enough new examples will outweigh the old ones. Suppose instead that two suppliers merge. In a symbolic layer, that is one new relationship. In a model, nobody can point to where the old structure lives.</p>
 <p>None of this makes the model unnecessary. Someone still has to read the quotes, and the model does that better than any rule. The point is a division of labour: let the model interpret, and let something explicit decide whether the interpretation is allowed.</p>
 <aside class="box maths">
-<p><strong>For the mathematically curious: probability versus entailment</strong></p>
+<p><strong>For the mathematically curious: probability versus <a class="term" href="https://en.wikipedia.org/wiki/Logical_consequence" target="_blank" rel="noopener" data-note="A statement is entailed by some facts when it must be true whenever those facts are true; a reasoner works out what is entailed." data-src="Wikipedia">entailment</a></strong></p>
 <p>A language model gives you a probability: P(<em>y</em> | <em>x</em>), the chance of an answer <em>y</em> given the text <em>x</em>. Asked whether a proposal is compliant, it might in effect say P(compliant | proposal) = 0.93. That number can be well calibrated or badly calibrated, but it is always a degree of belief.</p>
 <p>A reasoner gives you entailment, written KB ⊨ φ. It says that the statement φ is true in every world where the knowledge base KB is true. There is no 0.93. Either φ follows, or its negation follows, or, if the facts are silent, neither does.</p>
 <p>The catch is in the KB. Entailment is sound relative to the facts you gave it. If the master data wrongly says that supplier 100200 belongs to East Trading, the reasoner will confirm, with complete certainty, that the 50–50 split is compliant. Logic does not create truth. It preserves it, and it preserves errors just as faithfully.</p>
@@ -64,6 +64,6 @@
 </article>
 </main>
 <footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
-<script src="../assets/brand.js?v=8"></script>
+<script src="../assets/brand.js?v=9"></script>
 </body>
 </html>

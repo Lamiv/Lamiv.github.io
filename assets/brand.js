@@ -202,3 +202,46 @@
   c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();mouse={x:e.clientX-r.left,y:e.clientY-r.top}});
   c.addEventListener('pointerleave',function(){mouse=null});
 })();
+
+// Blog terms: a short note on hover, focus or first tap; the link opens the
+// outside reference (Wikipedia, W3C, IETF). Without JavaScript the link still works.
+(function(){
+  var terms=document.querySelectorAll('.post .term');if(!terms.length)return;
+  var card=document.createElement('div'),cur=null,timer=null,touch=false,wasOpen=false;
+  card.id='termcard';card.className='termcard';card.hidden=true;
+  document.body.appendChild(card);
+  function place(t){
+    var r=t.getBoundingClientRect(),w=Math.min(320,innerWidth-24);
+    card.style.width=w+'px';
+    var left=Math.max(12,Math.min(r.left+scrollX,scrollX+innerWidth-w-12));
+    card.style.left=left+'px';card.style.top='0px';
+    var h=card.offsetHeight,below=r.bottom+8,above=r.top-h-8;
+    card.style.top=(below+h<innerHeight-8||above<8?below:above)+scrollY+'px';
+  }
+  function show(t){
+    clearTimeout(timer);if(cur===t&&!card.hidden)return;
+    if(cur)cur.removeAttribute('aria-describedby');
+    cur=t;card.textContent='';
+    var k=document.createElement('p');k.className='label';k.textContent=t.textContent;card.appendChild(k);
+    var n=document.createElement('p');n.textContent=t.dataset.note;card.appendChild(n);
+    if(t.href){var a=document.createElement('a');a.href=t.href;a.target='_blank';a.rel='noopener';a.textContent='Read more on '+t.dataset.src+' ↗';card.appendChild(a)}
+    card.hidden=false;t.setAttribute('aria-describedby','termcard');place(t);
+  }
+  function hide(){clearTimeout(timer);card.hidden=true;if(cur)cur.removeAttribute('aria-describedby');cur=null}
+  function later(){clearTimeout(timer);timer=setTimeout(hide,250)}
+  terms.forEach(function(t){
+    t.addEventListener('pointerenter',function(e){if(e.pointerType==='mouse'){clearTimeout(timer);timer=setTimeout(function(){show(t)},120)}});
+    t.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse')later()});
+    t.addEventListener('pointerdown',function(e){touch=e.pointerType!=='mouse';wasOpen=cur===t&&!card.hidden});
+    t.addEventListener('focus',function(){show(t)});
+    t.addEventListener('blur',function(e){if(!card.contains(e.relatedTarget))later()});
+    // first tap shows the note; the card's own link (or a second tap) opens the reference
+    t.addEventListener('click',function(e){if(touch&&!wasOpen){e.preventDefault();show(t)}touch=false});
+  });
+  card.addEventListener('pointerenter',function(){clearTimeout(timer)});
+  card.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse')later()});
+  card.addEventListener('focusout',function(e){if(e.relatedTarget!==cur&&!card.contains(e.relatedTarget))later()});
+  document.addEventListener('pointerdown',function(e){if(!card.hidden&&!card.contains(e.target)&&!e.target.closest('.term'))hide()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!card.hidden){var t=cur;hide();if(t)t.focus({preventScroll:true})}});
+  addEventListener('resize',hide);
+})();
