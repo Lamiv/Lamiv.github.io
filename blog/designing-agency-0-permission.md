@@ -4,6 +4,8 @@ subtitle: Agency, autonomy, authorisation and accountability are four different 
 part: 0
 date: 4 October 2026
 summary: Designing Agency prologue on one page: one request hides several grants of authority; agency, autonomy, authorisation and accountability are four different questions; think freely, act narrowly; grant authority per step, not per request.
+image: covers/designing-agency
+image_alt: Hand-drawn sketch: a requester asks an AI agent to order 4,000 cartons; the agent’s action must pass a gate of authority and constraints that can allow, deny or escalate, watched by an approver, before it reaches the system of record.
 ---
 
 A buyer types six words into an assistant: “Take care of this order, please.” It sounds like one instruction. It is really five or six separate grants of authority, and most of the trouble with AI agents in the enterprise comes from treating them as one.
