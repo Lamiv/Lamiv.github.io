@@ -496,3 +496,4 @@ main:has(.bgrid){padding-bottom:clamp(48px,8vw,96px)}
 /* Post cover image */
 .post figure.cover{margin:6px 0 30px}
 .post figure.cover img{display:block;width:100%;height:auto;border:1px solid var(--line)}
+.sec-head .sec-note{max-width:68ch;color:var(--mist);margin:0}
