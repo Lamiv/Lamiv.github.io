@@ -458,3 +458,13 @@ main:has(.topic-card){padding-bottom:clamp(48px,8vw,96px)}
 .post figure.summary figcaption a{font:500 .76rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium)}
 .post figure.summary{margin-top:40px}
 .post .notes-label{margin:0;color:var(--sodium);font-size:.76rem}
+/* Blog terms: dotted underline, note card on hover, focus or tap */
+.post .term{color:inherit;text-decoration:underline dotted;text-decoration-color:var(--sodium);text-decoration-thickness:1.5px;text-underline-offset:4px;cursor:help}
+.post a.term:hover,.post .term:focus-visible{text-decoration-style:solid}
+.post .term:focus-visible{outline:2px solid var(--sodium);outline-offset:2px}
+.termcard{position:absolute;z-index:60;box-sizing:border-box;padding:12px 14px 13px;background:var(--panel);color:var(--crystal);border:1px solid var(--line);border-top:2px solid var(--sodium);box-shadow:0 8px 28px rgba(0,0,0,.28);font:400 .95rem/1.5 var(--body)}
+.termcard[hidden]{display:none}
+.termcard p{margin:0 0 6px}
+.termcard .label{font:600 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium)}
+.termcard a{display:inline-block;margin-top:2px;font:500 .74rem var(--mono);letter-spacing:.04em;color:var(--sodium);text-underline-offset:3px}
+[data-theme=light] .termcard{box-shadow:0 6px 22px rgba(0,0,0,.14);border-top-color:var(--sodium)}

@@ -13,7 +13,7 @@
 <script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="../assets/brand.css?v=28">
+<link rel="stylesheet" href="../assets/brand.css?v=29">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -32,11 +32,11 @@
 <p class="post-sub">Semantic parsing, and why the first translation is usually wrong</p>
 <p class="label byline">Vimal Vidyadharan</p>
 </header>
-<p>A reasoner cannot read a purchasing policy. It needs the policy as formal statements: symbols, relationships and rules with exact meanings. Someone, or something, has to translate. Translating natural language into a formal representation is called semantic parsing, and it is where most of the neuro-symbolic loop is won or lost.</p>
+<p>A <a class="term" href="https://en.wikipedia.org/wiki/Semantic_reasoner" target="_blank" rel="noopener" data-note="Software that derives what logically follows from stated facts and rules, and finds where they contradict each other." data-src="Wikipedia">reasoner</a> cannot read a purchasing policy. It needs the policy as formal statements: symbols, relationships and rules with exact meanings. Someone, or something, has to translate. Translating natural language into a formal representation is called <a class="term" href="https://en.wikipedia.org/wiki/Semantic_parsing" target="_blank" rel="noopener" data-note="Translating ordinary language into a formal representation of its meaning that a machine can check or execute." data-src="Wikipedia">semantic parsing</a>, and it is where most of the <a class="term" href="https://en.wikipedia.org/wiki/Neuro-symbolic_AI" target="_blank" rel="noopener" data-note="AI that combines a learning system, such as a language model, with explicit symbols and rules a machine can check, so each covers the other&#x27;s weaknesses." data-src="Wikipedia">neuro-symbolic</a> loop is won or lost.</p>
 <h2 id="one-sentence-three-targets">One sentence, three targets</h2>
 <p>Take the policy sentence “No single supplier group may receive more than 60% of an order.” Depending on what the symbolic side does, the translation can take different forms.</p>
-<p>For a classical planner, the target is a planning language such as PDDL, which describes states, actions and what each action requires. The LOOP preprint has a language model write those descriptions and a planner solve them.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
-<p>For a logic solver, the target might be Answer Set Programming (ASP), a language of facts and rules that a solver searches for consistent answers. Adam Ishay and Joohyung Lee at Arizona State University use language models to write ASP programs for logic puzzles, planning tasks and nonmonotonic reasoning, where conclusions can be withdrawn when exceptions appear.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
+<p>For a classical planner, the target is a planning language such as <a class="term" href="https://en.wikipedia.org/wiki/Planning_Domain_Definition_Language" target="_blank" rel="noopener" data-note="Planning Domain Definition Language: a standard way to describe states, actions and their preconditions so that an automated planner can search for a plan." data-src="Wikipedia">PDDL</a>, which describes states, actions and what each action requires. The LOOP preprint has a <a class="term" href="https://en.wikipedia.org/wiki/Large_language_model" target="_blank" rel="noopener" data-note="An AI system trained on very large amounts of text to predict and generate language. It reads and writes fluently, but does not check its output against rules on its own." data-src="Wikipedia">language model</a> write those descriptions and a planner solve them.<sup class="cite"><a href="#src-1" aria-label="Source 1">1</a></sup></p>
+<p>For a logic solver, the target might be <a class="term" href="https://en.wikipedia.org/wiki/Answer_set_programming" target="_blank" rel="noopener" data-note="A way of writing a problem as facts and rules, for which a solver searches for every consistent set of conclusions." data-src="Wikipedia">Answer Set Programming</a> (ASP), a language of facts and rules that a solver searches for consistent answers. Adam Ishay and Joohyung Lee at Arizona State University use language models to write ASP programs for logic puzzles, planning tasks and nonmonotonic reasoning, where conclusions can be withdrawn when exceptions appear.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
 <p>For people and machines at once, the target can be a controlled language: a restricted form of English with a precise logical reading. The Wright State group uses Attempto Controlled English, prompting a model to write ACE-compliant statements and checking them with the Attempto parsing engine in a feedback loop, to surface hidden assumptions and preserve the intended meaning.<sup class="cite"><a href="#src-3" aria-label="Source 3">3</a></sup></p>
 <h2 id="the-first-attempt-is-usually-wrong">The first attempt is usually wrong</h2>
 <p>The striking finding is how ordinary failure is. Ishay and Lee write that a model's initial attempt at writing an ASP program is often flawed. Recent reasoning models fix this by reflecting on the solver's output messages and revising the program, and the authors identify this automated self-correction loop as the primary driver of their results.<sup class="cite"><a href="#src-2" aria-label="Source 2">2</a></sup></p>
@@ -60,7 +60,7 @@
 <p>Both are valid formulas. Both parse. Both can be checked. The second one approves the 50–50 split between two members of North Holdings, because each supplier record holds only 50%.</p>
 <p>The repair loop is easy to write down: φ<sub>0</sub> = <em>f</em>(text), then φ<sub><em>t</em>+1</sub> = <em>f</em>(text, <em>feedback</em>(φ<sub><em>t</em></sub>)), stopping when the checker accepts or <em>t</em> reaches a limit. The weakness is in the stopping rule. The checker can accept φ<sub><em>t</em></sub> because it is consistent, not because it is faithful. Nothing in the loop compares φ with what the board meant.</p>
 </aside>
-<p>That gap is why the symbolic side needs more than a parser. It needs a shared, explicit definition of what the words refer to: what a supplier is, what a group is, how they relate. That is an ontology, and it is the subject of Part 3.</p>
+<p>That gap is why the symbolic side needs more than a parser. It needs a shared, explicit definition of what the words refer to: what a supplier is, what a group is, how they relate. That is an <a class="term" href="https://en.wikipedia.org/wiki/Ontology_(information_science)" target="_blank" rel="noopener" data-note="A formal, shared definition of the things in a domain (such as supplier or corporate group), their properties and how they relate, written so that software can reason with it." data-src="Wikipedia">ontology</a>, and it is the subject of Part 3.</p>
 <aside class="box question">
 <p><strong>A question to sit with.</strong> If a model translated one of your policies into rules tomorrow, who would notice a translation that was well formed but wrong? What would they have to read to notice it?</p>
 </aside>
@@ -73,6 +73,6 @@
 </article>
 </main>
 <footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
-<script src="../assets/brand.js?v=8"></script>
+<script src="../assets/brand.js?v=9"></script>
 </body>
 </html>

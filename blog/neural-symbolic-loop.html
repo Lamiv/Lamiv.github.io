@@ -13,7 +13,7 @@
 <script>document.documentElement.classList.add("js");try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,600;62..100,800&family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2304181c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc247'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="../assets/brand.css?v=28">
+<link rel="stylesheet" href="../assets/brand.css?v=29">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -38,7 +38,7 @@
 <p>Two facts stand in the way. Purchasing policy caps any single supplier group at 60% of an order. And SAP shows that the draft purchase order is still awaiting approval.</p>
 <p>A release check can stop the order, and in a well-built system it will. The more interesting question is what the agent does with that refusal, because the answer tells you how the system was designed.</p>
 <h2 id="three-words-plainly">Three words, plainly</h2>
-<p>The <strong>neural</strong> part is the component that learns from examples rather than following written rules. Here it is a language model. It reads quotes laid out in different formats, notices that a discount depends on volume, and turns commercial prose into a proposed allocation. It is good at this, and it can still be wrong: a discount might apply only if everything ships at once, and that condition might sit in a footnote the model skims past.</p>
+<p>The <strong>neural</strong> part is the component that learns from examples rather than following written rules. Here it is a <a class="term" href="https://en.wikipedia.org/wiki/Large_language_model" target="_blank" rel="noopener" data-note="An AI system trained on very large amounts of text to predict and generate language. It reads and writes fluently, but does not check its output against rules on its own." data-src="Wikipedia">language model</a>. It reads quotes laid out in different formats, notices that a discount depends on volume, and turns commercial prose into a proposed allocation. It is good at this, and it can still be wrong: a discount might apply only if everything ships at once, and that condition might sit in a footnote the model skims past.</p>
 <p>The <strong>symbolic</strong> part works with facts, relationships and rules that are written down explicitly. A supplier has an identifier. It may belong to a parent group. A purchase order has a version and an approval status. A policy sets a ceiling on how much of an order one group may receive. Once those facts are established, software can do the arithmetic and check the proposal against the rule, the same way every time.</p>
 <p>The <strong>loop</strong> is what connects them. The symbolic side’s verdict does not simply end the conversation; it shapes the model’s next move. The model can revise the allocation, ask for missing information or hand the decision to a buyer, and whatever it proposes next passes through the same checks.</p>
 <h2 id="what-travels-in-each-direction">What travels in each direction</h2>
@@ -68,7 +68,7 @@
     F --&gt; E</pre></details></figure>
 <h2 id="what-counts-as-one-supplier">What counts as one supplier?</h2>
 <p>Now the agent tries again. It proposes a 50–50 split between two supplier IDs in SAP, comfortably under the 60% cap. Except that both suppliers belong to the same parent company. If the policy counts concentration at group level, the split still puts 100% of the order with one group.</p>
-<p>The arithmetic was never the hard part. The hard part is knowing which entities the rule is meant to count, and that is a question about meaning, not maths. Defining what a supplier, a legal entity and a corporate group are, and how they relate, is the work of an ontology. How those definitions become shared across the business, its systems and the agents acting for it is where I want to go next.</p>
+<p>The arithmetic was never the hard part. The hard part is knowing which entities the rule is meant to count, and that is a question about meaning, not maths. Defining what a supplier, a legal entity and a corporate group are, and how they relate, is the work of an <a class="term" href="https://en.wikipedia.org/wiki/Ontology_(information_science)" target="_blank" rel="noopener" data-note="A formal, shared definition of the things in a domain (such as supplier or corporate group), their properties and how they relate, written so that software can reason with it." data-src="Wikipedia">ontology</a>. How those definitions become shared across the business, its systems and the agents acting for it is where I want to go next.</p>
 <h2 id="sources">Sources</h2>
 <ol class="sources numbered"><li id="src-1">Brian Platz, <a href="https://flur.ee/blog/the-neural-symbolic-loop"><em>The Neural-Symbolic Loop: Where Data Engineering Meets Reasoning</em></a>, Fluree, August 2026.</li><li id="src-2">Ronit Virwani and Ruchika Suryawanshi, <a href="https://arxiv.org/html/2508.13371v1"><em>LOOP: A Plug-and-Play Neuro-Symbolic Framework for Enhancing Planning in Autonomous Systems</em></a>, arXiv preprint, 2025.</li><li id="src-3">Timothy Duggan, Pierrick Lorang, Hong Lu and Matthias Scheutz, <a href="https://arxiv.org/abs/2602.19260"><em>The Price Is Not Right: Neuro-Symbolic Methods Outperform VLAs on Structured Long-Horizon Manipulation Tasks with Significantly Lower Energy Consumption</em></a>, arXiv, accepted at ICRA 2026.</li><li id="src-4">Gary Marcus, <a href="https://garymarcus.substack.com/p/even-more-good-news-for-the-future"><em>Even more good news for the future of neurosymbolic AI</em></a>, Marcus on AI, April 2026.</li></ol>
 <ul class="sources">
@@ -78,6 +78,6 @@
 </article>
 </main>
 <footer class="wrap label"><span>© 2026 Vimal Vidyadharan</span><a href="../index.html">Back to home</a></footer>
-<script src="../assets/brand.js?v=8"></script>
+<script src="../assets/brand.js?v=9"></script>
 </body>
 </html>
