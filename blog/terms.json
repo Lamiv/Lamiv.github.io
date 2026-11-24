@@ -40,6 +40,8 @@
     {"term": "SWE-bench", "match": "SWE-bench", "case": true, "note": "A benchmark of real software issues from open-source projects, used to test whether AI agents can fix code.", "url": null},
     {"term": "circuit breaker", "match": "circuit breakers?", "note": "A mechanism that stops further actions automatically once a limit is crossed, such as a number of failures or a total value.", "url": "https://en.wikipedia.org/wiki/Circuit_breaker_design_pattern", "src": "Wikipedia"},
     {"term": "defence in depth", "match": "defen[cs]e in depth", "note": "Several independent layers of protection, so that a failure in one is caught by another.", "url": "https://en.wikipedia.org/wiki/Defense_in_depth_(computing)", "src": "Wikipedia"},
+    {"term": "Model Context Protocol", "match": "Model Context Protocol", "note": "An open standard for connecting AI assistants to outside tools and data, so one connection works across many assistants.", "url": "https://en.wikipedia.org/wiki/Model_Context_Protocol", "src": "Wikipedia"},
+    {"term": "entity resolution", "match": "entity resolution", "note": "Working out which records in different systems refer to the same real thing, such as one customer appearing in email, chat and the CRM.", "url": "https://en.wikipedia.org/wiki/Record_linkage", "src": "Wikipedia"},
     {"term": "fail closed", "match": "fail(?:s|ing)? closed", "note": "If a check cannot be made, for example because a service is down, the action is refused rather than allowed.", "url": null}
   ]
 }
