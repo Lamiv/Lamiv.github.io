@@ -17,7 +17,7 @@ This series explores a proposition: an AI system can get better at a task withou
 
 ## A small experiment
 
-I have been exploring this with a small market intelligence agent, assembled from ChatGPT and its scheduled tasks, a Supabase database, a Notion workspace and Firecrawl for deeper research. There is no application to build. Every piece is an existing platform, configured, and as Part 1 describes, ChatGPT did most of the configuring.
+I have been exploring this with a small market intelligence agent, assembled from ChatGPT, a Supabase database and a Notion workspace, with scheduled engines and Firecrawl research designed as the next steps. There is no application to build. Every piece is an existing platform, configured, and as Part 1 describes, ChatGPT did most of the configuring.
 
 It follows one thing, Brent crude oil, and answers one question every trading day: *which way will Brent move next, how confident is it, and why?*
 
@@ -96,7 +96,7 @@ Nothing here retrains the model. What changes is everything around it: which sou
 
 A professional analyst is a fair comparison. Their underlying abilities may not change much over a career; their methods, sources and judgement do, through experience and through being held to their record.
 
-Measuring it honestly means three things. Comparing the learning agent with a simple baseline, and with itself running a fixed strategy that never learns, so that any improvement can be attributed to learning. Storing every prediction before the outcome exists. And testing each change only on days that come after the ones it was developed on. I have no results yet that meet that standard. The architecture's claim is narrower: it makes the question answerable, and I will publish the answer either way.
+Measuring it honestly means three things. Comparing the learning agent with a simple baseline, and with itself running a fixed strategy that never learns, so that any improvement can be attributed to learning. Storing every prediction before the outcome exists. And testing each change only on days that come after the ones it was developed on. I have no prospective results yet that meet that standard. A 60-session historical replay, reported in Part 2, already shows something more useful than a headline number: a strategy that adapted, whose loss fell by 10% between its first and last block of sessions, still did worse than a fixed baseline overall, and was therefore not promoted. The architecture's claim is narrower than improvement: it makes the question answerable, and I will publish the answer either way.
 
 ## Who decides what it learns
 
