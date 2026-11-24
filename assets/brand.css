@@ -503,3 +503,8 @@ main:has(.bgrid){padding-bottom:clamp(48px,8vw,96px)}
 .diagram .cluster-label .background{fill:none}
 .diagram .node path,.diagram .node circle{fill:var(--ink);stroke:var(--sodium);stroke-width:1.2px}
 .post h3{font:800 clamp(1.2rem,2.3vw,1.45rem)/1.15 var(--display);font-stretch:var(--stretch);text-transform:uppercase;margin:30px 0 10px;color:var(--crystal)}
+/* Prompt blocks: wrapped text with a copy button */
+.post .prompt{position:relative;margin:6px 0 24px}
+.post .prompt pre.code.prompt{margin:0;white-space:pre-wrap;word-break:break-word;padding-top:40px}
+.post .prompt .copy{position:absolute;z-index:2;top:8px;right:8px;font:500 .7rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium);background:var(--ink);border:1px solid var(--line);padding:5px 10px;cursor:pointer}
+.post .prompt .copy:hover,.post .prompt .copy:focus-visible{border-color:var(--sodium)}

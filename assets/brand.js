@@ -245,3 +245,13 @@
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!card.hidden){var t=cur;hide();if(t)t.focus({preventScroll:true})}});
   addEventListener('resize',hide);
 })();
+
+// Prompt blocks: copy the prompt text to the clipboard.
+(function(){
+  document.querySelectorAll('.post .prompt .copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.parentNode.querySelector('pre').innerText,done=function(ok){b.textContent=ok?'Copied':'Select and copy';setTimeout(function(){b.textContent='Copy prompt'},1800)};
+      try{navigator.clipboard.writeText(t).then(function(){done(true)},function(){done(false)})}catch(e){done(false)}
+    });
+  });
+})();
