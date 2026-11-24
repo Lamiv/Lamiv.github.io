@@ -497,3 +497,8 @@ main:has(.bgrid){padding-bottom:clamp(48px,8vw,96px)}
 .post figure.cover{margin:6px 0 30px}
 .post figure.cover img{display:block;width:100%;height:auto;border:1px solid var(--line)}
 .sec-head .sec-note{max-width:68ch;color:var(--mist);margin:0}
+/* Diagram groups (Mermaid subgraphs), cylinders and circles */
+.diagram .cluster rect{fill:none;stroke:var(--line);stroke-width:1.2px;stroke-dasharray:5 4}
+.diagram .cluster-label text,.diagram .cluster-label tspan{fill:var(--mist)}
+.diagram .cluster-label .background{fill:none}
+.diagram .node path,.diagram .node circle{fill:var(--ink);stroke:var(--sodium);stroke-width:1.2px}
