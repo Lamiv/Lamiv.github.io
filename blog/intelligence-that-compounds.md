@@ -23,6 +23,8 @@ It follows one thing, Brent crude oil, and answers one question every trading da
 
 Any capable assistant can research the market and answer that. The difference is what happens afterwards. The agent keeps its prediction, its evidence, its confidence and the version of the strategy it used. When the real price is known, it goes back, measures the gap and writes down possible explanations, which become hypotheses to test.
 
+Its first live forecast, frozen at 14:30 UTC on 24 November, gives a 43% chance that Brent's January futures settle higher on 25 November than on 23 November, and labels that number, honestly, as uncalibrated. Part 1 shows it, and what it reveals about the design.
+
 This is an experiment in architecture, not a forecasting claim, and certainly not investment advice. Its purpose is to make one question concrete: what would it take for a system like this to *show* that it is improving?
 
 ```mermaid
