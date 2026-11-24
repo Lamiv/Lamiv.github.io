@@ -120,7 +120,7 @@ Each engine is a scheduled task with one job. The engine that forecasts never ma
 | B: evaluation | Every day, 22:00 | Record newly published prices and score matured forecasts in SQL |
 | C: learning | Sundays, 10:00 | Compare strategies, study failures, register hypotheses and experiments |
 
-ChatGPT's scheduled tasks allow a limited number of active tasks per plan: five on Plus, ten on Business, fifteen on Pro. Exact times need a paid plan, and tasks use your plan's allowance even when they post nothing. [OpenAI](https://help.openai.com/en/articles/10291617-tasks-in-chatgpt) Four engines fit within any of them.
+ChatGPT's scheduled tasks allow a limited number of active tasks per plan: five on Plus, ten on Business, fifteen on Pro. Exact times need a paid plan, and tasks use your plan's allowance even when they post nothing. [OpenAI](https://help.openai.com/en/articles/10291617-tasks-in-chatgpt) Four engines fit within any of them. Each run is short: a research and forecast cycle finishes in minutes, a little longer when Firecrawl is doing deeper research, with the Notion updates complete within about ten minutes.
 
 ```mermaid
 flowchart TD
@@ -236,7 +236,7 @@ Because every research activity is recorded, research can improve too. After a f
 
 Notion holds seven pages proposed by ChatGPT, Daily Dashboard, Performance Dashboard, Research Library, Learning Journal, Hypotheses and Experiments, Strategy History, and Governance and Instructions, plus the Decisions page added in review. The agent writes to all of them except Decisions. That one is mine.
 
-The weekly review, after Engine C has run, takes about twenty minutes:
+The weekly review, after Engine C has run, covers five things:
 
 1. **Read the performance dashboard** against both baselines, on matched dates, with the sample sizes in view.
 2. **Read the learning journal.** Is each hypothesis a pattern across cases, or a story about one bad day?
@@ -280,10 +280,10 @@ flowchart TD
 
 ## Next: the first results
 
-The build took an afternoon. Evidence takes longer. [Part 2](intelligence-that-compounds-2-what-it-means.html) looks at the agent's first live forecast as it appeared in Notion, at what it shows about the design, at how the results will be judged, and at what the pattern means for an organisation that wants to learn from its own decisions.
+Each cycle of the agent is quick: a run finishes in minutes, a little longer when Firecrawl is doing deeper research, and the Notion pages are updated within about ten minutes. Evidence is what takes time. [Part 2](intelligence-that-compounds-2-what-it-means.html) looks at the agent's first live forecast as it appeared in Notion, at what it shows about the design, at how the results will be judged, and at what the pattern means for an organisation that wants to learn from its own decisions.
 
 :::question
-**A question to sit with.** If an AI designed and deployed a system like this for you in an afternoon, which three things would you check before trusting its results?
+**A question to sit with.** If an AI designed and deployed a system like this for you by conversation, which three things would you check before trusting its results?
 :::
 
 ## Sources

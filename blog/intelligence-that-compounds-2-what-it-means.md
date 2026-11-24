@@ -67,7 +67,7 @@ Each of these has a governance edge. Sharing is an access decision: share the da
 
 One forecast proves nothing about Brent. It says a good deal about building systems like this.
 
-**The cost of building has collapsed; the cost of judging has not.** The agent, its database, its workspace and its schedule took an afternoon of conversation. The first evidence worth reading will take eight to twelve weeks, and the most valuable hours in the whole project were spent reviewing a design, not producing one. In an organisation, that changes where AI effort should be budgeted: less on building, more on review, measurement and ownership.
+**The cost of building has collapsed; the cost of judging has not.** The agent, its database, its workspace and its schedule were built by conversation, and each cycle, from research to forecast to updated Notion pages, completes in about ten minutes. The first evidence worth reading will take eight to twelve weeks, and the most valuable hours in the whole project were spent reviewing a design, not producing one. In an organisation, that changes where AI effort should be budgeted: less on building, more on review, measurement and ownership.
 
 **A capable designer still needs a reviewer.** The live system caught one data problem on its own, the stale spot series, and missed a subtler one, the timing of its reference price. Neither is exotic. Both would have quietly flattered the results. Design review of AI-built systems is real work, and someone has to be accountable for it.
 
@@ -178,7 +178,7 @@ Most enterprise systems are designed to record what an organisation does. The qu
 
 The principle stays the same at every scale. Agency lets an agent act. Observation lets it see its environment. Memory lets it keep experience. Reflection lets it question its understanding. Evaluation establishes whether an improvement is real. Governance decides which improvements it may adopt.
 
-Building an agent with memory is now straightforward; this one was built in an afternoon. Building one that can show it improves through experience is a different and harder problem, and most of it is not technical. Connecting more tools gives an agent more information. Designing a learning loop gives it a chance to get better at using that information. The opportunity is not only to build more capable agents, but to build organisations in which intelligence, human and artificial, compounds.
+Building an agent with memory is now straightforward; this one was built by conversation and completes each cycle in minutes. Building one that can show it improves through experience is a different and harder problem, and most of it is not technical. Connecting more tools gives an agent more information. Designing a learning loop gives it a chance to get better at using that information. The opportunity is not only to build more capable agents, but to build organisations in which intelligence, human and artificial, compounds.
 
 I will report the Brent results here when there are enough of them to mean something, whichever way they point.
 
