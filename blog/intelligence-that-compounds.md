@@ -15,15 +15,25 @@ Memory alone is not learning. Reflection alone is not improvement. And self-impr
 
 This series explores a proposition: an AI system can get better at a task without changing the underlying model. What has to evolve is the architecture around it: its memory, its strategies, its evaluation, and its ability to build up experience that has been checked.
 
+## Where this series fits
+
+It is the third of three series on this blog, and each asks a different architectural question.
+
+| Series | The question it asks |
+|---|---|
+| [Closing the Loop](neural-symbolic-loop.html) | How should an agent reason? |
+| [Designing Agency](designing-agency-0-permission.html) | What should an agent be authorised to do? |
+| Intelligence That Compounds | How should an agent learn from experience? |
+
+Together they make one argument about enterprise AI: *an agent must be able to reason correctly, act within delegated authority, and learn from consequences without compromising either.* This series is about the third, and about why it cannot be allowed to undermine the first two.
+
 ## A small experiment
 
-I have been exploring this with a small market intelligence agent, assembled from ChatGPT and its scheduled tasks, a Supabase database, a Notion workspace and Firecrawl for deeper research. There is no application to build. Every piece is an existing platform, configured, and as Part 1 describes, ChatGPT did most of the configuring.
+I have been exploring this with a small market intelligence agent, assembled from ChatGPT, a Supabase database and a Notion workspace, with Firecrawl for deeper research. There is no application to build; every piece is an existing platform, configured.
 
-It follows one thing, Brent crude oil, and answers one question every trading day: *which way will Brent move next, how confident is it, and why?*
+It follows one thing, Brent crude oil, and asks one question each trading day: *which way will Brent move next, how confident am I, and why?* Any capable assistant can answer that. The difference is what happens afterwards. The agent keeps its forecast, its evidence, its confidence and the version of the strategy it used, and when the real price is known it measures the gap.
 
-Any capable assistant can research the market and answer that. The difference is what happens afterwards. The agent keeps its prediction, its evidence, its confidence and the version of the strategy it used. When the real price is known, it goes back, measures the gap and writes down possible explanations, which become hypotheses to test.
-
-The agent grew out of seven weeks of scheduled market watch that included Brent, from early October to late November 2026, and those weeks taught the first lesson: daily analysis that is read but never recorded as a scored forecast cannot be learned from. Its first experiment executed a learning algorithm over 60 trading sessions of historical Brent prices, from late August to mid-November 2026, one session at a time: each of three strategies made its forecast before the session's outcome was read, was scored against it, and updated. Nothing was simulated, and nothing was live; the algorithm ran over real observations, in order. One strategy's loss fell by 10% from its first 20 sessions to its last 20, yet across all 60 it still did worse than simply saying 50% every day, so it was not adopted. [Part 2](intelligence-that-compounds-2-what-it-means.html) tells that story.
+The idea did not come from nowhere. Weeks of scheduled market watch had already produced plenty of analysis, and almost nothing that could be checked afterwards against what happened. That gap is what this series sets out to close.
 
 This is an experiment in architecture, not a forecasting claim, and certainly not investment advice. Its purpose is to make one question concrete: what would it take for a system like this to *show* that it is improving?
 
@@ -62,14 +72,6 @@ The design rests on keeping two kinds of memory apart.
 
 The difference matters. A hypothesis does not become knowledge because an AI wrote it down. Recent research names the danger: agents that reflect on their own work can endorse their mistakes and store them as guidance, a *self-confirmation trap*. [Zhu et al.](https://arxiv.org/abs/2606.24428) Only evaluation against outcomes the agent does not control should turn an idea into practice.
 
-## One wrong prediction
-
-Suppose that on Monday the agent sees a supply disruption and predicts Brent will rise 1.5%, with 80% confidence. Brent falls 0.8%.
-
-An ordinary assistant simply writes Tuesday's analysis. This one goes back. Did it give too much weight to the supply risk, and too little to weakening demand and a stronger dollar? That suggests a hypothesis: *supply shocks may matter less when demand is falling.*
-
-The hypothesis is not adopted. One wrong prediction proves nothing. It is recorded, compared with similar past cases, and tested: a revised strategy runs alongside the current one, on days neither has seen. It is promoted only if it does better over enough of them. That is the difference between an agent that remembers and an agent designed to learn.
-
 ```mermaid
 flowchart TD
     O["Observe"] --> R["Reason"]
@@ -90,40 +92,21 @@ flowchart TD
 
 *Alt text: A cycle: observe, reason, predict, evaluate, hypothesise, experiment, adapt, and back to observe. Independent outcomes feed into evaluate. Accumulated experience sits at the centre: evaluation and experiments add to it, and reasoning draws on it.*
 
-## What improves, and how we would know
+## What can improve
 
 Nothing here retrains the model. What changes is everything around it: which sources it reads, how it weighs signals, how well its confidence matches reality, which past cases it recalls, and how it researches. Research such as Reflexion and ExpeL has shown agents improving on benchmark tasks through written reflection and extracted insights, without changing the model's weights. [Shinn et al.](https://arxiv.org/abs/2303.11366)[Zhao et al.](https://arxiv.org/abs/2308.10144) Whether that holds in a noisy market is exactly what has to be measured.
 
 A professional analyst is a fair comparison. Their underlying abilities may not change much over a career; their methods, sources and judgement do, through experience and through being held to their record.
 
-Measuring it honestly means three things. Comparing the learning agent with a simple baseline, and with itself running a fixed strategy that never learns, so that any improvement can be attributed to learning. Storing every prediction before the outcome exists. And testing each change only on days that come after the ones it was developed on. The first experiment, reported in Part 2, executed a learning algorithm over 60 historical trading sessions in sequence, and it already shows something more useful than a headline number: a strategy that adapted, whose loss fell by 10% between its first and last block of sessions, still did worse than a fixed baseline overall, and was therefore not promoted. Forecasts made ahead of outcomes that have not yet happened are the next stage. The architecture's claim is narrower than improvement: it makes the question answerable, and I will publish the answer either way.
+That raises the question the rest of the series has to answer. If we authorise an agent to do a task, have we also authorised it to change how it does it, and who decides which changes count as improvement?
 
-## Who decides what it learns
+## What the series covers
 
-[Designing Agency](designing-agency-0-permission.html) asked what we are giving an agent permission to do. A learning agent raises a new question: *if we authorise an agent to do a task, have we also authorised it to change how it does it?*
+**[Part 1: Building it by conversation](intelligence-that-compounds-1-building-it.html)** is the build. ChatGPT designed the database, the engines and their prompts through its plugins for Supabase, Notion and Firecrawl, and built the parts the experiment needed. What it could not do was decide what counts as evidence, and what the agent may change about itself. The part covers the design, the eight problems a careful review found in it, and where a person's time actually goes.
 
-Organisational learning offers a useful distinction, introduced by Chris Argyris. *Single-loop learning* corrects actions within the existing rules, like a thermostat that switches the heating on when the room is cold. *Double-loop learning* questions the rules themselves, such as whether that is the right temperature. [Wikipedia](https://en.wikipedia.org/wiki/Double-loop_learning) In this agent, adjusting a prediction is single-loop. Changing its analytical strategy is double-loop. Changing its objectives, or the way its success is measured, is a loop that should stay with people.
+**[Part 2: Adapting is not improving](intelligence-that-compounds-2-what-it-means.html)** is the evidence. The learning algorithm was actually executed over 60 historical trading sessions of Brent prices, one session at a time. On 10 September one of its strategies was 77.8% sure Brent would rise, and it rose by more than 10%. The next day it was 80% sure, and Brent fell. Did the system learn? Did it improve? And what did its governance decide? The answers are not the same, and the difference is the point.
 
-So the answer is: partly. It may propose and test new strategies. It may not change its objectives, its scoring or its permissions, because an agent that can rewrite how it is judged can always declare itself improved. Promotion stays a human decision, recorded and reversible.
-
-## Beyond oil
-
-Brent is a convenient teacher because the market publishes an independent outcome every day. Organisations generate far more experience than that, scattered across email, meetings, chat and the CRM, and almost none of it is connected to what happened next. The same pattern could connect a commercial team's signals and recommendations to deals won or lost, with one caution: a deal won after a recommendation does not prove the recommendation caused it. Claims about cause need comparison groups, not anecdotes.
-
-| Level | Capability |
-|---|---|
-| 1 · Stateless | Answers requests, keeps nothing |
-| 2 · Connected | Reaches outside applications and information |
-| 3 · Persistent | Keeps observations, decisions and outcomes |
-| 4 · Reflective | Examines its record and forms hypotheses |
-| 5 · Adaptive | Tests changes and adopts only validated ones |
-| 6 · Institutional | Turns validated experience into knowledge others reuse |
-
-This is a proposed scale, not an industry standard. Connecting applications reaches level 2, and level 3 is now easy to build. The real work is the step from 4 to 5, where a claim has to become a measurement.
-
-## Next: building it, and what it means
-
-Connecting tools gives an agent more information. Designing a learning loop gives it a chance to get better at using that information. [Part 1](intelligence-that-compounds-1-building-it.html) is the build, and most of it was done by conversation: ChatGPT designed the database, the engines and their prompts, and deployed them. What it could not do was decide what counts as evidence, and what the agent may change about itself. That is where a person's time goes. [Part 2](intelligence-that-compounds-2-what-it-means.html) reads the first live forecast against the design, draws out what it means in practice, and extends the pattern to an organisation's own decisions.
+**[Part 3: From one experiment to an organisation](intelligence-that-compounds-3-organisations.html)** is the meaning. What the experiment implies in practice, why single-loop and double-loop learning need different owners, how the same architecture would work for a commercial team, and what an organisation must change before it can trust a system that learns.
 
 :::question
 **A question to sit with.** If an AI system in your organisation claimed it had improved last quarter, what evidence would you ask for, and does anything record it today?
@@ -134,4 +117,3 @@ Connecting tools gives an agent more information. Designing a learning loop give
 - Shiding Zhu and colleagues, [*Beyond Self-Reflection: An Execute-Distill-Verify Framework for Agentic Experience Learning*](https://arxiv.org/abs/2606.24428), arXiv preprint, June 2026.
 - Noah Shinn and colleagues, [*Reflexion: Language Agents with Verbal Reinforcement Learning*](https://arxiv.org/abs/2303.11366), arXiv preprint, 2023.
 - Andrew Zhao and colleagues, [*ExpeL: LLM Agents Are Experiential Learners*](https://arxiv.org/abs/2308.10144), AAAI 2024.
-- Wikipedia, [*Double-loop learning*](https://en.wikipedia.org/wiki/Double-loop_learning).
