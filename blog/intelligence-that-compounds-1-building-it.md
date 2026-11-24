@@ -7,9 +7,9 @@ date: 24 November 2026
 
 The [prologue](intelligence-that-compounds.html) argued that an agent which remembers is not yet an agent which learns. This part is about building one, and the most surprising thing about it is how little of the building I did.
 
-I added three plugins to ChatGPT. I described the idea. ChatGPT proposed a design: the database, the engines, the prompts and the schedule. I reviewed it, asked for changes, and then asked it to finalise and deploy everything. It wrote and ran the database setup through the Supabase plugin, created the Notion workspace, wrote the engine prompts and scheduled the tasks. I did not write an application, and I did not type the SQL.
+I added three plugins to ChatGPT. I described the idea. ChatGPT proposed a design: the database, the engines, the prompts and the schedule. I reviewed it, asked for changes, and then asked it to finalise and build. It designed the full architecture, created the tables the experiment uses through the Supabase plugin, set up the Notion workspace, wrote the engine prompts, and ran the 60-session learning experiment that Part 2 reports. The scheduled engines and Firecrawl research are designed but not yet deployed. I did not write an application, and I did not type the SQL.
 
-That does not mean the build needs no expertise. It means the expertise moves. The work that remains is judgement: what exactly to predict, what the agent may and may not change, and whether the design it proposes actually measures what it claims to. This part walks through the build in that order, using the design ChatGPT produced when asked to make the experiment reproducible, checked against the vendors' documentation and corrected where checking found problems.
+That does not mean the build needs no expertise. It means the expertise moves. The work that remains is judgement: what exactly to predict, what the agent may and may not change, and whether the design it proposes actually measures what it claims to. This part walks through the build in that order, using the design ChatGPT produced when asked to make the experiment reproducible, checked against the vendors' documentation and corrected where checking found problems. It describes the full design; where something is designed rather than deployed, the table below says so.
 
 As before, this is an experiment in architecture. Nothing here is investment advice.
 
@@ -18,11 +18,11 @@ As before, this is an experiment in architecture. Nothing here is investment adv
 | ChatGPT did | I did |
 |---|---|
 | Proposed the architecture: three engines, ten tables, a Notion workspace | Added the plugins and described the idea |
-| Wrote the database setup, the protections and the scoring views, and ran them through the Supabase plugin | Reviewed the design and asked for changes |
+| Designed the database, protections and scoring, and created the tables the experiment uses (seven so far) through the Supabase plugin | Reviewed the design and asked for changes |
 | Created the Notion pages | Decided what the agent may change, and what only I may change |
 | Wrote the master instructions and the engine prompts | Approved the first strategy |
-| Loaded a year of price history and a first research sweep | Checked each engine's first run |
-| Scheduled the recurring tasks | Review results and approve or reject changes each week |
+| Loaded the price history and ran the 60-session learning experiment | Checked the first outputs against the design |
+| Wrote the scheduled engines (designed; not yet deployed) | Decide whether any change is adopted |
 
 ## Step 1: add the plugins
 
@@ -280,7 +280,7 @@ flowchart TD
 
 ## Next: the first results
 
-Each cycle of the agent is quick: a run finishes in minutes, a little longer when Firecrawl is doing deeper research, and the Notion pages are updated within about ten minutes. Evidence is what takes time. [Part 2](intelligence-that-compounds-2-what-it-means.html) reports what the experiment has shown so far: a sequential learning experiment over 60 historical trading sessions, in which a strategy adapted, did not beat a fixed baseline, and was not promoted; the first live forecast; and what the pattern means for an organisation that wants to learn from its own decisions.
+Each cycle of the agent is quick: a run finishes in minutes, a little longer when Firecrawl is doing deeper research, and the Notion pages are updated within about ten minutes. Evidence is what takes time. [Part 2](intelligence-that-compounds-2-what-it-means.html) reports what the experiment has shown: a learning algorithm executed over 60 historical trading sessions, which adapted, did not beat a fixed baseline, and was not promoted. [Part 3](intelligence-that-compounds-3-organisations.html) asks what that means for an organisation that wants to learn from its own decisions.
 
 :::question
 **A question to sit with.** If an AI designed and deployed a system like this for you by conversation, which three things would you check before trusting its results?
