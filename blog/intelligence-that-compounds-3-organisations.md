@@ -5,23 +5,25 @@ part: 3
 date: 24 November 2026
 ---
 
-[Part 2](intelligence-that-compounds-2-what-it-means.html) showed a learning algorithm that adapted, did not improve on a fixed baseline, and was therefore not promoted. This part asks what that means beyond one market: for the people who build and review systems like this, for who should own each kind of learning, and for an organisation that wants to learn from its own decisions rather than only record them.
+[Part 2](intelligence-that-compounds-2-what-it-means.html) followed a system through 60 sessions of experience: its confidence built, failed, and settled; its loss fell by 10.3% from the first stage to the last; and because it still did not beat a baseline that never learned, its governance declined to adopt it. This part asks what that means beyond one market: for the people who build and review systems like this, for who should own each kind of learning, and for an organisation that wants to learn from its own decisions rather than only record them.
 
 ## What it means in practice
 
-Sixty sessions and one live forecast prove nothing about Brent. They say a good deal about building systems like this.
+Sixty sessions say little about Brent. They say a good deal about systems that learn.
 
-**The cost of building has collapsed; the cost of judging has not.** The pilot's database, its workspace, its first forecasts and the 60-session experiment were built by conversation, and a run, from research to forecast to updated Notion pages, completes in about ten minutes. The first prospective evidence worth reading will take eight to twelve weeks, and the most valuable hours in the whole project were spent reviewing a design, not producing one. In an organisation, that changes where AI effort should be budgeted: less on building, more on review, measurement and ownership.
+**Experience has to be recorded as decisions.** Seven weeks of scheduled market commentary had produced plenty of analysis and almost nothing to learn from. Sixty sessions of recorded forecasts produced 180 scored comparisons. The difference was not intelligence; it was whether each judgement was written down, with its confidence, before the outcome was known. Most organisations are in the first position: rich in commentary, poor in decisions that can be checked.
 
-**A capable designer still needs a reviewer.** The live system caught one data problem on its own, the stale spot series, and missed a subtler one, the timing of its reference price. Neither is exotic. Both would have quietly flattered the results. Design review of AI-built systems is real work, and someone has to be accountable for it.
+**Adapting and improving are separate measurements.** The adaptive strategy changed its behaviour as it learned, and got better at every stage. Only a comparison with a baseline that never learned showed that it was still not good enough. Without that baseline, the 10.3% would have been reported as success. Any claim that an AI system has improved should come with the answer to one question: compared with what, on the same cases?
 
-**Honest uncertainty is a feature, and most organisations do not reward it.** A forecast labelled *uncalibrated* at 43% is less impressive on a slide than a confident call, and far more useful. The Brier score rewards the honest version; most management dashboards reward the confident one. An organisation that adopts learning agents has to decide which behaviour it wants, and measure accordingly.
+**How fast a system learns is a design decision.** The adaptive strategy remembered everything and adjusted slowly; it kept expecting rises through five consecutive falls. The regime-sensitive strategy reacted at once and was repeatedly caught by reversals. Neither is right in general. Choosing how much weight new experience should carry is a judgement about the domain, and it belongs to the people who understand it.
 
-**The agent is a research colleague, not a decision-maker.** It recommends nothing it cannot be scored on, executes nothing, and marks its scenarios as sensitivities rather than additional forecasts. That restraint was designed in, not added afterwards. In an enterprise, the same restraint is what makes decision support auditable.
+**Confidence has to be earned, and measured.** Both strategies lost most heavily when they were most confident. In the ten sessions where the regime-sensitive strategy was at least 65% sure of a rise, averaging 72.6%, Brent rose six times. The Brier score rewards honest uncertainty; most management dashboards reward the confident call. An organisation that adopts learning systems has to decide which behaviour it wants, and measure accordingly.
 
-**Shared work needs access decisions.** Moving the agent's interpretation into Notion turned a private experiment into something a team can read, question and comment on. It also made every sharing setting a decision about who may see, and who may change, what the agent has learned.
+**The cost of building has collapsed; the cost of judging has not.** The database, the workspace and the experiment were built by conversation. The most valuable hours went into reviewing the design, where eight problems were found, each of which would have quietly flattered the results. In an organisation, that changes where AI effort should be budgeted: less on building, more on review, measurement and ownership.
 
-**A personal setup has personal limits.** The experiment runs on one person's accounts, with plugins that act with that person's rights, and its scheduled engines are still to come. That is acceptable for an experiment and not for an organisation, which is where the rest of this part goes.
+**Shared work needs access decisions.** Moving the system's interpretation into Notion turned a private experiment into something a team can read, question and comment on. It also made every sharing setting a decision about who may see, and who may change, what the system has learned.
+
+**A personal setup has personal limits.** The experiment runs on one person's accounts, with plugins that act with that person's rights. That is acceptable for an experiment and not for an organisation, which is where the rest of this part goes.
 
 ### What Notion adds
 
@@ -29,9 +31,9 @@ Because the agent's interpretation lives in Notion, the experiment gains things 
 
 **It can be shared.** A Notion page can be shared with chosen colleagues or guests at a chosen permission level, or published to the web. [Notion](https://www.notion.com/help/sharing-and-permissions) The research becomes something a team reads, not a file one person keeps.
 
-**It can be discussed where it is written.** Readers can comment on a whole page or on a specific sentence. [Notion](https://www.notion.com/help/comments-mentions-and-reminders) A colleague who doubts the Libya assumption can say so next to it, and the weekly review becomes a conversation in place rather than a meeting about a document.
+**It can be discussed where it is written.** Readers can comment on a whole page or on a specific sentence. [Notion](https://www.notion.com/help/comments-mentions-and-reminders) A colleague who doubts a hypothesis can say so next to it, and the weekly review becomes a conversation in place rather than a meeting about a document.
 
-**It can be questioned.** Notion AI answers questions from the pages in a workspace that the person asking has access to, and follows the workspace's access rules. [Notion](https://www.notion.com/help/notion-ai-faqs) Anyone on the team can ask which hypotheses are waiting for a decision, or what the agent said about inventories last week, without reading every page.
+**It can be questioned.** Notion AI answers questions from the pages in a workspace that the person asking has access to, and follows the workspace's access rules. [Notion](https://www.notion.com/help/notion-ai-faqs) Anyone on the team can ask which hypotheses are waiting for a decision, or why the regime-sensitive strategy was not promoted, without reading every page.
 
 Each of these has a governance edge. Sharing is an access decision: share the dashboards widely, but keep the Decisions page editable by its owner alone. Notion AI answers from Notion, which holds the interpretation; the numbers that count are in Supabase, and a dashboard figure should be checked against them before it is quoted. And Notion's own agent can create and edit pages, which makes it one more writer in the workspace to account for.
 
@@ -159,11 +161,11 @@ Most enterprise systems are designed to record what an organisation does. The qu
 
 This series began with a claim from all three series on this blog: an agent must be able to reason correctly, act within delegated authority, and learn from consequences without compromising either. The principle behind the third part of that claim stays the same at every scale. Agency lets an agent act. Observation lets it see its environment. Memory lets it keep experience. Reflection lets it question its understanding. Evaluation establishes whether an improvement is real. Governance decides which improvements it may adopt.
 
-The experiment so far has shown exactly that sequence, on a small scale. Memory enabled adaptation. Evaluation showed that the adaptation was not yet improvement. Governance withheld the promotion. That is a modest result, and the right one: a system that could not reach it would have adopted its luckiest guess.
+The experiment showed that sequence working end to end. Memory enabled adaptation: the system's decisions changed, session by session, as its experience grew. Evaluation established that the adaptation was real and not yet enough. Governance declined to adopt it and chose the next experiment from the evidence. A system that could not reach that conclusion would have adopted its luckiest guess.
 
-Building an agent with memory is now straightforward; this one was built by conversation and completes a run in minutes. Building one that can show it improves through experience is a different and harder problem, and most of it is not technical. Connecting more tools gives an agent more information. Designing a learning loop gives it a chance to get better at using that information. The opportunity is not only to build more capable agents, but to build organisations in which intelligence, human and artificial, compounds.
+Building an agent with memory is now straightforward; this one was built by conversation. Building one that can show it improves through experience is a different and harder problem, and most of it is not technical. Connecting more tools gives an agent more information. Designing a learning loop gives it a chance to get better at using that information. The opportunity is not only to build more capable agents, but to build organisations in which intelligence, human and artificial, compounds.
 
-The next steps are the designed ones: scheduled engines, Firecrawl research, forecasts informed by news, and prospective tests of challengers against the baseline on days that have not happened yet. I will report those results here when there are enough of them to mean something, whichever way they point.
+The next experiment is already registered: a confidence-adjusted strategy, tested forward against the same baseline, followed by forecasts informed by research and model reasoning. I will report the results here when there are enough of them to mean something, whichever way they point.
 
 :::question
 **A question to sit with.** Which decision in your organisation produces an outcome you could record within a month, and who would review what an agent learned from it?

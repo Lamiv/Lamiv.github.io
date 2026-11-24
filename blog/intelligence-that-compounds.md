@@ -29,13 +29,13 @@ Together they make one argument about enterprise AI: *an agent must be able to r
 
 ## A small experiment
 
-I have been exploring this with a small market intelligence agent, assembled from ChatGPT, a Supabase database and a Notion workspace, with Firecrawl for deeper research. There is no application to build; every piece is an existing platform, configured.
+I have been exploring this with a market intelligence system that follows one thing, Brent crude oil, and asks one question each trading session: *which way will Brent move next, and how confident should I be?* Any capable assistant can answer that. The difference is what happens afterwards. The system keeps every forecast, the confidence behind it and the strategy that produced it, and when the real price is known it measures the gap.
 
-It follows one thing, Brent crude oil, and asks one question each trading day: *which way will Brent move next, how confident am I, and why?* Any capable assistant can answer that. The difference is what happens afterwards. The agent keeps its forecast, its evidence, its confidence and the version of the strategy it used, and when the real price is known it measures the gap.
+The experiment at the centre of this series ran that loop over 60 consecutive trading sessions of Brent prices. Three strategies made 180 forecasts, each recorded before its outcome was read. Two of them learned from every outcome; one never learned at all, so that learning could be measured against it. The system wrote 60 reflections, registered its hypotheses, and in the end decided that neither learning strategy was good enough to adopt.
 
-The idea did not come from nowhere. Weeks of scheduled market watch had already produced plenty of analysis, and almost nothing that could be checked afterwards against what happened. That gap is what this series sets out to close.
+The purpose was never a profitable oil strategy. It was to make one thing visible: how a system's decisions change as experience accumulates, and how it can tell whether that change is improvement. The thesis of the series follows from what it showed. *Intelligence compounds when experience is preserved, subsequent decisions are informed by that experience, outcomes are independently evaluated, and adaptations are subjected to governance.*
 
-This is an experiment in architecture, not a forecasting claim, and certainly not investment advice. Its purpose is to make one question concrete: what would it take for a system like this to *show* that it is improving?
+The system was assembled from existing platforms, ChatGPT, a Supabase database and a Notion workspace, configured by conversation rather than built as an application. Figure 1 shows the reference design.
 
 ```mermaid
 flowchart LR
@@ -52,7 +52,7 @@ flowchart LR
     E --> M2
 ```
 
-*Figure 1. The architecture is a loop, not a pipeline: each cycle ends by checking against reality, and only tested changes feed the next cycle.*
+*Figure 1. The reference design is a loop, not a pipeline: each cycle ends by checking against reality, and only tested changes feed the next cycle.*
 
 *Alt text: A scheduled task starts each cycle. External sources are ingested and given context, then passed to a reasoning agent, which makes a prediction or recommendation. That is evaluated against the real outcome, which leads to controlled adaptation and back to the agent for the next cycle. The agent reads and writes empirical memory in Supabase and reflective memory in Notion; evaluation reads and writes empirical memory and writes to reflective memory.*
 
@@ -102,9 +102,9 @@ That raises the question the rest of the series has to answer. If we authorise a
 
 ## What the series covers
 
-**[Part 1: Building it by conversation](intelligence-that-compounds-1-building-it.html)** is the build. ChatGPT designed the database, the engines and their prompts through its plugins for Supabase, Notion and Firecrawl, and built the parts the experiment needed. What it could not do was decide what counts as evidence, and what the agent may change about itself. The part covers the design, the eight problems a careful review found in it, and where a person's time actually goes.
+**[Part 1: Five responsibilities of a learning system](intelligence-that-compounds-1-building-it.html)** is the architecture. Empirical memory preserves experience, reflective memory interprets it, evaluation establishes whether decisions improve, adaptation changes subsequent behaviour, and governance decides which changes are acceptable. It also covers how ChatGPT designed the system by conversation, and the eight problems a careful review found in that design.
 
-**[Part 2: Adapting is not improving](intelligence-that-compounds-2-what-it-means.html)** is the evidence. The learning algorithm was actually executed over 60 historical trading sessions of Brent prices, one session at a time. On 10 September one of its strategies was 77.8% sure Brent would rise, and it rose by more than 10%. The next day it was 80% sure, and Brent fell. Did the system learn? Did it improve? And what did its governance decide? The answers are not the same, and the difference is the point.
+**[Part 2: Watching a system learn](intelligence-that-compounds-2-what-it-means.html)** is the evidence. Over 60 sessions, the system starts with no experience, builds confidence through a run of rising prices, and on 10 September is 77.8% sure Brent will rise. It rises by more than 10%. The next day it is 80% sure, and Brent falls. The part follows what the system did next, how its decisions changed through a falling market in November, how it measured its own progress against a baseline that never learned, and why it rejected its own strategies.
 
 **[Part 3: From one experiment to an organisation](intelligence-that-compounds-3-organisations.html)** is the meaning. What the experiment implies in practice, why single-loop and double-loop learning need different owners, how the same architecture would work for a commercial team, and what an organisation must change before it can trust a system that learns.
 
