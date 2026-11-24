@@ -111,7 +111,7 @@ This is a proposed scale, not an industry standard. Connecting applications reac
 
 ## Next: building it
 
-Connecting tools gives an agent more information. Designing a learning loop gives it a chance to get better at using that information. [Part 1](intelligence-that-compounds-1-building-it.html) is the build: connecting the tools, the tables and pages, the four engines and their prompts, the schedule, tracking the news that moves Brent, and the weekly review where a person decides what the agent may learn.
+Connecting tools gives an agent more information. Designing a learning loop gives it a chance to get better at using that information. [Part 1](intelligence-that-compounds-1-building-it.html) is the build, and most of it was done by conversation: ChatGPT designed the database, the engines and their prompts, and deployed them. What it could not do was decide what counts as evidence, and what the agent may change about itself.
 
 :::question
 **A question to sit with.** If an AI system in your organisation claimed it had improved last quarter, what evidence would you ask for, and does anything record it today?
