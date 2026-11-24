@@ -262,59 +262,7 @@ flowchart TD
 
 *Alt text: Engine C registers a hypothesis. If it is not worth testing it is recorded and rejected. If it is, and fewer than two tests are running, a challenger is tested on at least 30 future dates. If it does not meet the rule fixed in advance it is rejected; if the result is unclear the test continues; if it meets the rule, you decide. Approval activates it, signed in Decisions; a decline rejects it. An activated strategy that later underperforms is retired and the previous strategy restored.*
 
-## The first live forecast
-
-On 24 November the agent made its first live forecast. This is what it published.
-
-![Screenshot of the Brent intelligence terminal for 24 November 2026: reference settlement $89.37 for the January 2027 futures contract on 23 November; forecast settlement $88.92 for 25 November, minus 0.50%; probability of upside 43%, labelled judgmental and uncalibrated; a chart of the FRED spot series from 11 to 17 November, labelled as a separate series that is stale for scoring; and an evidence balance listing recovering supply, a Libya pipeline restart and an unconfirmed inventory build as bearish drivers, against Hormuz logistics risk, physical supply vulnerability and reported backwardation as bullish counterweights.](img/compounds/terminal.webp)
-
-*Figure 3. The agent's first forecast, as it appears in Notion. A real output from the experiment, not an illustration.*
-
-Several details are worth reading closely, because they show the design doing its job.
-
-**It chose a precise target, and kept the stale one at arm's length.** The forecast is scored against the settlement of a named contract, ICE Brent January 2027 futures: $89.37 on 23 November, forecast at $88.92 for 25 November, a fall of 0.50%. Naming the contract matters, because ICE's January contract stops trading on the last business day of November and a later contract then becomes the front month. [ICE](https://www.ice.com/products/219/Brent-Crude-Futures) The FRED spot series still appears, but as a separate chart labelled *stale for scored spot forecast*: the agent itself recognised the publication delay discussed above.
-
-**It is honest about its confidence.** The probability of a rise is 43%, labelled *judgmental, uncalibrated*. That is the right label for a first forecast: there is no record yet against which to calibrate it. The Brier score will make the stakes concrete. If Brent falls, the forecast scores 0.43², about 0.18; if it rises, 0.57², about 0.32. A plain 50% scores 0.25 either way, so this forecast beats a coin only if its lean turns out to be right.
-
-**It separates fact from expectation.** The evidence balance lists bearish drivers against bullish counterweights, and marks the expected inventory build as *unconfirmed*. The footer says what the forecast is not: research only, no trade execution, and pending independent verification of the settlement, because the reference price came from news reporting rather than an official feed.
-
-**It still shows how subtle the timing is.** The forecast was frozen at 14:30 UTC on 24 November, but it is measured from the 23 November settlement, so most of a trading day had already happened before the freeze. Some of the move it forecasts may already have been visible. The cleaner version measures from the first settlement *after* the freeze, the one on 24 November. This is exactly the kind of thing the weekly review exists to catch, and a good argument for having one.
-
-![Screenshot of the Brent scenario analysis card: illustrative sensitivities from the $89.37 reference settlement. Bullish supply disruption, plus 3%, $92.05. Neutral balanced market, 0%, $89.37. Bearish supply recovery, minus 3%, $86.69. Recorded central forecast $88.92 for the 25 November 2026 settlement.](img/compounds/scenario-card.webp)
-
-*Figure 4. Scenarios around the forecast. The agent labels them as illustrative sensitivities; only the central forecast is recorded and scored.*
-
-Alongside the forecast, the Scenario and Risk Monitor page shows what plus or minus 3% would mean, and keeps a risk register with a control for each risk: match the January 2027 settlement exactly, against contract mismatch; search for contradictory evidence, against narrative bias; preserve retrieval and observation dates, against publication delay; score probabilities with the Brier score, against overconfidence; and freeze forecasts before the target date, against lookahead. The scenarios are clearly marked as sensitivities, not extra forecasts, which keeps the record honest: one forecast, one score.
-
-![Screenshot of the Learning Laboratory page in Notion: hypothesis H01, physical supply recovery may outweigh geopolitical headlines when export flows improve. Status proposed, untested; candidate strategy not activated; to be tested as a fixed rubric against the original strategy on identical future observations, with a minimum of 30 paired dates and pre-registered acceptance criteria.](img/compounds/learning-lab.webp)
-
-*Figure 5. The first hypothesis, on day one: proposed, untested and not activated.*
-
-The Learning Laboratory already holds a first hypothesis: *physical supply recovery may outweigh geopolitical headlines when export flows improve.* Its status is the most important part. Proposed, untested; the candidate strategy not activated; to be tested on identical future dates, at least thirty of them, against criteria registered in advance. On day one, the learning loop is a commitment, not a result. That is how it should be.
-
-### What Notion adds
-
-Because the agent's interpretation lives in Notion, the experiment gains things a database alone would not give it.
-
-![Screenshot of the Notion page 01, Market Intelligence Terminal, with an attached HTML dashboard called Brent terminal, an investment research thesis stating that supply recovery and weak momentum modestly outweigh disruption risks, a tentative bearish research view and not a trade instruction, frozen at 14:30:09 UTC on 24 November, and a source register linking the FRED spot series and two Reuters reports.](img/compounds/notion-terminal-page.webp)
-
-*Figure 6. The forecast as a Notion page: a short thesis, the time it was frozen, its sources, and an attached dashboard.*
-
-**It can be shared.** A Notion page can be shared with chosen colleagues or guests at a chosen permission level, or published to the web. [Notion](https://www.notion.com/help/sharing-and-permissions) The research becomes something a team reads, not a file one person keeps.
-
-**It can be discussed where it is written.** Readers can comment on a whole page or on a specific sentence. [Notion](https://www.notion.com/help/comments-mentions-and-reminders) A colleague who doubts the Libya assumption can say so next to it, and the weekly review becomes a conversation in place rather than a meeting about a document.
-
-**It can be questioned.** Notion AI answers questions from the pages in a workspace that the person asking has access to, and follows the workspace's access rules. [Notion](https://www.notion.com/help/notion-ai-faqs) Anyone on the team can ask which hypotheses are waiting for a decision, or what the agent said about inventories last week, without reading every page.
-
-Each of these has a governance edge. Sharing is an access decision: share the dashboards widely, but keep the Decisions page editable by its owner alone. Notion AI answers from Notion, which holds the interpretation; the numbers that count are in Supabase, and a dashboard figure should be checked against them before it is quoted. And Notion's own agent can create and edit pages, which makes it one more writer in the workspace to account for.
-
-## How we will know
-
-The Brier score is the primary measure because it rewards honest confidence: a forecast of 80% that turns out wrong scores 0.64, while always saying 50% scores 0.25. [Wikipedia](https://en.wikipedia.org/wiki/Brier_score) An agent that is often confidently wrong does worse than one that admits uncertainty.
-
-Three comparisons matter, all on the same future dates: the learning agent against the no-change forecast, which any skill must beat; against the fixed V1 forecast, which shows whether learning added anything; and each challenger against the strategy it would replace. Because every test runs forward on dates that did not exist when it began, this is walk-forward evaluation, the standard defence against strategies that merely fit the past. [Wikipedia](https://en.wikipedia.org/wiki/Walk_forward_optimization)
-
-Eight to twelve weeks gives a first dataset, not a verdict. The year of loaded history gives context, not experience: the agent's record begins with its first forecast made before the outcome existed. I will publish results here when there are enough to say something, including if the learning agent does worse than the baselines.
+## What can go wrong in the build
 
 :::risk
 **Averting risk**
@@ -330,13 +278,9 @@ Eight to twelve weeks gives a first dataset, not a verdict. The year of loaded h
 | Web content steers the agent | Outside text is data | Instruction 3; suspicious text logged | Subtle influence on interpretation |
 :::
 
-## Beyond Brent
+## Next: the first results
 
-The same conversation could build a commercial version. ChatGPT connects to Outlook email and calendar, Microsoft Teams and Gmail, and HubSpot's connector can read CRM data and create or update records within your existing permissions. [OpenAI](https://help.openai.com/articles/12512241)[OpenAI](https://help.openai.com/articles/12552368)[HubSpot](https://knowledge.hubspot.com/integrations/connect-your-hubspot-account-to-chatgpt) The tables would hold signals, recommendations, actions taken and deals won or lost; the engines would stay the same.
-
-The review would matter even more. Linking an email to the right customer, knowing what was known when a recommendation was made, and telling a remark from a commitment do not come with any plugin. HubSpot notes that records created through its connector bypass custom validation rules, including pipeline stage checks, and recommends requiring approval for its write tools. [HubSpot](https://knowledge.hubspot.com/integrations/connect-your-hubspot-account-to-chatgpt) And a deal won after a recommendation does not prove the recommendation caused it.
-
-The lesson of this build is not that AI can now write the software. It is that when it does, the human contribution concentrates in the places that were always hardest: deciding what counts as evidence, what the system may change about itself, and how anyone would know it had improved.
+The build took an afternoon. Evidence takes longer. [Part 2](intelligence-that-compounds-2-what-it-means.html) looks at the agent's first live forecast as it appeared in Notion, at what it shows about the design, at how the results will be judged, and at what the pattern means for an organisation that wants to learn from its own decisions.
 
 :::question
 **A question to sit with.** If an AI designed and deployed a system like this for you in an afternoon, which three things would you check before trusting its results?
@@ -344,11 +288,8 @@ The lesson of this build is not that AI can now write the software. It is that w
 
 ## Sources
 
-- ICE, [*Brent Crude Futures*](https://www.ice.com/products/219/Brent-Crude-Futures), contract specification, accessed November 2026.
 - U.S. Energy Information Administration, [*Europe Brent Spot Price FOB*](https://www.eia.gov/dnav/pet/hist/RBRTED.htm) and [*Weekly Petroleum Status Report*](https://www.eia.gov/petroleum/supply/weekly/), accessed November 2026. The same daily series is republished by FRED as DCOILBRENTEU.
 - Supabase, [*Supabase is now an official ChatGPT app*](https://supabase.com/blog/supabase-is-now-an-official-chatgpt-app), 2026, and [*Connect your AI tools to Supabase using MCP*](https://supabase.com/docs/guides/getting-started/mcp), accessed November 2026.
-- OpenAI Help Center, [*Notion app and setup in ChatGPT*](https://help.openai.com/en/articles/12532955-notion-app-and-setup-in-chatgpt), [*Connected apps in ChatGPT*](https://help.openai.com/en/articles/11487775-connectors-in-chatgpt), [*Managing app permissions in ChatGPT*](https://help.openai.com/articles/20001495), [*Scheduled tasks in ChatGPT*](https://help.openai.com/en/articles/10291617-tasks-in-chatgpt), [*Outlook Email and Calendar apps in ChatGPT*](https://help.openai.com/articles/12512241) and [*Microsoft Teams app and setup in ChatGPT*](https://help.openai.com/articles/12552368), accessed November 2026.
-- Notion, [*Connect AI tools to your workspace with Notion MCP*](https://www.notion.com/help/notion-mcp), [*Sharing and permissions*](https://www.notion.com/help/sharing-and-permissions), [*Comments, mentions and reactions*](https://www.notion.com/help/comments-mentions-and-reminders) and [*Notion AI FAQs*](https://www.notion.com/help/notion-ai-faqs), accessed November 2026.
+- OpenAI Help Center, [*Notion app and setup in ChatGPT*](https://help.openai.com/en/articles/12532955-notion-app-and-setup-in-chatgpt), [*Connected apps in ChatGPT*](https://help.openai.com/en/articles/11487775-connectors-in-chatgpt), [*Managing app permissions in ChatGPT*](https://help.openai.com/articles/20001495) and [*Scheduled tasks in ChatGPT*](https://help.openai.com/en/articles/10291617-tasks-in-chatgpt), accessed November 2026.
+- Notion, [*Connect AI tools to your workspace with Notion MCP*](https://www.notion.com/help/notion-mcp), accessed November 2026.
 - Firecrawl, [*Firecrawl MCP*](https://docs.firecrawl.dev/mcp-server), [*Firecrawl MCP tools*](https://docs.firecrawl.dev/mcp-server/tools), [*Search*](https://docs.firecrawl.dev/features/search) and [*Change tracking*](https://docs.firecrawl.dev/features/change-tracking), accessed November 2026.
-- HubSpot Knowledge Base, [*Set up and use the HubSpot connector for ChatGPT*](https://knowledge.hubspot.com/integrations/connect-your-hubspot-account-to-chatgpt), accessed November 2026.
-- Wikipedia, [*Brier score*](https://en.wikipedia.org/wiki/Brier_score) and [*Walk forward optimization*](https://en.wikipedia.org/wiki/Walk_forward_optimization).

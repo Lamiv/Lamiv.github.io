@@ -23,7 +23,7 @@ It follows one thing, Brent crude oil, and answers one question every trading da
 
 Any capable assistant can research the market and answer that. The difference is what happens afterwards. The agent keeps its prediction, its evidence, its confidence and the version of the strategy it used. When the real price is known, it goes back, measures the gap and writes down possible explanations, which become hypotheses to test.
 
-Its first live forecast, frozen at 14:30 UTC on 24 November, gives a 43% chance that Brent's January futures settle higher on 25 November than on 23 November, and labels that number, honestly, as uncalibrated. Part 1 shows it, and what it reveals about the design.
+Its first live forecast, frozen at 14:30 UTC on 24 November, gives a 43% chance that Brent's January futures settle higher on 25 November than on 23 November, and labels that number, honestly, as uncalibrated. [Part 2](intelligence-that-compounds-2-what-it-means.html) shows it, and what it reveals about the design.
 
 This is an experiment in architecture, not a forecasting claim, and certainly not investment advice. Its purpose is to make one question concrete: what would it take for a system like this to *show* that it is improving?
 
@@ -121,9 +121,9 @@ Brent is a convenient teacher because the market publishes an independent outcom
 
 This is a proposed scale, not an industry standard. Connecting applications reaches level 2, and level 3 is now easy to build. The real work is the step from 4 to 5, where a claim has to become a measurement.
 
-## Next: building it
+## Next: building it, and what it means
 
-Connecting tools gives an agent more information. Designing a learning loop gives it a chance to get better at using that information. [Part 1](intelligence-that-compounds-1-building-it.html) is the build, and most of it was done by conversation: ChatGPT designed the database, the engines and their prompts, and deployed them. What it could not do was decide what counts as evidence, and what the agent may change about itself. That is where a person's time goes.
+Connecting tools gives an agent more information. Designing a learning loop gives it a chance to get better at using that information. [Part 1](intelligence-that-compounds-1-building-it.html) is the build, and most of it was done by conversation: ChatGPT designed the database, the engines and their prompts, and deployed them. What it could not do was decide what counts as evidence, and what the agent may change about itself. That is where a person's time goes. [Part 2](intelligence-that-compounds-2-what-it-means.html) reads the first live forecast against the design, draws out what it means in practice, and extends the pattern to an organisation's own decisions.
 
 :::question
 **A question to sit with.** If an AI system in your organisation claimed it had improved last quarter, what evidence would you ask for, and does anything record it today?
