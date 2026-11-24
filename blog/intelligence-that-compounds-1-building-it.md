@@ -7,42 +7,22 @@ date: 24 November 2026
 
 The [prologue](intelligence-that-compounds.html) argued that an agent which remembers is not yet an agent which learns. This part is about building one, and the most surprising thing about it is how little of the building I did.
 
-I added the plugins to ChatGPT. I described the idea. ChatGPT proposed a design: the database, the engines, the prompts and the schedule. I reviewed it, asked for changes, and asked it to build. It created the experiment's tables through the Supabase plugin, set up the Notion workspace, recorded the first forecasts, and ran a 60-session historical replay with daily reflections and a strategy comparison. I did not write an application, and I did not type the SQL.
+I added three plugins to ChatGPT. I described the idea. ChatGPT proposed a design: the database, the engines, the prompts and the schedule. I reviewed it, asked for changes, and then asked it to finalise and deploy everything. It wrote and ran the database setup through the Supabase plugin, created the Notion workspace, wrote the engine prompts and scheduled the tasks. I did not write an application, and I did not type the SQL.
 
-That does not mean the build needs no expertise. It means the expertise moves. The work that remains is judgement: what exactly to predict, what the agent may and may not change, and whether the design it proposes actually measures what it claims to.
-
-This part describes two things, and keeps them apart. The **reference architecture** is the complete design ChatGPT produced when asked to make the experiment reproducible, checked against the vendors' documentation and corrected where checking found problems. The **implemented experiment** is the part of it that is running and has been tested. They are not the same yet, and the difference matters.
+That does not mean the build needs no expertise. It means the expertise moves. The work that remains is judgement: what exactly to predict, what the agent may and may not change, and whether the design it proposes actually measures what it claims to. This part walks through the build in that order, using the design ChatGPT produced when asked to make the experiment reproducible, checked against the vendors' documentation and corrected where checking found problems.
 
 As before, this is an experiment in architecture. Nothing here is investment advice.
-
-## Designed, and implemented
-
-| Capability | Status |
-|---|---|
-| Supabase as persistent empirical memory | Implemented and tested |
-| Notion as reflective memory, research discussion and governance | Implemented and tested |
-| Sequential probability updates from observed outcomes | Implemented and tested, in a 60-session historical replay |
-| Scoring, daily reflections, hypotheses and strategy comparison | Implemented and tested |
-| Evidence-based rejection of strategies that do not improve | Implemented and tested |
-| First live forecasts, frozen before their outcomes | Implemented; awaiting outcomes |
-| Firecrawl research acquisition | Designed, not yet implemented |
-| The full ten-table database | Designed; five pilot tables in place |
-| Scheduled, unattended execution of the engines | Designed, not yet implemented |
-| News-driven forecasting and strategy refinement by the model | Designed, not yet implemented |
-| Prospective champion and challenger testing | Designed, not yet implemented |
-
-What exists today demonstrates the mechanics of a governed learning loop. It is not yet a fully autonomous, self-improving agent, and nothing in this series claims otherwise. [Part 2](intelligence-that-compounds-2-what-it-means.html) reports what the implemented part has shown.
 
 ## Who did what
 
 | ChatGPT did | I did |
 |---|---|
 | Proposed the architecture: three engines, ten tables, a Notion workspace | Added the plugins and described the idea |
-| Designed the database, protections and scoring, and created the pilot tables through the Supabase plugin | Reviewed the design and asked for changes |
+| Wrote the database setup, the protections and the scoring views, and ran them through the Supabase plugin | Reviewed the design and asked for changes |
 | Created the Notion pages | Decided what the agent may change, and what only I may change |
-| Wrote the master instructions and the engine prompts | Set the rules for what counts as improvement |
-| Loaded price history and ran a 60-session replay of three strategies | Checked the first outputs against the design |
-| Wrote 60 daily reflections, scored the strategies and registered hypotheses | Decide whether any change is adopted |
+| Wrote the master instructions and the engine prompts | Approved the first strategy |
+| Loaded a year of price history and a first research sweep | Checked each engine's first run |
+| Scheduled the recurring tasks | Review results and approve or reject changes each week |
 
 ## Step 1: add the plugins
 
@@ -50,7 +30,7 @@ What exists today demonstrates the mechanics of a governed learning loop. It is 
 
 **Notion** connects as an app. OpenAI's help page describes ChatGPT's Notion app as searching and reading the pages your account can access, [OpenAI](https://help.openai.com/en/articles/12532955-notion-app-and-setup-in-chatgpt) while Notion describes its MCP connection as letting AI apps, ChatGPT included, read from and write to Notion pages. [Notion](https://www.notion.com/help/notion-mcp) The agent needs to write, so check what your connection offers, and limit it to the pages for the experiment.
 
-**Firecrawl** has a native connector for ChatGPT. [Firecrawl](https://docs.firecrawl.dev/mcp-server) ChatGPT's own web search and deep research can do the research on their own; [OpenAI](https://help.openai.com/en/articles/11487775-connectors-in-chatgpt) Firecrawl adds deeper searches, more sources, page monitoring and an autonomous research mode. In the runs so far, Firecrawl was not available to the agent's tools, so it used ordinary web research; Firecrawl remains part of the reference design.
+**Firecrawl** has a native connector for ChatGPT. [Firecrawl](https://docs.firecrawl.dev/mcp-server) ChatGPT's own web search and deep research can do the research on their own; [OpenAI](https://help.openai.com/en/articles/11487775-connectors-in-chatgpt) Firecrawl adds deeper searches, more sources, page monitoring and an autonomous research mode.
 
 **Permissions** deserve a moment's thought. ChatGPT can ask before every read or change, read freely but ask before changes, allow low-risk actions, or, for an eligible account, allow all actions. [OpenAI](https://help.openai.com/articles/20001495) A scheduled task that needs an approval at 08:00 while you are elsewhere will wait for it. The engines' writing connections therefore need more freedom than you would give in conversation, which is a real grant of authority, and the reason everything else in the design narrows what those connections can reach.
 
@@ -129,11 +109,9 @@ After each step, read back what you wrote and report counts. If anything fails, 
 
 The order matters. The first manual run of each engine is where you find out that a plugin needs reconnecting, a table name is wrong, or a forecast is being scored against the wrong date. Activating Strategy V1 is a deliberate act of yours, made after reading it.
 
-**Where the build stands.** In practice, the build has reached a pilot. Five of the ten tables exist in a private schema; the first live forecasts and a 60-session historical replay are recorded; Notion holds the dashboards, the journal, the hypotheses, the strategy register and the governance rules. The scheduled engines, Firecrawl research and model-driven strategy refinement are the next steps. The rest of this part describes the reference architecture they belong to.
+## The engines
 
-## The engines (reference architecture)
-
-None of these runs on a schedule yet; this is the design the pilot is growing into. Each engine is a scheduled task with one job. The engine that forecasts never marks its own work, and, after the review above, the fixed baseline runs separately from the strategy that learns.
+Each engine is a scheduled task with one job. The engine that forecasts never marks its own work, and, after the review above, the fixed baseline runs separately from the strategy that learns.
 
 | Engine | Schedule (Dubai) | Job |
 |---|---|---|
@@ -142,7 +120,7 @@ None of these runs on a schedule yet; this is the design the pilot is growing in
 | B: evaluation | Every day, 22:00 | Record newly published prices and score matured forecasts in SQL |
 | C: learning | Sundays, 10:00 | Compare strategies, study failures, register hypotheses and experiments |
 
-ChatGPT's scheduled tasks allow a limited number of active tasks per plan: five on Plus, ten on Business, fifteen on Pro. Exact times need a paid plan, and tasks use your plan's allowance even when they post nothing. [OpenAI](https://help.openai.com/en/articles/10291617-tasks-in-chatgpt) Four engines fit within any of them. Runs are short: in the pilot, a research and forecast run finishes in minutes and the Notion updates within about ten; deeper Firecrawl research would add a little.
+ChatGPT's scheduled tasks allow a limited number of active tasks per plan: five on Plus, ten on Business, fifteen on Pro. Exact times need a paid plan, and tasks use your plan's allowance even when they post nothing. [OpenAI](https://help.openai.com/en/articles/10291617-tasks-in-chatgpt) Four engines fit within any of them. Each run is short: a research and forecast cycle finishes in minutes, a little longer when Firecrawl is doing deeper research, with the Notion updates complete within about ten minutes.
 
 ```mermaid
 flowchart TD
@@ -165,9 +143,9 @@ flowchart TD
 
 *Alt text: Engine A, on weekdays at 08:00, writes observations, evidence and predictions, using the active strategy and challengers. Engine A2, at 08:15, writes fixed-baseline predictions using Strategy V1. Engine B, daily at 22:00, reads published prices from EIA via FRED and the predictions, and writes evaluations scored in SQL. Engine C, on Sundays at 10:00, reads the evaluations and writes hypotheses and experiments to Notion. Your review is the only path by which an approved activation reaches the strategies.*
 
-## The prompts (reference architecture)
+## The prompts
 
-ChatGPT wrote these for the reference design; I have kept their substance and applied the corrections above. Each scheduled task starts with the master instructions, then its own.
+ChatGPT wrote these; I have kept their substance and applied the corrections above. Each scheduled task starts with the master instructions, then its own.
 
 ```prompt
 BRENT INTELLIGENCE AGENT: MASTER INSTRUCTIONS
@@ -233,9 +211,9 @@ ENGINE C: LEARNING AND ADAPTATION (Sundays 10:00 Dubai)
 8. Write a dated, never-overwritten entry in Notion "Learning Journal", and list decisions needed in "Decisions".
 ```
 
-## Research with Firecrawl (designed)
+## Research with Firecrawl
 
-This is the research design the engines will use; in the pilot, research so far has been ordinary web search. Asking an agent "why is oil moving?" produces a narrative. The design instead runs research as separate questions, each looking for evidence rather than explanations.
+Asking an agent "why is oil moving?" produces a narrative. The design instead runs research as separate questions, each looking for evidence rather than explanations.
 
 | What can move Brent | What the agent looks for |
 |---|---|
@@ -256,7 +234,7 @@ Because every research activity is recorded, research can improve too. After a f
 
 ## Reviewing decisions in Notion
 
-This part is implemented. Notion holds the pages ChatGPT proposed: a daily dashboard, a performance dashboard, a research library, a learning journal, hypotheses and experiments, a strategy history and promotion register, and governance and instructions. In the reference design, a separate Decisions page that only the owner edits records each approval; in the pilot, the promotion register plays that role.
+Notion holds seven pages proposed by ChatGPT, Daily Dashboard, Performance Dashboard, Research Library, Learning Journal, Hypotheses and Experiments, Strategy History, and Governance and Instructions, plus the Decisions page added in review. The agent writes to all of them except Decisions. That one is mine.
 
 The weekly review, after Engine C has run, covers five things:
 
@@ -302,7 +280,7 @@ flowchart TD
 
 ## Next: the first results
 
-Each cycle of the agent is quick; evidence is what takes time. [Part 2](intelligence-that-compounds-2-what-it-means.html) reports what the implemented experiment has shown: a 60-session replay in which a strategy adapted, did not improve on a fixed baseline, and was not promoted; the first live forecast; and what the pattern means for an organisation that wants to learn from its own decisions.
+Each cycle of the agent is quick: a run finishes in minutes, a little longer when Firecrawl is doing deeper research, and the Notion pages are updated within about ten minutes. Evidence is what takes time. [Part 2](intelligence-that-compounds-2-what-it-means.html) reports what the experiment has shown so far: a 60-session replay in which a strategy adapted, did not beat a fixed baseline, and was not promoted; the first live forecast; and what the pattern means for an organisation that wants to learn from its own decisions.
 
 :::question
 **A question to sit with.** If an AI designed and deployed a system like this for you by conversation, which three things would you check before trusting its results?

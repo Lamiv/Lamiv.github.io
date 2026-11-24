@@ -17,7 +17,7 @@ This series explores a proposition: an AI system can get better at a task withou
 
 ## A small experiment
 
-I have been exploring this with a small market intelligence agent, assembled from ChatGPT, a Supabase database and a Notion workspace, with scheduled engines and Firecrawl research designed as the next steps. There is no application to build. Every piece is an existing platform, configured, and as Part 1 describes, ChatGPT did most of the configuring.
+I have been exploring this with a small market intelligence agent, assembled from ChatGPT and its scheduled tasks, a Supabase database, a Notion workspace and Firecrawl for deeper research. There is no application to build. Every piece is an existing platform, configured, and as Part 1 describes, ChatGPT did most of the configuring.
 
 It follows one thing, Brent crude oil, and answers one question every trading day: *which way will Brent move next, how confident is it, and why?*
 
