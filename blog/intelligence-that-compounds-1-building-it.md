@@ -280,7 +280,7 @@ flowchart TD
 
 ## Next: the first results
 
-Each cycle of the agent is quick: a run finishes in minutes, a little longer when Firecrawl is doing deeper research, and the Notion pages are updated within about ten minutes. Evidence is what takes time. [Part 2](intelligence-that-compounds-2-what-it-means.html) reports what the experiment has shown so far: a 60-session replay in which a strategy adapted, did not beat a fixed baseline, and was not promoted; the first live forecast; and what the pattern means for an organisation that wants to learn from its own decisions.
+Each cycle of the agent is quick: a run finishes in minutes, a little longer when Firecrawl is doing deeper research, and the Notion pages are updated within about ten minutes. Evidence is what takes time. [Part 2](intelligence-that-compounds-2-what-it-means.html) reports what the experiment has shown so far: a 60-session experiment on real Brent prices in which a strategy adapted, did not beat a fixed baseline, and was not promoted; the first live forecast; and what the pattern means for an organisation that wants to learn from its own decisions.
 
 :::question
 **A question to sit with.** If an AI designed and deployed a system like this for you by conversation, which three things would you check before trusting its results?

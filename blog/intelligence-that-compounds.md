@@ -23,7 +23,7 @@ It follows one thing, Brent crude oil, and answers one question every trading da
 
 Any capable assistant can research the market and answer that. The difference is what happens afterwards. The agent keeps its prediction, its evidence, its confidence and the version of the strategy it used. When the real price is known, it goes back, measures the gap and writes down possible explanations, which become hypotheses to test.
 
-Its first live forecast, frozen at 14:30 UTC on 24 November, gives a 43% chance that Brent's January futures settle higher on 25 November than on 23 November, and labels that number, honestly, as uncalibrated. [Part 2](intelligence-that-compounds-2-what-it-means.html) shows it, and what it reveals about the design.
+Its first experiment put three forecasting strategies through 60 real trading sessions of Brent prices, from late August to mid-November 2026, one session at a time, using prices already on record: each strategy made its forecast before the session's outcome was revealed, was scored against it, and updated. One strategy's loss fell by 10% from its first 20 sessions to its last 20, yet across all 60 it still did worse than simply saying 50% every day, so it was not adopted. [Part 2](intelligence-that-compounds-2-what-it-means.html) tells that story.
 
 This is an experiment in architecture, not a forecasting claim, and certainly not investment advice. Its purpose is to make one question concrete: what would it take for a system like this to *show* that it is improving?
 
@@ -96,7 +96,7 @@ Nothing here retrains the model. What changes is everything around it: which sou
 
 A professional analyst is a fair comparison. Their underlying abilities may not change much over a career; their methods, sources and judgement do, through experience and through being held to their record.
 
-Measuring it honestly means three things. Comparing the learning agent with a simple baseline, and with itself running a fixed strategy that never learns, so that any improvement can be attributed to learning. Storing every prediction before the outcome exists. And testing each change only on days that come after the ones it was developed on. I have no prospective results yet that meet that standard. A 60-session historical replay, reported in Part 2, already shows something more useful than a headline number: a strategy that adapted, whose loss fell by 10% between its first and last block of sessions, still did worse than a fixed baseline overall, and was therefore not promoted. The architecture's claim is narrower than improvement: it makes the question answerable, and I will publish the answer either way.
+Measuring it honestly means three things. Comparing the learning agent with a simple baseline, and with itself running a fixed strategy that never learns, so that any improvement can be attributed to learning. Storing every prediction before the outcome exists. And testing each change only on days that come after the ones it was developed on. The first experiment, reported in Part 2, ran 60 real trading sessions in sequence, and it already shows something more useful than a headline number: a strategy that adapted, whose loss fell by 10% between its first and last block of sessions, still did worse than a fixed baseline overall, and was therefore not promoted. Forecasts made ahead of outcomes that have not yet happened are the next stage. The architecture's claim is narrower than improvement: it makes the question answerable, and I will publish the answer either way.
 
 ## Who decides what it learns
 
