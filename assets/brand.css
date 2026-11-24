@@ -508,3 +508,7 @@ main:has(.bgrid){padding-bottom:clamp(48px,8vw,96px)}
 .post .prompt pre.code.prompt{margin:0;white-space:pre-wrap;word-break:break-word;padding-top:40px}
 .post .prompt .copy{position:absolute;z-index:2;top:8px;right:8px;font:500 .7rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium);background:var(--ink);border:1px solid var(--line);padding:5px 10px;cursor:pointer}
 .post .prompt .copy:hover,.post .prompt .copy:focus-visible{border-color:var(--sodium)}
+/* Screenshots inside posts */
+.post figure.shot{margin:26px 0 30px}
+.post figure.shot img{display:block;width:100%;max-width:440px;height:auto;border:1px solid var(--line);border-radius:6px}
+.post figure.shot figcaption{margin-top:10px;font-size:.92rem;color:var(--mist);font-style:italic;max-width:62ch}

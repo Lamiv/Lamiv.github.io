@@ -262,13 +262,7 @@ flowchart TD
 
 *Alt text: Engine C registers a hypothesis. If it is not worth testing it is recorded and rejected. If it is, and fewer than two tests are running, a challenger is tested on at least 30 future dates. If it does not meet the rule fixed in advance it is rejected; if the result is unclear the test continues; if it meets the rule, you decide. Approval activates it, signed in Decisions; a decline rejects it. An activated strategy that later underperforms is retired and the previous strategy restored.*
 
-## How we will know
-
-The Brier score is the primary measure because it rewards honest confidence: a forecast of 80% that turns out wrong scores 0.64, while always saying 50% scores 0.25. [Wikipedia](https://en.wikipedia.org/wiki/Brier_score) An agent that is often confidently wrong does worse than one that admits uncertainty.
-
-Three comparisons matter, all on the same future dates: the learning agent against the no-change forecast, which any skill must beat; against the fixed V1 forecast, which shows whether learning added anything; and each challenger against the strategy it would replace. Because every test runs forward on dates that did not exist when it began, this is walk-forward evaluation, the standard defence against strategies that merely fit the past. [Wikipedia](https://en.wikipedia.org/wiki/Walk_forward_optimization)
-
-Eight to twelve weeks gives a first dataset, not a verdict. The year of loaded history gives context, not experience: the agent's record begins with its first forecast made before the outcome existed. I will publish results here when there are enough to say something, including if the learning agent does worse than the baselines.
+## What can go wrong in the build
 
 :::risk
 **Averting risk**
@@ -284,13 +278,9 @@ Eight to twelve weeks gives a first dataset, not a verdict. The year of loaded h
 | Web content steers the agent | Outside text is data | Instruction 3; suspicious text logged | Subtle influence on interpretation |
 :::
 
-## Beyond Brent
+## Next: the first results
 
-The same conversation could build a commercial version. ChatGPT connects to Outlook email and calendar, Microsoft Teams and Gmail, and HubSpot's connector can read CRM data and create or update records within your existing permissions. [OpenAI](https://help.openai.com/articles/12512241)[OpenAI](https://help.openai.com/articles/12552368)[HubSpot](https://knowledge.hubspot.com/integrations/connect-your-hubspot-account-to-chatgpt) The tables would hold signals, recommendations, actions taken and deals won or lost; the engines would stay the same.
-
-The review would matter even more. Linking an email to the right customer, knowing what was known when a recommendation was made, and telling a remark from a commitment do not come with any plugin. HubSpot notes that records created through its connector bypass custom validation rules, including pipeline stage checks, and recommends requiring approval for its write tools. [HubSpot](https://knowledge.hubspot.com/integrations/connect-your-hubspot-account-to-chatgpt) And a deal won after a recommendation does not prove the recommendation caused it.
-
-The lesson of this build is not that AI can now write the software. It is that when it does, the human contribution concentrates in the places that were always hardest: deciding what counts as evidence, what the system may change about itself, and how anyone would know it had improved.
+The build took an afternoon. Evidence takes longer. [Part 2](intelligence-that-compounds-2-what-it-means.html) looks at the agent's first live forecast as it appeared in Notion, at what it shows about the design, at how the results will be judged, and at what the pattern means for an organisation that wants to learn from its own decisions.
 
 :::question
 **A question to sit with.** If an AI designed and deployed a system like this for you in an afternoon, which three things would you check before trusting its results?
@@ -300,8 +290,6 @@ The lesson of this build is not that AI can now write the software. It is that w
 
 - U.S. Energy Information Administration, [*Europe Brent Spot Price FOB*](https://www.eia.gov/dnav/pet/hist/RBRTED.htm) and [*Weekly Petroleum Status Report*](https://www.eia.gov/petroleum/supply/weekly/), accessed November 2026. The same daily series is republished by FRED as DCOILBRENTEU.
 - Supabase, [*Supabase is now an official ChatGPT app*](https://supabase.com/blog/supabase-is-now-an-official-chatgpt-app), 2026, and [*Connect your AI tools to Supabase using MCP*](https://supabase.com/docs/guides/getting-started/mcp), accessed November 2026.
-- OpenAI Help Center, [*Notion app and setup in ChatGPT*](https://help.openai.com/en/articles/12532955-notion-app-and-setup-in-chatgpt), [*Connected apps in ChatGPT*](https://help.openai.com/en/articles/11487775-connectors-in-chatgpt), [*Managing app permissions in ChatGPT*](https://help.openai.com/articles/20001495), [*Scheduled tasks in ChatGPT*](https://help.openai.com/en/articles/10291617-tasks-in-chatgpt), [*Outlook Email and Calendar apps in ChatGPT*](https://help.openai.com/articles/12512241) and [*Microsoft Teams app and setup in ChatGPT*](https://help.openai.com/articles/12552368), accessed November 2026.
+- OpenAI Help Center, [*Notion app and setup in ChatGPT*](https://help.openai.com/en/articles/12532955-notion-app-and-setup-in-chatgpt), [*Connected apps in ChatGPT*](https://help.openai.com/en/articles/11487775-connectors-in-chatgpt), [*Managing app permissions in ChatGPT*](https://help.openai.com/articles/20001495) and [*Scheduled tasks in ChatGPT*](https://help.openai.com/en/articles/10291617-tasks-in-chatgpt), accessed November 2026.
 - Notion, [*Connect AI tools to your workspace with Notion MCP*](https://www.notion.com/help/notion-mcp), accessed November 2026.
 - Firecrawl, [*Firecrawl MCP*](https://docs.firecrawl.dev/mcp-server), [*Firecrawl MCP tools*](https://docs.firecrawl.dev/mcp-server/tools), [*Search*](https://docs.firecrawl.dev/features/search) and [*Change tracking*](https://docs.firecrawl.dev/features/change-tracking), accessed November 2026.
-- HubSpot Knowledge Base, [*Set up and use the HubSpot connector for ChatGPT*](https://knowledge.hubspot.com/integrations/connect-your-hubspot-account-to-chatgpt), accessed November 2026.
-- Wikipedia, [*Brier score*](https://en.wikipedia.org/wiki/Brier_score) and [*Walk forward optimization*](https://en.wikipedia.org/wiki/Walk_forward_optimization).
