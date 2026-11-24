@@ -11,9 +11,9 @@ Three kinds of statement run through it, and each is labelled. **Implemented** m
 
 ## What is implemented, and what is not
 
-**Implemented and tested:** Supabase as persistent empirical memory; Notion as reflective memory, research discussion and governance; a 60-session experiment on real Brent prices comparing three forecasting strategies, run session by session; sequential probability updates from observed outcomes; scoring, daily reflections, hypothesis records and strategy comparison; and evidence-based rejection of strategies that did not improve.
+**Implemented and tested:** Supabase as persistent empirical memory; Notion as reflective memory, research discussion and governance; a 60-session sequential learning experiment, in which a learning algorithm ran over historical Brent market observations, session by session, comparing three forecasting strategies; sequential probability updates from observed outcomes; scoring, daily reflections, hypothesis records and strategy comparison; and evidence-based rejection of strategies that did not improve.
 
-**Designed, not yet implemented:** Firecrawl research acquisition; the full ten-table database, of which five pilot tables exist; scheduled, unattended execution of the engines; forecasting and strategy refinement driven by news and the model; and prospective champion and challenger testing.
+**Designed, not yet implemented:** Firecrawl research acquisition; the full ten-table database, of which seven tables exist, five for the live pilot and two for the learning experiments; scheduled, unattended execution of the engines; forecasting and strategy refinement driven by news and the model; and prospective champion and challenger testing.
 
 So the experiment demonstrates the mechanics of a governed learning loop. It is not a fully autonomous, self-improving investment agent, and its results are not investment performance.
 
@@ -25,9 +25,9 @@ Three comparisons matter, all on the same future dates: the learning agent again
 
 Eight to twelve weeks of prospective forecasts gives a first dataset, not a verdict. Loaded history gives context, not experience: an agent's genuine record begins with its first forecast made before the outcome existed. That prospective test is designed, not yet running. What has been run is a 60-session experiment on recorded market data, and it already tests the part of the loop that matters most.
 
-## The experiment: learning over 60 trading sessions
+## The experiment: sequential learning over 60 trading sessions
 
-**What was run.** The experiment took 60 real trading sessions of the EIA Brent spot price, from 25 August to 17 November 2026, and ran them one at a time, in order. [EIA](https://www.eia.gov/dnav/pet/hist/RBRTED.htm) Before each session's outcome, three strategies each stated a probability that the price would rise:
+**What was run.** A learning algorithm was executed over 60 trading sessions of historical market observations, the EIA Brent spot price from 25 August to 17 November 2026, one session at a time, in order. [EIA](https://www.eia.gov/dnav/pet/hist/RBRTED.htm) Nothing about the learning was simulated. Before each session's outcome was read, three strategies each stated a probability that the price would rise; the outcome was then read, every forecast was scored, and the adaptive strategies updated. In all: 60 evaluation sessions, three strategies, 180 probability comparisons and 60 outcome-driven reflections.
 
 | Strategy | How it forms its probability |
 |---|---|
@@ -37,7 +37,7 @@ Eight to twelve weeks of prospective forecasts gives a first dataset, not a verd
 
 After each outcome, every forecast was scored with the Brier score, the adaptive strategies updated their counts, and the next session began. Supabase held the records; Notion held the dashboard, the journal, the hypotheses and the strategy register.
 
-**What it was not.** The 60 sessions were run on 24 November, using prices already on record, so this is not 60 days of live operation. It was a statistical experiment, not a news-driven test of the model's judgement. It used prices only; no news was collected for the period, and no language-model forecasts were made. It also assumed that each day's price was available immediately, which the published series is not, and it did not reconstruct what was actually known on each historical date. The experiment's own records say so: *do not present as executable backtest.* What it does test is the machinery: whether memory changes behaviour, whether evaluation can tell change from improvement, and whether governance acts on the difference.
+**What it was not.** It was not a simulated agent, and it was not a live deployment. The experiment was executed on 24 November 2026 over historical price inputs in sequential order, so it is not 60 days, or 12 weeks, of live operation. Nor was it a news-driven test of the model's judgement. It used prices only; no news was collected for the period, and no language-model forecasts were made. It also assumed that each day's price was available immediately, which the published series is not, it did not reconstruct what was actually known on each historical date, and the price inputs have not yet been independently re-checked against the source. The experiment's own records say so: *do not present as executable backtest.* What it does test is the machinery: whether memory changes behaviour, whether evaluation can tell change from improvement, and whether governance acts on the difference.
 
 ![The agent's dashboard for the 60-session experiment: Brent spot price from late August to 17 November 2026, rising from about $88 to above $130 and falling back to about $93; below it, cumulative Brier loss for the adaptive strategy in teal and the regime-sensitive strategy in amber, both settling slightly above the dashed fixed baseline at 0.25; overall Brier scores fixed 0.2500, adaptive 0.2618, regime 0.2688; and the note that neither adaptive strategy beats the baseline overall, with no promotion and no trading returns claimed.](img/compounds/replay-dashboard.webp)
 
@@ -60,13 +60,13 @@ The adaptive strategy's loss fell by 10.3% between the first and the last block.
 
 The audit trail shows why. With few outcomes counted, the adaptive strategy's probabilities swung widely, from 25% to over 70%, and confident forecasts that turned out wrong were punished hard. On 11 September it said 71% after a run of rises; Brent fell, and that one forecast cost 0.51. As outcomes accumulated, its probabilities settled in the mid-40s, close to the baseline's 50%, and its losses settled close to the baseline's too. Part of its improvement is the market changing; part is the strategy becoming less confidently wrong. Neither is the same as becoming better than a coin.
 
-A smaller five-session demonstration, run first, showed the same pattern in miniature: after two rises the strategy raised its confidence to 75%, the next day fell, and its loss for the period ended 22.7% *higher* than the baseline's. Single good days are just as misleading in the other direction. The regime-sensitive strategy's best day, 10 September, scored 0.05 against the baseline's 0.25, an 80% improvement for that observation. The agent recorded it as a *selected success, not typical performance*, which is exactly the right label.
+An initial five-session sequential experiment, run first, showed the same pattern in miniature: after two rises the strategy raised its confidence to 75%, the next day fell, and its loss for the period ended 22.7% *higher* than the baseline's. Single good days are just as misleading in the other direction. The regime-sensitive strategy's best day, 10 September, scored 0.05 against the baseline's 0.25, an 80% improvement for that observation. The agent recorded it as a *selected success, not typical performance*, which is exactly the right label.
 
-**Memory, evaluation and governance.** The experiment produced 60 daily reflections in the Notion learning journal, one per session. These were written mechanically from the stored results, not by 60 separate runs of a language model reasoning about each day; the journal says so at the top. A typical entry:
+**Memory, evaluation and governance.** The experiment produced 60 outcome-driven reflections in the Notion learning journal, one per session. They were generated algorithmically from each session's stored result, not by 60 separate runs of a language model reasoning about each day; the journal says so at the top. A typical entry:
 
 > *Session 13, 11 September. Before outcome: adaptive P(up) 71.4%; regime 80.0%. Realised −2.41%; adaptive loss 0.5102 versus 0.2500 baseline. Underperformed baseline; confidence was misplaced. After outcome: next adaptive probability 66.7%.*
 
-That distinction matters. The learning here is deterministic and statistical: counts updated by arithmetic. The reflection is a record of it, not independent reasoning. Model-generated reflection, of the kind Part 1 designs for, is a separate capability that has not yet been tested.
+Two distinctions matter here. The first is between simulating an agent and executing a learning algorithm: this experiment did the second, so the forecasts, updates and scores are real computations over real observations, not a story about what an agent might have done. The second is between statistical learning and model reflection: the learning here is deterministic, counts updated by arithmetic, and the journal is a record of it, not independent reasoning. Model-generated reflection, of the kind Part 1 designs for, is a separate capability that has not yet been tested.
 
 Evaluation then did its job, and governance acted on it. The strategy register:
 
