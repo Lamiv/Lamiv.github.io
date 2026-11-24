@@ -41,7 +41,7 @@ The pieces, and what each is for:
 | Supabase | Empirical memory: structured records of what was observed, predicted and measured |
 | Notion | Reflective memory: research notes, hypotheses and the evolving interpretation |
 | Evaluation | Measuring performance and testing proposed changes |
-| Firecrawl (being added) | Wider web research and extraction |
+| Firecrawl (optional) | Deeper web searches and more sources, when ChatGPT's own research is not enough |
 
 ChatGPT can run one-time or recurring tasks, [OpenAI](https://help.openai.com/en/articles/10291617-tasks-in-chatgpt) and use connected apps to search information or take supported actions in other services. [OpenAI](https://help.openai.com/en/articles/11487775-connectors-in-chatgpt) Supabase and Notion both publish servers for the Model Context Protocol, the common way to connect an AI assistant to an outside service. Supabase's lets an assistant query and work with a Postgres database; Notion's lets it search a workspace, create and edit pages, and manage databases. [Supabase](https://supabase.com/docs/guides/getting-started/mcp)[Notion](https://developers.notion.com/docs/mcp)
 
@@ -176,7 +176,7 @@ A professional analyst is a fair comparison. An analyst's underlying abilities m
 
 ### A second loop: how the agent researches
 
-The same reasoning applies to how the agent gathers information. Firecrawl, which I am adding to the experiment, searches the web and turns pages into clean text or structured data for an AI to use, and has a connector for ChatGPT. [Firecrawl](https://docs.firecrawl.dev/introduction)[Firecrawl MCP](https://docs.firecrawl.dev/mcp-server) Once research is a recorded activity, it can be evaluated too. Which sources report useful information first? Which repeat others, or are often wrong? Which searches produce signals that matter, and which consume effort without improving anything?
+The same reasoning applies to how the agent gathers information. By default it uses ChatGPT's own research: searching the web, and deep research across sources. [OpenAI](https://help.openai.com/en/articles/11487775-connectors-in-chatgpt) Where that is not enough, Firecrawl can extend it with deeper searches and more sources. It searches the web and turns pages into clean text or structured data for an AI to use, and has a connector for ChatGPT. [Firecrawl](https://docs.firecrawl.dev/introduction)[Firecrawl MCP](https://docs.firecrawl.dev/mcp-server) Once research is a recorded activity, it can be evaluated too. Which sources report useful information first? Which repeat others, or are often wrong? Which searches produce signals that matter, and which consume effort without improving anything?
 
 Three properties need separate measures here, because they are easily confused. A source can be *reliable*, reporting facts accurately, without being *useful*, because the facts carry no predictive value. And a useful source may not be *efficient* to monitor.
 
