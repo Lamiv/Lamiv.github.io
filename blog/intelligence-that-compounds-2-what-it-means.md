@@ -51,9 +51,13 @@ After each outcome, every forecast was scored with the Brier score, the adaptive
 
 **What it was not.** It was not a simulated agent, and it was not a live deployment. The experiment was executed on 24 November 2026 over historical price inputs in sequential order, so it is not 60 days, or 12 weeks, of live operation. Nor was it a news-driven test of the model's judgement. It used prices only; no news was collected for the period, and no language-model forecasts were made. It also assumed that each day's price was available immediately, which the published series is not, it did not reconstruct what was actually known on each historical date, and the price inputs have not yet been independently re-checked against the source. The experiment's own records say so: *do not present as executable backtest.* What it does test is the machinery: whether memory changes behaviour, whether evaluation can tell change from improvement, and whether governance acts on the difference.
 
+![Notion page extract: Brent Intelligence, Sequential Learning and Live Pilot. 60-session sequential learning experiment. Completed: 60 evaluation sessions, 3 strategies, 180 probability comparisons, 60 outcome-driven reflections. Market observation dates 25 August to 17 November 2026; experiment executed retrospectively on 24 November 2026 using historical price inputs in sequential order; publication delays not reconstructed; not a 12-week live deployment; price provenance not independently revalidated. Mean Brier loss: fixed baseline 0.2500, adaptive frequency 0.2618, prior-direction regime 0.2688. Adaptive loss declined 10.3% between the first and final 20-session blocks, but neither adaptive strategy beat the baseline overall. No promotion. The journal records algorithmic outcome-driven reflections, not independent historical LLM reasoning.](img/compounds/notion-summary.webp)
+
+*Figure 1. The experiment's summary on the workspace's main page. Reproduced from the page's content, retrieved through the Notion connector: the words and numbers are the page's own; the layout is a reproduction, not a screenshot.*
+
 ![The agent's dashboard for the 60-session experiment: Brent spot price from late August to 17 November 2026, rising from about $88 to above $130 and falling back to about $93; below it, cumulative Brier loss for the adaptive strategy in teal and the regime-sensitive strategy in amber, both settling slightly above the dashed fixed baseline at 0.25; overall Brier scores fixed 0.2500, adaptive 0.2618, regime 0.2688; and the note that neither adaptive strategy beats the baseline overall, with no promotion and no trading returns claimed.](img/compounds/replay-dashboard.webp)
 
-*Figure 1. The dashboard the agent produced in Notion for the 60-session experiment. Prices above; cumulative Brier loss below, where lower is better and the dashed line is the fixed 50% baseline.*
+*Figure 2. The dashboard the agent produced in Notion for the 60-session experiment. Prices above; cumulative Brier loss below, where lower is better and the dashed line is the fixed 50% baseline.*
 
 **What it found.** The results, by block of 20 sessions:
 
@@ -68,7 +72,7 @@ The adaptive strategy's loss fell by 10.3% between the first and the last block.
 
 ![The agent's figure titled learning under changing market conditions: Brier loss by block of 20 sessions, with the adaptive strategy falling from about 0.277 to 0.249, the regime-sensitive strategy rising to about 0.297 in the middle block before falling to 0.252, and the fixed baseline flat at 0.25; headline 10.3% lower loss in the final block than the first; overall adaptive loss 0.2618 against 0.2500 baseline, no promotion, block improvement descriptive and not proof of causal learning.](img/compounds/learning-stages.webp)
 
-*Figure 2. The agent's own summary, prepared for this article. Its caption states the limit plainly: the block improvement is descriptive, not proof of learning.*
+*Figure 3. The agent's own summary, prepared for this article. Its caption states the limit plainly: the block improvement is descriptive, not proof of learning.*
 
 The audit trail shows why. With few outcomes counted, the adaptive strategy's probabilities swung widely, from 25% to over 70%, and confident forecasts that turned out wrong were punished hard. On 11 September it said 71% after a run of rises; Brent fell, and that one forecast cost 0.51. As outcomes accumulated, its probabilities settled in the mid-40s, close to the baseline's 50%, and its losses settled close to the baseline's too. Part of its improvement is the market changing; part is the strategy becoming less confidently wrong. Neither is the same as becoming better than a coin.
 
@@ -76,27 +80,23 @@ An initial five-session sequential experiment, run first, showed the same patter
 
 **Memory, evaluation and governance.** The experiment produced 60 outcome-driven reflections in the Notion learning journal, one per session. They were generated algorithmically from each session's stored result, not by 60 separate runs of a language model reasoning about each day; the journal says so at the top. A typical entry:
 
-> *Session 13, 11 September. Before outcome: adaptive P(up) 71.4%; regime 80.0%. Realised −2.41%; adaptive loss 0.5102 versus 0.2500 baseline. Underperformed baseline; confidence was misplaced. After outcome: next adaptive probability 66.7%.*
+![Notion page extract: Learning Journal, 60 outcome-driven reflections. Note: retrospective, mechanically derived reflections from stored statistical results, not historical LLM reasoning. Session 11, 9 September 2026: before outcome adaptive P(up) 66.7%, regime 75.0%; realised 3.19%; adaptive loss 0.1111 versus 0.2500 baseline; beat baseline; next adaptive probability 69.2%. Session 12, 10 September: adaptive 69.2%, regime 77.8%; realised 10.47%; loss 0.0947; beat baseline; next 71.4%. Session 13, 11 September: adaptive 71.4%, regime 80.0%; realised minus 2.41%; loss 0.5102 versus 0.2500; underperformed baseline, confidence was misplaced; next 66.7%.](img/compounds/notion-journal.webp)
+
+*Figure 4. Three consecutive reflections from the learning journal: two confident wins, then a confident miss that cost almost as much as both had gained. Reproduced from the Notion page.*
 
 Two distinctions matter here. The first is between simulating an agent and executing a learning algorithm: this experiment did the second, so the forecasts, updates and scores are real computations over real observations, not a story about what an agent might have done. The second is between statistical learning and model reflection: the learning here is deterministic, counts updated by arithmetic, and the journal is a record of it, not independent reasoning. Model-generated reflection, of the kind Part 1 designs for, is a separate capability that has not yet been tested.
 
 Evaluation then did its job, and governance acted on it. The strategy register:
 
-| Strategy | Mechanism | Brier | Decision |
-|---|---|---|---|
-| Fixed | 50% | 0.2500 | Retained as the benchmark |
-| Adaptive V1 | Share of rises so far | 0.2618 | Not promoted |
-| Regime V2 | Share of rises, by previous day's direction | 0.2688 | Not promoted |
-| V3, proposed | Pull confidence towards 50% | Not yet tested | Untested |
+![Notion page extract: Strategy History and Promotion Register. Fixed, 50%, Brier 0.2500, retain benchmark. Adaptive V1, expanding Beta(1,1) frequency, 0.2618, not promoted. Regime V2, prior-direction conditional Beta counts, 0.2688, not promoted. V3 proposed, shrink confidence toward 50%, pending, untested. Note: final 20-session V1 loss 0.2487 versus first 20 0.2774; descriptive only; no live strategy changes; all versions evaluated retrospectively except proposed V3.](img/compounds/notion-register.webp)
+
+*Figure 5. The strategy register: two strategies not promoted, a third proposed. Reproduced from the Notion page.*
 
 And the hypotheses that came out of it:
 
-| Hypothesis | Evidence | Status |
-|---|---|---|
-| Accumulated frequency of rises beats a fixed probability | 0.2618 against 0.2500 | Not supported over the 60 sessions |
-| The previous day's direction improves the forecast | 0.2688 against 0.2500 | Not supported over the 60 sessions |
-| Pulling confidence towards 50% reduces overconfidence | None yet | Proposed |
-| Evidence about physical supply improves probability forecasts | None yet; news not yet integrated | Proposed |
+![Notion page extract: Hypotheses and Experiments. H01, accumulated directional frequency beats fixed probability, 0.2618 versus 0.2500, not supported. H02, prior direction improves forecast, 0.2688 versus 0.2500, not supported. H03, shrinkage reduces overconfidence, not tested, proposed. H04, physical supply evidence improves probability forecasts, news not integrated, proposed. Prospective protocol: freeze candidate and baseline, use same cutoff and instrument, minimum 30 paired observations, compare Brier and coverage, require human approval; no claims of statistical significance.](img/compounds/notion-hypotheses.webp)
+
+*Figure 6. Hypotheses, and the protocol for testing them, written down before any test. Reproduced from the Notion page.*
 
 The protocol for testing them was written down before any test: freeze the candidate and the baseline, use the same cutoff and the same instrument, at least 30 paired future observations, compare Brier score and coverage, require human approval, and make no claims of statistical significance.
 
@@ -108,7 +108,7 @@ Alongside the 60-session experiment, the pilot recorded its first live forecasts
 
 ![Screenshot of the Brent intelligence terminal for 24 November 2026: reference settlement $89.37 for the January 2027 futures contract on 23 November; forecast settlement $88.92 for 25 November, minus 0.50%; probability of upside 43%, labelled judgmental and uncalibrated; a chart of the FRED spot series from 11 to 17 November, labelled as a separate series that is stale for scoring; and an evidence balance listing recovering supply, a Libya pipeline restart and an unconfirmed inventory build as bearish drivers, against Hormuz logistics risk, physical supply vulnerability and reported backwardation as bullish counterweights.](img/compounds/terminal.webp)
 
-*Figure 3. The agent's first forecast, as it appears in Notion. A real output from the experiment, not an illustration.*
+*Figure 7. The agent's first forecast, as it appears in Notion. A real output from the experiment, not an illustration.*
 
 Several details are worth reading closely, because they show the design doing its job.
 
@@ -122,23 +122,15 @@ Several details are worth reading closely, because they show the design doing it
 
 ![Screenshot of the Brent scenario analysis card: illustrative sensitivities from the $89.37 reference settlement. Bullish supply disruption, plus 3%, $92.05. Neutral balanced market, 0%, $89.37. Bearish supply recovery, minus 3%, $86.69. Recorded central forecast $88.92 for the 25 November 2026 settlement.](img/compounds/scenario-card.webp)
 
-*Figure 4. Scenarios around the forecast. The agent labels them as illustrative sensitivities; only the central forecast is recorded and scored.*
+*Figure 8. Scenarios around the forecast. The agent labels them as illustrative sensitivities; only the central forecast is recorded and scored.*
 
 Alongside the forecast, the Scenario and Risk Monitor page shows what plus or minus 3% would mean, and keeps a risk register with a control for each risk: match the January 2027 settlement exactly, against contract mismatch; search for contradictory evidence, against narrative bias; preserve retrieval and observation dates, against publication delay; score probabilities with the Brier score, against overconfidence; and freeze forecasts before the target date, against lookahead. The scenarios are clearly marked as sensitivities, not extra forecasts, which keeps the record honest: one forecast, one score.
 
-![Screenshot of the Learning Laboratory page in Notion: hypothesis H01, physical supply recovery may outweigh geopolitical headlines when export flows improve. Status proposed, untested; candidate strategy not activated; to be tested as a fixed rubric against the original strategy on identical future observations, with a minimum of 30 paired dates and pre-registered acceptance criteria.](img/compounds/learning-lab.webp)
-
-*Figure 5. The first hypothesis, on day one: proposed, untested and not activated.*
-
-The Learning Laboratory already holds a first hypothesis: *physical supply recovery may outweigh geopolitical headlines when export flows improve.* Its status is the most important part. Proposed, untested; the candidate strategy not activated; to be tested on identical future dates, at least thirty of them, against criteria registered in advance. On day one, the learning loop is a commitment, not a result. That is how it should be.
+The live pilot's Learning Laboratory also records a first research hypothesis from the live analysis, that physical supply recovery may outweigh geopolitical headlines when export flows improve, as proposed, untested and not acted on: on day one, the learning loop is a commitment, not a result.
 
 ### What Notion adds
 
 Because the agent's interpretation lives in Notion, the experiment gains things a database alone would not give it.
-
-![Screenshot of the Notion page 01, Market Intelligence Terminal, with an attached HTML dashboard called Brent terminal, an investment research thesis stating that supply recovery and weak momentum modestly outweigh disruption risks, a tentative bearish research view and not a trade instruction, frozen at 14:30:09 UTC on 24 November, and a source register linking the FRED spot series and two Reuters reports.](img/compounds/notion-terminal-page.webp)
-
-*Figure 6. The forecast as a Notion page: a short thesis, the time it was frozen, its sources, and an attached dashboard.*
 
 **It can be shared.** A Notion page can be shared with chosen colleagues or guests at a chosen permission level, or published to the web. [Notion](https://www.notion.com/help/sharing-and-permissions) The research becomes something a team reads, not a file one person keeps.
 
@@ -220,7 +212,7 @@ flowchart TB
     EV <--> MEM
 ```
 
-*Figure 7. The proposed commercial architecture. Internal and external sources converge; recommendations go to people; business outcomes flow back as the evidence for learning.*
+*Figure 9. The proposed commercial architecture. Internal and external sources converge; recommendations go to people; business outcomes flow back as the evidence for learning.*
 
 *Alt text: Web research and publications from the external environment, and email, calendar, Teams and the CRM from the internal environment, are ingested, resolved and given context. They feed a commercial intelligence agent, which makes recommendations for people to decide on. The business outcome, won, lost or abandoned, goes to evaluation and learning, which feeds the next cycle. The agent and evaluation share empirical and reflective memory.*
 
