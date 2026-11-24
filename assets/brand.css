@@ -512,3 +512,5 @@ main:has(.bgrid){padding-bottom:clamp(48px,8vw,96px)}
 .post figure.shot{margin:26px 0 30px}
 .post figure.shot img{display:block;width:100%;max-width:440px;height:auto;border:1px solid var(--line);border-radius:6px}
 .post figure.shot figcaption{margin-top:10px;font-size:.92rem;color:var(--mist);font-style:italic;max-width:62ch}
+.post blockquote{margin:18px 0 22px;padding:4px 0 4px 18px;border-left:2px solid var(--sodium);color:var(--mist)}
+.post blockquote p{margin:0}
