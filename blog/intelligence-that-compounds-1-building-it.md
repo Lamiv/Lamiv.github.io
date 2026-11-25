@@ -68,6 +68,12 @@ It is also where I expect learning to go wrong most often, because interpretatio
 
 Reflective memory can be filled in two quite different ways, and I want to be precise about which one the experiment used. Each of its 60 reflections was derived mechanically from the stored result of one session: the probability before the outcome, the realised move, the loss against the baseline and the probability carried into the next session. That is exact and limited. The reference design adds a weekly learning engine in which a language model looks for patterns across many sessions, researches them and proposes hypotheses with the evidence for and against. That is far richer, and it is precisely the kind of output that needs independent evaluation before anyone acts on it.
 
+Figure 2 shows the journal as it sits in the workspace, with the note at the top that says how its entries were produced.
+
+![Screenshot of the Notion mobile app showing the page "Learning Journal — outcome-driven reflections". A note at the top reads: "Retrospective, mechanically derived reflections from stored statistical results, not historical LLM reasoning. No causal news attribution." Below it are the entries for Session 1 on 25 August 2026, Session 2 on 26 August and Session 3 on 27 August, each giving the adaptive and regime probabilities before the outcome, the realised move, the adaptive loss against the 0.2500 baseline, and the next adaptive probability. An "Ask AI" bar sits at the bottom of the screen.](img/compounds/notion-learning-journal.webp)
+
+*Figure 2. The learning journal in the Notion workspace, in the Notion mobile app. Each entry is derived from the stored result of one session. The Ask AI bar at the bottom opens Notion's own assistant, which Part 3 returns to.*
+
 Research is the main input to that second kind of reflection. Rather than asking the model why oil is moving, which invites a narrative, the design runs research as separate questions about supply, demand, inventories, geopolitics and money, plus a deliberate search for evidence against whatever story currently dominates. It can use ChatGPT's own search, or Firecrawl for deeper research and page monitoring. [Firecrawl](https://docs.firecrawl.dev/mcp-server) Because each research activity is recorded, the research itself can be evaluated over time: which sources reported things first, which only repeated others, and which searches produced nothing that ever informed a forecast. The research brief is in the [appendix](#appendix-the-engines-and-their-prompts).
 
 ## Evaluation: establishing whether decisions improve
@@ -118,7 +124,7 @@ flowchart TD
     Y -->|"approve activation"| ST
 ```
 
-*Figure 2. The operating cycle of the reference design. Four scheduled engines, scoring done in the database, and one human decision as the only route by which the active strategy changes. Times are Dubai time.*
+*Figure 3. The operating cycle of the reference design. Four scheduled engines, scoring done in the database, and one human decision as the only route by which the active strategy changes. Times are Dubai time.*
 
 *Alt text: Engine A, on weekdays at 08:00, writes observations, evidence and predictions, using the active strategy and challengers. Engine A2, at 08:15, writes fixed-baseline predictions using Strategy V1. Engine B, daily at 22:00, reads published prices from EIA via FRED and the predictions, and writes evaluations scored in SQL. Engine C, on Sundays at 10:00, reads the evaluations and writes hypotheses and experiments to Notion. Your review is the only path by which an approved activation reaches the strategies.*
 
@@ -142,7 +148,7 @@ flowchart TD
     A -->|"later underperforms"| B["Retired; previous<br/>strategy restored"]
 ```
 
-*Figure 3. The life of a hypothesis. The agent may register and test; only a signed human decision activates a strategy, and activation can be reversed.*
+*Figure 4. The life of a hypothesis. The agent may register and test; only a signed human decision activates a strategy, and activation can be reversed.*
 
 *Alt text: Engine C registers a hypothesis. If it is not worth testing it is recorded and rejected. If it is, and fewer than two tests are running, a challenger is tested on at least 30 future dates. If it does not meet the rule fixed in advance it is rejected; if the result is unclear the test continues; if it meets the rule, you decide. Approval activates it, signed in Decisions; a decline rejects it. An activated strategy that later underperforms is retired and the previous strategy restored.*
 
