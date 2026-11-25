@@ -7,17 +7,15 @@ image: covers/intelligence-that-compounds
 image_alt: Hand-drawn sketch: a learning loop of observe, predict, evaluate and adapt widens into a spiral around accumulated experience, between a database labelled evidence and a notebook labelled interpretation.
 ---
 
-Imagine a colleague who is exceptionally capable. Every morning they gather information, analyse the situation and make recommendations. But they never check whether yesterday's recommendations were right, and never ask why one approach worked and another failed. Every morning, for all their intelligence, they start again.
+For about seven weeks this autumn I had a scheduled workflow watching markets for me. Brent crude went onto its watchlist on 8 October, and from then on each run produced a careful piece of analysis: what had moved, which supply and geopolitical stories seemed to be driving it, and which way the risks were leaning. In mid-November I split it into two watches with different objectives, one looking for opportunities and one for early signs of a crisis, with shared risk controls and my approval required before anything was acted on.
 
-Many AI assistants work this way. We have given them knowledge, tools, connected applications and, increasingly, the ability to act. We have rarely given them a way to learn from the consequences of what they recommend.
+When I went back through those weeks of output, I could not answer a simple question about it: was it getting any better? Much of the analysis was good. Very little of it, though, had been recorded in a form that could be checked against what happened afterwards. A report might say the risks were tilted upwards, but without a probability, without a horizon, and without a record of which version of the instructions had produced it. Every report had been saved, so in one sense the system remembered everything. It had almost nothing it could learn from.
 
-Memory alone is not learning. Reflection alone is not improvement. And self-improvement without measurement is only a claim.
-
-This series explores a proposition: an AI system can get better at a task without changing the underlying model. What has to evolve is the architecture around it: its memory, its strategies, its evaluation, and its ability to build up experience that has been checked.
+That observation is where this series starts. The assistants most of us now use have knowledge, tools and access to our applications, and some of them can act. Few have any way of finding out whether their recommendations turned out to be right, and fewer still have a controlled way of changing how they work as a result. I wanted to see what that would take with the model left exactly as it is, using platforms that are already available rather than an application written for the purpose.
 
 ## Where this series fits
 
-It is the third of three series on this blog, and each asks a different architectural question.
+This is the third series on the blog, and the three grew out of the same practical concern.
 
 | Series | The question it asks |
 |---|---|
@@ -25,17 +23,17 @@ It is the third of three series on this blog, and each asks a different architec
 | [Designing Agency](designing-agency-0-permission.html) | What should an agent be authorised to do? |
 | Intelligence That Compounds | How should an agent learn from experience? |
 
-Together they make one argument about enterprise AI: *an agent must be able to reason correctly, act within delegated authority, and learn from consequences without compromising either.* This series is about the third, and about why it cannot be allowed to undermine the first two.
+An agent that adapts its own behaviour can drift away from the reasoning it was validated on, and it can quietly widen the authority it was given, for example by deciding that a strategy it has just invented is now the one it should run. The working principle I have used across all three series is that an agent must be able to reason correctly, act within delegated authority, and learn from consequences without compromising either of the first two. This series is about the third part, and much of it is about protecting the other two.
 
-## A small experiment
+## Choosing a problem small enough to measure
 
-I have been exploring this with a market intelligence system that follows one thing, Brent crude oil, and asks one question each trading session: *which way will Brent move next, and how confident should I be?* Any capable assistant can answer that. The difference is what happens afterwards. The system keeps every forecast, the confidence behind it and the strategy that produced it, and when the real price is known it measures the gap.
+I wanted a problem where the outcome arrives quickly, is published by someone other than the agent, and can be scored without argument. The commercial decisions I work with in enterprise settings fail all three tests: a sales opportunity can take months to resolve, its status often lives in someone's head, and whether a recommendation helped is a matter of opinion. The free-text views my monitoring workflow produced could not be scored at all.
 
-The experiment at the centre of this series ran that loop over 60 consecutive trading sessions of Brent prices. Three strategies made 180 forecasts, each recorded before its outcome was read. Two of them learned from every outcome; one never learned at all, so that learning could be measured against it. The system wrote 60 reflections, registered its hypotheses, and in the end decided that neither learning strategy was good enough to adopt.
+Brent crude oil passes all three. So the system I built follows one instrument and, for each trading session, states the probability that the price will rise. A probability can be scored the moment the price is known, which means the system never gets to grade its own work. I have no interest here in a profitable oil strategy; Brent is simply a setting in which learning can be measured.
 
-The purpose was never a profitable oil strategy. It was to make one thing visible: how a system's decisions change as experience accumulates, and how it can tell whether that change is improvement. The thesis of the series follows from what it showed. *Intelligence compounds when experience is preserved, subsequent decisions are informed by that experience, outcomes are independently evaluated, and adaptations are subjected to governance.*
+The case study at the centre of the series is a learning algorithm executed over 60 consecutive trading sessions of historical Brent prices, from 25 August to 17 November 2026, one session at a time. Three strategies stated a probability before each outcome was read: two that learned from every outcome, and one fixed at 50% that never learned, so that learning had something to be measured against. That produced 180 forecast comparisons and 60 reflections, one per session. The adaptive strategy's loss fell by 10.3% between the first and last third of the sessions, and yet neither learning strategy beat the fixed baseline over the whole period, so neither was adopted. Part 2 follows that record session by session.
 
-The system was assembled from existing platforms, ChatGPT, a Supabase database and a Notion workspace, configured by conversation rather than built as an application. Figure 1 shows the reference design.
+The system is assembled from ChatGPT, a Supabase database and a Notion workspace, configured by conversation. Figure 1 shows the reference design. The experiment implemented the parts of it needed to test the learning loop itself; Part 1 describes which parts those are.
 
 ```mermaid
 flowchart LR
@@ -52,25 +50,21 @@ flowchart LR
     E --> M2
 ```
 
-*Figure 1. The reference design is a loop, not a pipeline: each cycle ends by checking against reality, and only tested changes feed the next cycle.*
+*Figure 1. The reference design. Each cycle ends by checking a prediction against the real outcome, and only tested changes feed into the next cycle.*
 
 *Alt text: A scheduled task starts each cycle. External sources are ingested and given context, then passed to a reasoning agent, which makes a prediction or recommendation. That is evaluated against the real outcome, which leads to controlled adaptation and back to the agent for the next cycle. The agent reads and writes empirical memory in Supabase and reflective memory in Notion; evaluation reads and writes empirical memory and writes to reflective memory.*
 
-## The outcome the agent does not control
+## Keeping evidence apart from interpretation
 
-An agent cannot learn from a world it cannot observe, so what it reads matters. But the most important input is the easiest to overlook: an independent record of what actually happened. Without it, an agent can produce convincing explanations indefinitely and never discover whether it is getting better. In enterprise terms, the outcome is the system of record; the agent's own account of its performance is not.
+The first design decision came straight from the monitoring weeks. In those reports, observation and interpretation were mixed together in the same paragraphs, so looking back I often could not tell what had been known at the time from what had been inferred. I wanted the new system to keep them in separate places.
 
-The same discipline applies to time. Every piece of evidence needs to record when it was published, so that a prediction can only use what was known before it was made. An agent that justifies yesterday's call with today's news has not learned anything; it has rewritten the past.
+Supabase holds the evidence: what was observed, what was predicted, with what confidence and under which strategy, and what actually happened. Those records cannot be edited once written, because a system that can revise its own history will always appear to be improving. Notion holds the interpretation: the learning journal, hypotheses, research notes and proposed changes to the strategy, in a form people can read and comment on.
 
-## Two kinds of memory
+I did consider simpler arrangements. Keeping everything in Notion would have been easier to set up, but its pages are designed to be edited, including by the agent, which is the wrong property for evidence. Keeping everything in Supabase would have made the record rigorous and left nowhere sensible for the discussion around it. Two stores with different rules turned out to be the simplest design that kept both properties.
 
-The design rests on keeping two kinds of memory apart.
+There is a research reason for the separation as well. Agents that reflect on their own work can endorse their own mistakes and store them as guidance, which one recent paper calls a *self-confirmation trap*. [Zhu et al.](https://arxiv.org/abs/2606.24428) In this design a hypothesis written in Notion is only a claim. It changes the system's behaviour only after it has been tested against outcomes the agent does not control.
 
-**Supabase holds the evidence:** what was observed, what was predicted, with what confidence, and what actually happened. These records are never rewritten once the outcome is known, because a system that can edit its own history can always look like it is improving.
-
-**Notion holds the interpretation:** research notes, explanations, hypotheses and proposed changes to the strategy. It turns disconnected daily reports into a continuing line of inquiry, where today's analysis can build on last week's question.
-
-The difference matters. A hypothesis does not become knowledge because an AI wrote it down. Recent research names the danger: agents that reflect on their own work can endorse their mistakes and store them as guidance, a *self-confirmation trap*. [Zhu et al.](https://arxiv.org/abs/2606.24428) Only evaluation against outcomes the agent does not control should turn an idea into practice.
+Those outcomes need care of their own. The price that settles a forecast has to come from an independent source, in the way an enterprise system treats its system of record as authoritative over any agent's account of events. Every piece of evidence also needs the time it was published, so that a forecast can be shown to have used only what was known before it was made. Part 1 describes how easily the first version of the design got this wrong.
 
 ```mermaid
 flowchart TD
@@ -92,25 +86,17 @@ flowchart TD
 
 *Alt text: A cycle: observe, reason, predict, evaluate, hypothesise, experiment, adapt, and back to observe. Independent outcomes feed into evaluate. Accumulated experience sits at the centre: evaluation and experiments add to it, and reasoning draws on it.*
 
-## What can improve
+## What can change when the model does not
 
-Nothing here retrains the model. What changes is everything around it: which sources it reads, how it weighs signals, how well its confidence matches reality, which past cases it recalls, and how it researches. Research such as Reflexion and ExpeL has shown agents improving on benchmark tasks through written reflection and extracted insights, without changing the model's weights. [Shinn et al.](https://arxiv.org/abs/2303.11366)[Zhao et al.](https://arxiv.org/abs/2308.10144) Whether that holds in a noisy market is exactly what has to be measured.
+Nothing in this design retrains the model. What can change is the material around it: which sources it reads, how it weighs different signals, how closely its stated confidence matches what actually happens, which past cases it recalls, and how it goes about research. There is good evidence that this kind of improvement is possible. Reflexion showed agents improving on benchmark tasks by writing reflections on their failures, and ExpeL by extracting reusable insights from past attempts, in both cases without changing the model's weights. [Shinn et al.](https://arxiv.org/abs/2303.11366)[Zhao et al.](https://arxiv.org/abs/2308.10144) Benchmarks are forgiving environments, though, and I wanted to know what such learning looks like in a noisy one where the measurement is unforgiving.
 
-A professional analyst is a fair comparison. Their underlying abilities may not change much over a career; their methods, sources and judgement do, through experience and through being held to their record.
+The analogy I find most useful is an experienced analyst. Their underlying ability probably does not change much over a career. Their methods, sources and judgement do, partly through experience and partly because someone holds them to their track record.
 
-That raises the question the rest of the series has to answer. If we authorise an agent to do a task, have we also authorised it to change how it does it, and who decides which changes count as improvement?
+The part I have not fully resolved is governance. If we authorise an agent to carry out a task, have we also authorised it to change how it carries it out? My current answer is that it may propose and test changes to its own strategy, while the decision to adopt one stays with a person, and Part 3 explores where that line should sit in an organisation. Taken together, the experiment has left me with a working thesis: intelligence compounds when experience is preserved, later decisions are informed by it, outcomes are evaluated independently, and adaptations are subject to governance. The rest of the series tests it.
 
-## What the series covers
+## How the series is organised
 
-**[Part 1: Five responsibilities of a learning system](intelligence-that-compounds-1-building-it.html)** is the architecture. Empirical memory preserves experience, reflective memory interprets it, evaluation establishes whether decisions improve, adaptation changes subsequent behaviour, and governance decides which changes are acceptable. It also covers how ChatGPT designed the system by conversation, and the eight problems a careful review found in that design.
-
-**[Part 2: Watching a system learn](intelligence-that-compounds-2-what-it-means.html)** is the evidence. Over 60 sessions, the system starts with no experience, builds confidence through a run of rising prices, and on 10 September is 77.8% sure Brent will rise. It rises by more than 10%. The next day it is 80% sure, and Brent falls. The part follows what the system did next, how its decisions changed through a falling market in November, how it measured its own progress against a baseline that never learned, and why it rejected its own strategies.
-
-**[Part 3: From one experiment to an organisation](intelligence-that-compounds-3-organisations.html)** is the meaning. What the experiment implies in practice, why single-loop and double-loop learning need different owners, how the same architecture would work for a commercial team, and what an organisation must change before it can trust a system that learns.
-
-:::question
-**A question to sit with.** If an AI system in your organisation claimed it had improved last quarter, what evidence would you ask for, and does anything record it today?
-:::
+[Part 1](intelligence-that-compounds-1-building-it.html) describes the architecture in terms of what each component is responsible for, and how ChatGPT designed most of it by conversation, including the problems I found when I reviewed that design. [Part 2](intelligence-that-compounds-2-what-it-means.html) goes through the 60-session experiment in order, from a system with no experience to one that rejected its own strategies. [Part 3](intelligence-that-compounds-3-organisations.html) considers what the results imply for organisations, where the decisions are commercial, the outcomes are slow, and the question of who approves a change carries more weight.
 
 ## Sources
 
