@@ -174,18 +174,25 @@ The conclusion I drew at the end of the experiment still seems right to me: lear
 
 ## Technical appendix
 
-**Implementation status.** Implemented and tested: Supabase as empirical memory, with seven of the ten designed tables, two of them for the learning experiments; Notion as reflective memory, with the dashboard, learning journal, hypotheses, strategy register and governance pages; the 60-session sequential learning experiment, with scoring, reflections, strategy comparison and governance decisions; and a manual test of recording live forecasts, which produced the first forecasts on 24 November, not yet scored and not part of this analysis. Designed, not yet implemented: the scheduled engines running unattended, Firecrawl research acquisition, the remaining three tables, forecasting and strategy revision informed by news and the model, automated recording of the monitoring workflow's views, and prospective champion and challenger testing.
+### Experimental methodology and scope
 
-**Methodological limitations.**
+The experiment was conducted on 24 November 2026 using the historical Europe Brent spot price published by the US Energy Information Administration, [EIA](https://www.eia.gov/dnav/pet/hist/RBRTED.htm) and republished by FRED as DCOILBRENTEU, covering 60 evaluation sessions between 25 August and 17 November 2026. The 62 price observations used, the 60 session prices and the two earlier observations that initialised the experiment (21 and 24 August), were afterwards cross-checked against the original EIA daily series. All 62 matched, with no discrepancies, and the direction of every session recalculated from the EIA values matches the stored outcomes.
 
-- The experiment was executed on 24 November 2026 over the historical series DCOILBRENTEU, the EIA price republished by FRED, in sequential order. The 60 sessions describe the order in which learning happened; they are not 60 days of live operation. The experiment does not reconstruct what was known on each historical date: EIA publishes the series with a delay, and the experiment assumed each price was available immediately.
-- The price inputs have not yet been independently re-checked against the source.
-- Prices were the only external data. Accumulated outcomes and statistical state informed later forecasts; the Notion reflections were recorded for review but were not used by a language model to generate forecasts. No news was collected for the period, so the experiment says nothing about the value of research or model judgement.
-- Sixty sessions is a small sample, and market sessions are not independent of one another. No claim of statistical significance is made.
-- Cases A and B illustrate the mechanism; they are not independent tests of it.
-- The results are forecasting scores, not investment performance, and nothing here is investment advice.
+The strategies processed the observations sequentially. Each forecast was generated from the strategy's accumulated state before the next outcome was introduced; the outcome was then evaluated and incorporated into the following learning cycle. Previous outcomes therefore informed every later forecast, and the price series was the only external observational data.
+
+The experiment concentrated on statistical adaptation, to establish a measurable foundation for the broader learning architecture. External research and judgement by a language model were outside its scope: no news was collected for the period, and the reflections recorded in Notion were not used by a language model to generate forecasts.
+
+The evaluation follows the order of observations, not the times at which they were historically published. Because EIA publishes the series with a delay, the results should be read as a sequential learning experiment, not as a reconstruction of real-time forecasting conditions.
+
+Sixty sessions give an initial view of how the strategies behave as experience accumulates. Given the limited sample and the likely temporal dependence between market observations, the results are descriptive and make no claim of statistical significance. Cases A and B illustrate the behaviour of the learning mechanism; they do not validate it independently.
+
+The reported metrics measure forecasting performance, not investment returns.
+
+### Implementation status
+
+Implemented and tested: Supabase as empirical memory, with seven of the ten designed tables, two of them for the learning experiments; Notion as reflective memory, with the dashboard, learning journal, hypotheses, strategy register and governance pages; the 60-session sequential learning experiment, with scoring, reflections, strategy comparison and governance decisions; and a manual test of recording live forecasts, which produced the first forecasts on 24 November, not yet scored and not part of this analysis. Designed, not yet implemented: the scheduled engines running unattended, Firecrawl research acquisition, the remaining three tables, forecasting and strategy revision informed by news and the model, automated recording of the monitoring workflow's views, and prospective champion and challenger testing.
 
 ## Sources
 
-- U.S. Energy Information Administration, [*Europe Brent Spot Price FOB*](https://www.eia.gov/dnav/pet/hist/RBRTED.htm), accessed November 2026; republished by FRED as DCOILBRENTEU, the series used in the experiment.
+- U.S. Energy Information Administration, [*Europe Brent Spot Price FOB*](https://www.eia.gov/dnav/pet/hist/RBRTED.htm), daily series, accessed November 2026; republished by FRED as DCOILBRENTEU. The series used in the experiment, and the source against which its 62 price inputs were checked.
 - Wikipedia, [*Brier score*](https://en.wikipedia.org/wiki/Brier_score) and [*Walk forward optimization*](https://en.wikipedia.org/wiki/Walk_forward_optimization).
