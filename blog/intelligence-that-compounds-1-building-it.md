@@ -11,7 +11,7 @@ So this part describes the architecture through those five responsibilities.
 
 | Responsibility | The question it answers | Where it lives |
 |---|---|---|
-| Empirical memory | What happened, and what did we decide before we knew? | Supabase |
+| Empirical memory | What happened, what did we decide before we knew, and from what state? | Supabase |
 | Reflective memory | What do we think it means? | Notion |
 | Evaluation | Are the decisions getting better? | Scoring in the database, against fixed baselines |
 | Adaptation | What should change in the next decision? | Strategies, and the engines that run them |
@@ -23,6 +23,7 @@ The full design is a reference architecture for a market intelligence agent that
 flowchart LR
     D["Decision<br/>recorded before<br/>the outcome"] --> EM[("Empirical memory<br/>preserves experience")]
     O["Independent<br/>outcome"] --> EM
+    S["Initial state and<br/>adaptation rules"] --> EM
     EM --> EV["Evaluation<br/>establishes whether<br/>decisions improve"]
     EM --> RM["Reflective memory<br/>interprets experience"]
     EV --> RM
@@ -33,9 +34,9 @@ flowchart LR
     G -->|"rejected"| RM
 ```
 
-*Figure 1. The five responsibilities as one loop. Decisions and outcomes are preserved before anything interprets them; adaptation proposes changes and governance decides on them.*
+*Figure 1. The five responsibilities as one loop. Decisions, outcomes and the state that produced them are preserved before anything interprets them; adaptation proposes changes and governance decides on them.*
 
-*Alt text: A decision recorded before the outcome, and an independent outcome, both flow into empirical memory, which preserves experience. Empirical memory feeds evaluation, which establishes whether decisions improve, and reflective memory, which interprets experience; evaluation also feeds reflective memory. Evaluation and reflective memory both feed adaptation, which proposes changes to the next decision. Governance decides which changes are acceptable: approved changes shape the next decision; rejected ones return to reflective memory.*
+*Alt text: A decision recorded before the outcome, an independent outcome, and the initial state and adaptation rules all flow into empirical memory, which preserves experience. Empirical memory feeds evaluation, which establishes whether decisions improve, and reflective memory, which interprets experience; evaluation also feeds reflective memory. Evaluation and reflective memory both feed adaptation, which proposes changes to the next decision. Governance decides which changes are acceptable: approved changes shape the next decision; rejected ones return to reflective memory.*
 
 ## Empirical memory: preserving experience
 
@@ -50,6 +51,14 @@ Time was also where the first design went most seriously wrong. It measured each
 Two smaller problems had the same root. Observations were protected against any change, yet they also carried a verification status that was meant to change from pending to verified, so one of those rules had to give; verifications are now recorded as rows of their own. And because only I could register a source, a finding from any outlet outside the starting list had nowhere to go. Those outlets are now stored as candidate sources, kept but not trusted until I approve them.
 
 A year of historical prices was loaded as context and labelled that way. I found it useful to be explicit that loaded history is not experience. The system's experience begins with the first decision it records before knowing the outcome.
+
+### Preserving the state behind each decision
+
+Decisions and outcomes are not quite enough. To explain why a learning system made a particular decision, you also need the state it was in at that moment, which depends on three things: its initial conditions, the experience it had accumulated, and the rule it used to turn that experience into a probability. If any one of them is lost, the decision can no longer be reconstructed, and nobody can say with confidence how experience shaped it.
+
+The final review of the experiment showed how small the missing piece can be. An independent reconstruction of the regime-sensitive strategy at first reproduced only some of its stored probabilities. The gap turned out to be its initial state. The strategy keeps separate records for sessions that follow a rise and sessions that follow a fall, so before the first session it needs to know which way the market had last moved. That came from one of the two observations used to initialise the experiment: Brent fell from $96.92 on 21 August to $92.71 on 24 August. Because of that fall, the first session's outcome went into the after-a-fall record, and every count the strategy kept from then on depended on it. With that one observation restored, all 60 of its forecasts and scores reproduced exactly, as the adaptive strategy's already had.
+
+So the design treats initial state as part of the empirical record. The initialising observations, the parameters each strategy starts from and its update rule belong with the strategy version, and every forecast should be traceable to the experience that produced it. For statistical strategies like these, that is enough to replay any decision exactly. For a strategy revised by a language model, exact replay is not possible, and the record has to preserve the decision's context instead; Part 3 considers what that means for an enterprise system.
 
 ## Reflective memory: interpreting experience
 
