@@ -29,7 +29,7 @@ I set it up this way because of the monitoring workflow described in the prologu
 
 ![The 60-session learning experiment, 25 August to 17 November 2026. Upper panel: Brent spot price, rising from $88.24 to a peak of $135.51 on 2 October and falling back to $92.94. Lower panel: cumulative mean Brier loss, lower is better. The adaptive strategy, in teal, and the regime-sensitive strategy, in amber, swing widely in the first sessions and then settle slightly above the fixed baseline's dashed grey line at 0.2500, finishing at 0.2618 and 0.2688. Over all 60 sessions neither learning strategy beats the fixed baseline, so neither is promoted; forecasting scores only, no trading returns claimed.](img/compounds/exp-dashboard.webp)
 
-*Figure 1. The experiment's performance dashboard, rebuilt from the session records behind the Notion dashboard. Prices above; cumulative Brier loss below, with the adaptive strategy in teal, the regime-sensitive strategy in amber and the fixed 50% baseline as a dashed grey line. The same colours are used for the three strategies in every figure in this series.*
+*Figure 1. Performance dashboard: a visualisation of the session records stored in Supabase. Prices above; cumulative Brier loss below, with the adaptive strategy in teal, the regime-sensitive strategy in amber and the fixed 50% baseline as a dashed grey line. The same colours are used for the three strategies in every figure in this series.*
 
 Before going through the sessions, it helps to see the whole record at once. Figure 2 plots how confident each learning strategy was before every session, with the actual outcome underneath.
 
@@ -73,7 +73,7 @@ The learning journal records each of these sessions: the probability before the 
 
 ![Learning journal, three consecutive reflections, mechanically derived from the stored statistical results, not written by a language model. Session 11, 9 September: adaptive 66.7%, regime-sensitive 75.0%, realised move +3.19%, adaptive loss 0.1111 against the baseline's 0.2500, beat the baseline, next adaptive probability 69.2%. Session 12, 10 September: adaptive 69.2%, regime-sensitive 77.8%, realised +10.47%, loss 0.0947, beat the baseline, next 71.4%. Session 13, 11 September: adaptive 71.4%, regime-sensitive 80.0%, realised −2.41%, loss 0.5102, underperformed the baseline, confidence was misplaced, next 66.7%.](img/compounds/exp-journal.webp)
 
-*Figure 4. Three consecutive reflections from the learning journal: two confident wins, then a confident miss that cost almost as much as both had gained. Rebuilt from the Notion learning journal.*
+*Figure 4. Three consecutive reflections from the learning journal: two confident wins, then a confident miss that cost almost as much as both had gained. Source: Notion learning journal.*
 
 What I take from Case A is that the same accumulated evidence did two things at once. It let the strategies recognise the trend, and it made them most confident at exactly the point where the trend ended. I don't think that is a quirk of these two simple strategies; any system that learns from a run of outcomes faces it. This is also where the evaluation step matters in the architecture. Because every forecast was scored against the same baseline, the record shows directly that the strategy's most confident forecasts carried its largest losses, which turns confidence into something a future strategy should control explicitly rather than inherit from its counts.
 
@@ -160,7 +160,7 @@ The next experiment came out of the failures in September and November. Both str
 
 ![Hypotheses and experiments. H01, in teal, accumulated directional frequency beats a fixed probability: 0.2618 versus 0.2500, not supported. H02, in amber, prior direction improves the forecast: 0.2688 versus 0.2500, not supported. H03, shrinkage towards 50% reduces overconfidence: not yet tested, proposed. H04, physical supply evidence improves probability forecasts: news not integrated, proposed. Prospective protocol: freeze the candidate and the baseline, use the same cutoff and instrument, at least 30 paired observations, compare Brier score and coverage, require human approval; no claims of statistical significance.](img/compounds/exp-hypotheses.webp)
 
-*Figure 10. Hypotheses and the testing protocol, recorded before any test. Rebuilt from the Notion register.*
+*Figure 10. Hypotheses and the testing protocol, recorded before any test. Source: Notion hypothesis register.*
 
 Every candidate follows the same protocol: freeze the candidate and the baseline, use the same cutoff and the same instrument, collect at least 30 paired future observations, compare Brier score and coverage, and require my approval before anything changes. Because each test runs forward on dates that had not happened when it began, this is walk-forward evaluation, the usual safeguard against strategies that only fit the past. [Wikipedia](https://en.wikipedia.org/wiki/Walk_forward_optimization)
 
