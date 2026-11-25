@@ -188,10 +188,6 @@ Sixty sessions give an initial view of how the strategies behave as experience a
 
 The reported metrics measure forecasting performance, not investment returns.
 
-### Implementation status
-
-Implemented and tested: Supabase as empirical memory, with seven of the ten designed tables, two of them for the learning experiments; Notion as reflective memory, with the dashboard, learning journal, hypotheses, strategy register and governance pages; the 60-session sequential learning experiment, with scoring, reflections, strategy comparison and governance decisions; and a manual test of recording live forecasts, which produced the first forecasts on 24 November, not yet scored and not part of this analysis. Designed, not yet implemented: the scheduled engines running unattended, Firecrawl research acquisition, the remaining three tables, forecasting and strategy revision informed by news and the model, automated recording of the monitoring workflow's views, and prospective champion and challenger testing.
-
 ## Sources
 
 - U.S. Energy Information Administration, [*Europe Brent Spot Price FOB*](https://www.eia.gov/dnav/pet/hist/RBRTED.htm), daily series, accessed November 2026; republished by FRED as DCOILBRENTEU. The series used in the experiment, and the source against which its 62 price inputs were checked.
